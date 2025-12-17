@@ -1,0 +1,12 @@
+export { Header } from "./Header";
+export { SplashScreen } from "./SplashScreen";
+export { Hero } from "./Hero";
+export { AboutSection } from "./AboutSection";
+export { GreenBanner } from "./GreenBanner";
+export { InfoSection } from "./InfoSection";
+export { HowItWorks } from "./HowItWorks";
+export { Testimonials } from "./Testimonials";
+export { ArticlesCarousel } from "./ArticlesCarousel";
+export { FAQ } from "./FAQ";
+export { Contact } from "./Contact";
+export { Footer } from "./Footer";
