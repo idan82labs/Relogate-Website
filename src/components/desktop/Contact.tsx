@@ -10,7 +10,7 @@ export const Contact = () => {
   return (
     <section id="contact" className="py-16 lg:py-24 relative overflow-hidden">
       {/* Decorative globe */}
-      <GlobeWatermark position="left" size={450} />
+      <GlobeWatermark position="center" size={450} />
       
       <div className="container relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-start">

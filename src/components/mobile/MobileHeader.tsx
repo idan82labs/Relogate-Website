@@ -57,39 +57,12 @@ export const MobileHeader = () => {
           </button>
 
           {/* Logo */}
-          <a
-            href="/"
-            className="text-[#215388] text-xl font-semibold flex items-center gap-1"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="14" fill="#239083" />
-              <ellipse
-                cx="16"
-                cy="16"
-                rx="6"
-                ry="14"
-                stroke="#215388"
-                strokeWidth="1.5"
-              />
-              <path d="M2 16h28" stroke="#215388" strokeWidth="1.5" />
-              <ellipse
-                cx="16"
-                cy="16"
-                rx="14"
-                ry="6"
-                stroke="#215388"
-                strokeWidth="1.5"
-              />
-            </svg>
-            <span className="font-['Satoshi',sans-serif]">
-              Rel<span className="text-[#239083]">o</span>gate
-            </span>
+          <a href="/" className="flex items-center">
+            <img 
+              src="/logo-header.svg" 
+              alt="Relogate" 
+              style={{ width: '120px', height: '25.5px' }} 
+            />
           </a>
 
           {/* CTA Button */}

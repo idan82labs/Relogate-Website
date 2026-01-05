@@ -19,7 +19,7 @@ export const Hero = () => {
       </div>
 
       {/* Main Hero Content */}
-      <div className="container py-16 lg:py-24">
+      <div className="container py-16 lg:py-24 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content - Right side for RTL */}
           <motion.div
@@ -120,7 +120,7 @@ export const Hero = () => {
       </div>
 
       {/* Decorative globe */}
-      <GlobeWatermark position="left" size={480} />
+      <GlobeWatermark position="center" size={480} />
     </section>
   );
 };

@@ -12,67 +12,11 @@ const step1 = siteContent.howItWorks.steps[0];
 const step2 = siteContent.howItWorks.steps[1];
 const step3 = siteContent.howItWorks.steps[2];
 
-// Animation variants for card sizing
-const cardVariants = {
-  collapsed: {
-    flex: 1,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
-    },
-  },
-  expanded: {
-    flex: 1.8,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
-    },
-  },
-  shrunk: {
-    flex: 0.6,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
-    },
-  },
-};
-
-// Animation variants for content
-const contentVariants = {
-  hidden: {
-    opacity: 0,
-    height: 0,
-    transition: {
-      opacity: { duration: 0.15 },
-      height: { duration: 0.3, ease: "easeInOut" },
-    },
-  },
-  visible: {
-    opacity: 1,
-    height: "auto",
-    transition: {
-      height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
-      opacity: { duration: 0.3, delay: 0.1 },
-    },
-  },
-};
-
-// Animation variants for collapsed content
-const collapsedContentVariants = {
-  hidden: {
-    opacity: 0,
-    scale: 0.95,
-    transition: { duration: 0.15 },
-  },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.25, delay: 0.1 },
-  },
-};
+// Card dimensions
+const CARD_HEIGHT = 560;
+const EXPANDED_WIDTH = 762;
+const COLLAPSED_WIDTH = 380;
+const SHRUNK_WIDTH = 189;
 
 export const HowItWorks = () => {
   const { howItWorks } = siteContent;
@@ -84,34 +28,35 @@ export const HowItWorks = () => {
     if (!intro || typeof intro === "string") return null;
 
     return (
-      <div className="space-y-6">
-        <ol className="space-y-4 list-decimal list-inside">
-          {intro.map((item, idx) => (
-            <motion.li
-              key={idx}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + idx * 0.1 }}
-              className="text-white"
-            >
-              <span className="font-semibold">{item.title}</span>
-              {item.content && (
-                <p className="mt-1 mr-6 text-white/90">{item.content}</p>
-              )}
-            </motion.li>
-          ))}
-        </ol>
+      <div className="space-y-4 text-right">
+        {intro.map((item, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 + idx * 0.1 }}
+            className="text-white"
+          >
+            <span className="font-semibold">{idx + 1}. {item.title}</span>
+            {item.content && (
+              <p className="mt-1 text-white/90 text-sm">{item.content}</p>
+            )}
+          </motion.div>
+        ))}
+        
+        {/* White bubble for "מה כולל הדוח?" */}
         {step.expandedContent.reportInfo && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-6 pt-6 border-t border-white/20"
+            className="mt-6 bg-white rounded-[20px] p-6"
+            style={{ width: '100%', maxWidth: '695px', minHeight: '170px' }}
           >
-            <h4 className="font-semibold text-white text-lg mb-2">
+            <h4 className="font-semibold text-[#215388] text-lg mb-2 text-right">
               {step.expandedContent.reportInfo.title}
             </h4>
-            <p className="text-white/90 text-sm">
+            <p className="text-[#1D1D1B] text-sm text-right leading-relaxed">
               {step.expandedContent.reportInfo.content}
             </p>
           </motion.div>
@@ -126,13 +71,13 @@ export const HowItWorks = () => {
     if (!sections || !Array.isArray(sections)) return null;
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 text-right">
         {sections.map((section, idx) => {
           if (typeof section === "string") return null;
           return (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + idx * 0.1 }}
             >
@@ -151,10 +96,10 @@ export const HowItWorks = () => {
     const sections = step.expandedContent.sections;
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 text-right">
         {typeof intro === "string" && (
           <motion.p
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
             className="font-semibold text-white"
@@ -165,7 +110,7 @@ export const HowItWorks = () => {
         {sections && sections.map((text, idx) => (
           <motion.p
             key={idx}
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.15 + idx * 0.1 }}
             className="text-white/90 text-sm"
@@ -185,20 +130,19 @@ export const HowItWorks = () => {
   };
 
   const handleCardClick = (stepNum: StepNumber) => {
-    // Toggle selection: if already selected, deselect; otherwise select
     setSelectedStep(selectedStep === stepNum ? null : stepNum);
   };
 
-  const getCardVariant = (stepNum: StepNumber) => {
-    if (selectedStep === null) return "collapsed";
-    if (selectedStep === stepNum) return "expanded";
-    return "shrunk";
+  const getCardWidth = (stepNum: StepNumber) => {
+    if (selectedStep === null) return COLLAPSED_WIDTH;
+    if (selectedStep === stepNum) return EXPANDED_WIDTH;
+    return SHRUNK_WIDTH;
   };
 
   return (
     <section id="how-it-works" className="py-16 lg:py-24 bg-[#F7F7F7] relative overflow-hidden">
       {/* Decorative globe */}
-      <GlobeWatermark position="left" size={550} className="top-[30%]" />
+      <GlobeWatermark position="center" size={550} className="top-[30%]" />
       
       <div className="container relative z-10">
         {/* Section Title */}
@@ -211,9 +155,9 @@ export const HowItWorks = () => {
           {howItWorks.title}
         </motion.h2>
 
-        {/* Steps Grid - Using flex for smooth width transitions */}
+        {/* Steps Grid */}
         <LayoutGroup>
-          <div className="flex gap-6 items-stretch">
+          <div className="flex gap-6 justify-center">
             {howItWorks.steps.map((step, index) => {
               const stepNum = (index + 1) as StepNumber;
               const isSelected = selectedStep === stepNum;
@@ -223,38 +167,39 @@ export const HowItWorks = () => {
                 <motion.div
                   key={step.number}
                   layout
-                  variants={cardVariants}
-                  initial="collapsed"
-                  animate={getCardVariant(stepNum)}
-                  className="cursor-pointer min-w-0"
+                  animate={{ width: getCardWidth(stepNum) }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="cursor-pointer"
                   onClick={() => handleCardClick(stepNum)}
                   whileHover={{ scale: isSelected ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <motion.div
                     layout
-                    className={`rounded-[20px] p-8 h-full transition-colors duration-300 ${
+                    className={`rounded-[20px] p-8 transition-colors duration-300 overflow-hidden ${
                       isSelected
                         ? "bg-[#215388]"
                         : "bg-white hover:shadow-md"
                     }`}
+                    style={{ height: CARD_HEIGHT }}
                   >
-                    {/* Step Number */}
+                    {/* Step Number - Left aligned */}
                     <motion.p
                       layout="position"
-                      className={`font-['Satoshi',sans-serif] font-normal leading-normal mb-4 transition-colors duration-300 ${
+                      className={`leading-normal mb-4 text-left transition-colors duration-300 ${
                         isSelected ? "text-white" : "text-[#215388]"
                       } ${isShrunk ? "text-[40px]" : "text-[58px]"}`}
+                      style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 400 }}
                     >
                       {step.number}
                     </motion.p>
 
-                    {/* Step Title */}
+                    {/* Step Title - Right aligned */}
                     <motion.h3
                       layout="position"
-                      className={`font-normal leading-normal text-center mb-4 transition-all duration-300 ${
+                      className={`font-normal leading-normal text-right mb-4 transition-all duration-300 ${
                         isSelected ? "text-white" : "text-[#215388]"
-                      } ${isShrunk ? "text-[40px]" : "text-[65px]"}`}
+                      } ${isShrunk ? "text-[32px]" : "text-[65px]"}`}
                     >
                       {step.title}
                     </motion.h3>
@@ -264,33 +209,39 @@ export const HowItWorks = () => {
                       {isSelected ? (
                         <motion.div
                           key="expanded"
-                          variants={contentVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="hidden"
-                          className="overflow-hidden"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-y-auto"
+                          style={{ maxHeight: CARD_HEIGHT - 200 }}
                         >
                           {renderExpandedContent(index)}
                         </motion.div>
                       ) : (
                         <motion.div
                           key="collapsed"
-                          variants={collapsedContentVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="hidden"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
                           className={`${isShrunk ? "opacity-70" : ""}`}
                         >
-                          <p className={`text-black text-right leading-normal mb-4 transition-all duration-300 ${
-                            isShrunk ? "text-[18px] line-clamp-3" : "text-[24px]"
-                          }`}>
-                            {step.shortDescription}
-                          </p>
-                          <button className={`text-black font-semibold underline text-center w-full transition-all duration-300 ${
-                            isShrunk ? "text-[14px]" : "text-[18px]"
-                          }`}>
-                            {step.readMore}
-                          </button>
+                          {!isShrunk && (
+                            <>
+                              <p className="text-black text-right leading-normal mb-4 text-[24px]">
+                                {step.shortDescription}
+                              </p>
+                              <button className="text-black font-semibold underline text-right w-full text-[18px]">
+                                {step.readMore}
+                              </button>
+                            </>
+                          )}
+                          {isShrunk && (
+                            <p className="text-black text-right leading-normal text-[16px] line-clamp-4">
+                              {step.shortDescription}
+                            </p>
+                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>

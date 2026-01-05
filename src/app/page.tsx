@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Desktop components
 import {
@@ -9,8 +9,7 @@ import {
   SplashScreen,
   Hero,
   AboutSection,
-  GreenBanner,
-  InfoSection,
+  BannerToInfoTransition,
   HowItWorks,
   Testimonials,
   ArticlesCarousel,
@@ -143,22 +142,28 @@ export default function Home() {
   // Desktop Experience
   return (
     <>
-      {showDesktopSplash && (
-        <SplashScreen onComplete={handleDesktopSplashComplete} />
-      )}
-      <main className="min-h-screen bg-white">
+      <AnimatePresence>
+        {showDesktopSplash && (
+          <SplashScreen onComplete={handleDesktopSplashComplete} />
+        )}
+      </AnimatePresence>
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showDesktopSplash ? 0 : 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="min-h-screen bg-white"
+      >
         <Header />
         <Hero />
         <AboutSection />
-        <GreenBanner />
-        <InfoSection />
+        <BannerToInfoTransition />
         <HowItWorks />
         <Testimonials />
         <ArticlesCarousel />
         <FAQ />
         <Contact />
         <Footer />
-      </main>
+      </motion.main>
     </>
   );
 }

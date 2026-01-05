@@ -21,13 +21,13 @@ export const GlobeWatermark = ({
 
   return (
     <div
-      className={`absolute top-1/2 -translate-y-1/2 pointer-events-none ${positionClasses[position]} ${className}`}
+      className={`absolute top-1/2 -translate-y-1/2 pointer-events-none z-0 ${positionClasses[position]} ${className}`}
       style={{ width: size, height: size, opacity }}
     >
       <img
         src="/globe-watermark.svg"
         alt=""
-        className="w-full h-full"
+        className="w-full h-full object-contain"
         aria-hidden="true"
       />
     </div>

@@ -4,6 +4,7 @@ export { Hero } from "./Hero";
 export { AboutSection } from "./AboutSection";
 export { GreenBanner } from "./GreenBanner";
 export { InfoSection } from "./InfoSection";
+export { BannerToInfoTransition } from "./BannerToInfoTransition";
 export { HowItWorks } from "./HowItWorks";
 export { Testimonials } from "./Testimonials";
 export { ArticlesCarousel } from "./ArticlesCarousel";

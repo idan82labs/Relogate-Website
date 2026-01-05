@@ -167,39 +167,12 @@ export const MobileHome = () => {
       <footer className="bg-[#215388] py-8 px-4">
         <div className="flex flex-col items-center text-center">
           {/* Logo */}
-          <a
-            href="/"
-            className="text-white text-xl font-semibold flex items-center gap-1 mb-4"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="14" fill="#239083" />
-              <ellipse
-                cx="16"
-                cy="16"
-                rx="6"
-                ry="14"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-              <path d="M2 16h28" stroke="white" strokeWidth="1.5" />
-              <ellipse
-                cx="16"
-                cy="16"
-                rx="14"
-                ry="6"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-            </svg>
-            <span className="font-['Satoshi',sans-serif]">
-              Rel<span className="text-[#239083]">o</span>gate
-            </span>
+          <a href="/" className="flex items-center mb-4">
+            <img 
+              src="/logo-white.svg" 
+              alt="Relogate" 
+              style={{ width: '140px', height: '29px' }} 
+            />
           </a>
 
           <div className="text-white/80 text-sm space-y-1 mb-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 
@@ -12,17 +12,7 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const { hero } = siteContent;
 
-  useEffect(() => {
-    // Auto-hide after 3 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      onComplete?.();
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [onComplete]);
-
-  const handleClick = () => {
+  const handleButtonClick = () => {
     setIsVisible(false);
     onComplete?.();
   };
@@ -35,7 +25,6 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
-          onClick={handleClick}
         >
           {/* Logo with 3D Globe */}
           <motion.div
@@ -90,20 +79,11 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             transition={{ duration: 0.6, delay: 0.4 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-[#215388] text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-[#1a4270] transition-colors"
+            onClick={handleButtonClick}
+            className="bg-[#215388] text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-[#1a4270] transition-colors cursor-pointer"
           >
             {hero.cta}
           </motion.button>
-
-          {/* Click anywhere hint */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ duration: 0.6, delay: 1.5 }}
-            className="absolute bottom-8 text-sm text-[#706F6F]"
-          >
-            לחץ בכל מקום להמשך
-          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>
