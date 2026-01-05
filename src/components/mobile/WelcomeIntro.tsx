@@ -104,24 +104,42 @@ const imageCards: ImageCard[] = [
   },
 ];
 
+/**
+ * Animation Configuration
+ *
+ * Timeline:
+ * 0.0s  - Component mounts
+ * 0.5s  - First card starts flying in
+ * 0.7s  - Second card starts (stagger: 0.2s)
+ * 0.9s  - Third card starts
+ * 1.1s  - Fourth card starts
+ * 1.3s  - Fifth card starts
+ * 1.5s  - Sixth card starts
+ * 1.8s  - Text starts appearing
+ * 2.6s  - Text fully visible, cards settled
+ * 5.0s  - Auto-transition to HP3
+ *
+ * User has ~2.4 seconds to read the text
+ */
+
 // Container variants for staggered children animation
 const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.3,
+      staggerChildren: 0.2,    // Slower stagger (was 0.12)
+      delayChildren: 0.5,      // Start later (was 0.3)
     },
   },
 };
 
-// Card variants - uses custom prop for direction
+// Card variants - uses duration-based spring for smoother, predictable animation
 const cardVariants: Variants = {
   hidden: (custom: { flyFromX: string; flyFromY: string }) => ({
     x: custom.flyFromX,
     y: custom.flyFromY,
     opacity: 0,
-    scale: 0.6,
+    scale: 0.8,               // Less dramatic scale (was 0.6)
   }),
   visible: {
     x: 0,
@@ -129,33 +147,34 @@ const cardVariants: Variants = {
     opacity: 1,
     scale: 1,
     transition: {
+      // Duration-based spring - smoother and more predictable than physics-based
       type: "spring",
-      damping: 25,
-      stiffness: 120,
-      mass: 0.8,
+      duration: 1.2,          // Predictable 1.2 second duration
+      bounce: 0.15,           // Subtle bounce, not jerky
     },
   },
 };
 
-// Text variants
+// Text variants - appears after cards with smooth fade
 const textVariants: Variants = {
   hidden: {
     opacity: 0,
-    scale: 0.8,
+    y: 20,                    // Slide up slightly for more natural feel
   },
   visible: {
     opacity: 1,
-    scale: 1,
+    y: 0,
     transition: {
-      delay: 1.2,
-      duration: 0.6,
+      delay: 1.8,             // After cards have mostly settled (was 1.2)
+      duration: 0.8,          // Slower fade-in (was 0.6)
       ease: "easeOut",
     },
   },
 };
 
 // Total animation duration before auto-transition (in ms)
-const AUTO_TRANSITION_DELAY = 2500;
+// Gives user ~2.4 seconds to read the text after it appears
+const AUTO_TRANSITION_DELAY = 5000;
 
 export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
   const { mobile } = siteContent;
