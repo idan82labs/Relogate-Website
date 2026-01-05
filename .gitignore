@@ -32,6 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# Figma cache (local-only by default; see docs/design/figma_cache/README.md to share)
+docs/design/figma_cache/*
+!docs/design/figma_cache/README.md
 
 # vercel
 .vercel
