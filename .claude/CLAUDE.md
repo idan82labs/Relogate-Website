@@ -65,6 +65,11 @@ scripts/              # CLI utilities (figma_cache.mjs)
 - **Prefer existing patterns**: Check `src/components/shared/` before creating new primitives.
 - **RTL-first**: Site is Hebrew, uses `dir="rtl"`. Test layouts accordingly.
 - **Content in content/**: All user-facing strings belong in `src/content/he.ts`.
+- **Maintain documentation**: Keep documentation up-to-date when making significant changes:
+  - Update `README.md` if adding new scripts or changing project structure
+  - Update `docs/ARCHITECTURE.md` if adding new components or changing patterns
+  - Update `docs/DEVELOPER_GUIDE.md` if changing workflows or setup steps
+  - Update this file (`CLAUDE.md`) if changing tech stack or rules
 
 ## Figma Workflow
 
@@ -101,3 +106,9 @@ scripts/              # CLI utilities (figma_cache.mjs)
 - `.claude/rules/frontend/styling.md` - Tailwind & tokens
 - `.claude/rules/frontend/testing.md` - Test guidance
 - `.claude/rules/design/figma.md` - Figma-to-code workflow
+
+## Project Documentation
+
+- `README.md` - Project overview and quick start
+- `docs/ARCHITECTURE.md` - Codebase architecture, components, styling system
+- `docs/DEVELOPER_GUIDE.md` - Setup guide, Figma workflow, Claude Code usage

@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Relogate Marketing Website
 
-## Getting Started
+Marketing website for Relogate - an international company helping people relocate abroad.
 
-First, run the development server:
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16 (App Router) |
+| React | 19.2.1 |
+| Language | TypeScript 5 (strict mode) |
+| Styling | Tailwind CSS 4 |
+| Animation | Framer Motion 12 |
+| Fonts | Noto Sans Hebrew, Satoshi |
+
+## Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Main page with mobile/desktop detection
+│   ├── layout.tsx         # Root layout with fonts
+│   └── globals.css        # Design tokens & global styles
+├── components/
+│   ├── desktop/           # Desktop-specific components
+│   ├── mobile/            # Mobile-specific components
+│   └── shared/            # Reusable UI components
+└── content/
+    └── he.ts              # Hebrew content (all user-facing text)
 
-## Learn More
+docs/
+├── ARCHITECTURE.md        # Codebase architecture documentation
+├── DEVELOPER_GUIDE.md     # Setup guide for developers
+└── design/
+    ├── figma_urls.md      # Source of truth for Figma links
+    └── figma_cache/       # Cached Figma screenshots & metadata
 
-To learn more about Next.js, take a look at the following resources:
+scripts/
+└── figma_cache.mjs        # CLI for caching Figma assets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+.claude/                   # Claude Code agent memory
+├── CLAUDE.md             # Main agent context
+└── rules/                # Domain-specific rules
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Key Features
 
-## Deploy on Vercel
+- **RTL Support**: Site is in Hebrew with full RTL layout support
+- **Responsive Design**: Separate mobile and desktop experiences
+- **Splash Screen**: Animated intro for first-time visitors
+- **Scroll Animations**: Framer Motion-powered scroll interactions
+- **Figma Integration**: Design-to-code workflow with caching
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Architecture Overview](docs/ARCHITECTURE.md) - Codebase structure, components, styling
+- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Setup, Figma workflow, Claude Code usage
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run figma:cache` | Cache all Figma URLs |
+| `npm run figma:cache:one <id>` | Cache single Figma entry |
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and configure:
+
+```bash
+# Required for Figma caching
+FIGMA_TOKEN=your-figma-personal-access-token
+```
+
+## Design Resources
+
+Figma designs are tracked in `docs/design/figma_urls.md`. Use the caching system to avoid hitting Figma API repeatedly:
+
+```bash
+# Set your token
+export FIGMA_TOKEN="your-token"
+
+# Cache all designs
+npm run figma:cache
+```
+
+See [Developer Guide](docs/DEVELOPER_GUIDE.md) for detailed Figma workflow.
+
+## Contributing
+
+1. Create a feature branch from `main`
+2. Make changes following existing patterns
+3. Ensure `npm run build` passes
+4. Submit a pull request
+
+## License
+
+Proprietary - All rights reserved.
