@@ -15,95 +15,101 @@ const TealCheckmark = () => (
 export const BannerToInfoTransition = () => {
   const { greenBanner, info, hero } = siteContent;
   const sectionRef = useRef<HTMLDivElement>(null);
-  
+
   // Track scroll progress through this section
+  // "start center" = animation begins when section top reaches viewport center (image is centered)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"]
+    offset: ["start center", "end end"]
   });
 
+  // === ANIMATION PHASES ===
+  // Phase 1 - VIEW:    0.00 - 0.60 → Image centered, no animation (long view time)
+  // Phase 2 - ANIMATE: 0.60 - 0.95 → Image shrinks, text appears (slower animation)
+  // Phase 3 - HOLD:    0.95 - 1.00 → Everything frozen
+
   // === IMAGE TRANSFORMS ===
-  // START: Full width (1360px) → END: Small (552px) - image shrinks as user scrolls
+  // START: Full width (1360px) → END: Small (552px)
   const imageWidth = useTransform(
-    scrollYProgress, 
-    [0, 0.1, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.9, 1], 
-    [1360, 1360, 1360, 1250, 1150, 1050, 920, 780, 650, 552, 552, 552]
+    scrollYProgress,
+    [0, 0.60, 0.68, 0.76, 0.84, 0.92, 0.95, 1],
+    [1360, 1360, 1180, 1000, 800, 650, 552, 552]
   );
-  
-  // Height: 600px → 466px - image gets shorter as it shrinks
+
+  // Height: 600px → 466px
   const imageHeight = useTransform(
-    scrollYProgress, 
-    [0, 0.1, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.9, 1], 
-    [600, 600, 600, 585, 565, 545, 520, 500, 480, 466, 466, 466]
+    scrollYProgress,
+    [0, 0.60, 0.68, 0.76, 0.84, 0.92, 0.95, 1],
+    [600, 600, 570, 540, 510, 485, 466, 466]
   );
-  
-  // Border radius: 0 → 20px - corners round as image shrinks
+
+  // Border radius: 0 → 20px
   const borderTopRadius = useTransform(
-    scrollYProgress, 
-    [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.85, 1], 
-    [0, 0, 4, 8, 13, 17, 20, 20]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [0, 0, 5, 12, 18, 20, 20]
   );
 
   // === TEAL BANNER TRANSFORMS ===
-  // Slides up and fades out as user scrolls
+  // Slides up and fades out during animation phase
   const tealBannerY = useTransform(
-    scrollYProgress, 
-    [0, 0.15, 0.3, 0.45, 0.55, 0.65, 0.75, 0.85, 0.9, 1], 
-    [0, 0, -10, -30, -50, -70, -90, -110, -120, -120]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [0, 0, -30, -70, -110, -120, -120]
   );
   const tealBannerOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.15, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 1], 
-    [1, 1, 0.85, 0.7, 0.55, 0.4, 0.25, 0.1, 0, 0]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [1, 1, 0.7, 0.35, 0.05, 0, 0]
   );
 
   // === TEXT OVERLAY ON IMAGE ===
-  // Fades out as image shrinks (visible at start, hidden at end)
+  // Fades out during animation phase
   const imageTextOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 1], 
-    [1, 1, 0.9, 0.75, 0.55, 0.35, 0.15, 0, 0]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [1, 1, 0.75, 0.4, 0.05, 0, 0]
   );
   const darkOverlayOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 1], 
-    [0.3, 0.3, 0.24, 0.17, 0.1, 0.05, 0, 0]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [0.3, 0.3, 0.22, 0.12, 0.02, 0, 0]
   );
 
   // === INFO TEXT COLUMN ===
-  // Fades in and slides in from right as image shrinks
+  // Fades in and slides in during animation phase
   const infoOpacity = useTransform(
-    scrollYProgress, 
-    [0, 0.1, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65], 
-    [0, 0.15, 0.35, 0.6, 0.85, 1, 1, 1]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [0, 0, 0.4, 0.75, 0.95, 1, 1]
   );
   const infoX = useTransform(
-    scrollYProgress, 
-    [0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 1], 
-    [200, 200, 190, 160, 125, 90, 60, 35, 15, 0]
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [200, 200, 120, 50, 10, 0, 0]
   );
 
   return (
     <section ref={sectionRef} className="relative bg-white mb-[150px]">
-      {/* Scroll container - provides scroll distance for animation */}
-      <div className="h-[1200px]">
-        {/* Sticky container - stays fixed while scrolling through the section */}
-        <div className="sticky top-0 pt-6 lg:pt-8 min-h-screen">
+      {/* Scroll container - 1800px for longer view + slower animation */}
+      <div className="h-[1800px]">
+        {/* Sticky container - top-[88px] positions below header for centered appearance */}
+        <div className="sticky top-[88px] pt-6 lg:pt-8">
           <div className="bg-white w-full">
             {/* Max-width container */}
             <div className="max-w-[1400px] mx-auto px-5">
               {/* Relative container for positioning */}
               <div className="relative" style={{ minHeight: '700px' }}>
-                
+
                 {/* IMAGE COLUMN - animates from left side to full width */}
-                <motion.div 
+                <motion.div
                   className="absolute left-0 top-0"
                   style={{ width: imageWidth }}
                 >
                   {/* Teal banner strip */}
-                  <motion.div 
+                  <motion.div
                     className="bg-[#239083] h-[80px] lg:h-[100px] rounded-t-[20px] flex items-center justify-center overflow-hidden"
-                    style={{ 
+                    style={{
                       y: tealBannerY,
                       opacity: tealBannerOpacity,
                       borderTopLeftRadius: borderTopRadius,
@@ -124,25 +130,25 @@ export const BannerToInfoTransition = () => {
                       borderTopRightRadius: borderTopRadius,
                     }}
                   >
-                    <img 
-                      src="/banner-bg.jpg" 
+                    <img
+                      src="/banner-bg.jpg"
                       alt="Woman working on laptop"
                       className="w-full h-full object-cover"
                     />
-                    
+
                     {/* Dark overlay */}
-                    <motion.div 
+                    <motion.div
                       className="absolute inset-0 bg-black pointer-events-none"
                       style={{ opacity: darkOverlayOpacity }}
                     />
-                    
+
                     {/* Text overlay on image */}
-                    <motion.div 
+                    <motion.div
                       className="absolute inset-0 z-10 flex items-center justify-end"
                       style={{ opacity: imageTextOpacity }}
                     >
                       <div className="px-6 lg:px-16">
-                        <h2 
+                        <h2
                           className="text-xl lg:text-[42px] font-medium text-white leading-[1.3] max-w-[500px] text-right"
                           dir="rtl"
                         >
@@ -153,10 +159,10 @@ export const BannerToInfoTransition = () => {
                   </motion.div>
                 </motion.div>
 
-                {/* TEXT COLUMN - positioned to the right, fades out */}
+                {/* TEXT COLUMN - positioned to the right, fades in */}
                 <motion.div
                   className="absolute right-0 top-[26px] w-[calc(100%-552px-94px)] max-w-[700px]"
-                  style={{ 
+                  style={{
                     opacity: infoOpacity,
                     x: infoX,
                   }}
@@ -185,7 +191,7 @@ export const BannerToInfoTransition = () => {
                     {info.cta}
                   </Button>
                 </motion.div>
-                
+
               </div>
             </div>
           </div>
