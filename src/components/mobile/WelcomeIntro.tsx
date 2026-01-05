@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { MobileHeader } from "./MobileHeader";
@@ -24,9 +24,9 @@ interface ImageCard {
   // Size
   width: string;
   aspectRatio: string;
-  // Animation direction (where card flies in from)
-  flyFromX: string; // e.g., "-100vw", "100vw", "0"
-  flyFromY: string; // e.g., "-100vh", "100vh", "0"
+  // Animation direction multipliers (-1 = left/top, 1 = right/bottom, 0 = center)
+  flyFromX: number;
+  flyFromY: number;
 }
 
 const imageCards: ImageCard[] = [
@@ -39,8 +39,8 @@ const imageCards: ImageCard[] = [
     top: "6%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: "-100vw",
-    flyFromY: "-50vh",
+    flyFromX: -1,
+    flyFromY: -0.5,
   },
   {
     // Top-Right: Couple in Florence
@@ -51,8 +51,8 @@ const imageCards: ImageCard[] = [
     top: "3%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: "100vw",
-    flyFromY: "-50vh",
+    flyFromX: 1,
+    flyFromY: -0.5,
   },
   {
     // Middle-Center: Amsterdam bikes
@@ -63,8 +63,8 @@ const imageCards: ImageCard[] = [
     top: "22%",
     width: "39%",
     aspectRatio: "146/116",
-    flyFromX: "0",
-    flyFromY: "-100vh",
+    flyFromX: 0,
+    flyFromY: -1,
   },
   {
     // Bottom-Left: Elderly woman with dog
@@ -75,8 +75,8 @@ const imageCards: ImageCard[] = [
     top: "63%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: "-100vw",
-    flyFromY: "50vh",
+    flyFromX: -1,
+    flyFromY: 0.5,
   },
   {
     // Bottom-Center: Family photo
@@ -87,8 +87,8 @@ const imageCards: ImageCard[] = [
     top: "55%",
     width: "39%",
     aspectRatio: "146/116",
-    flyFromX: "0",
-    flyFromY: "100vh",
+    flyFromX: 0,
+    flyFromY: 1,
   },
   {
     // Bottom-Right: Mother & child at beach
@@ -99,8 +99,8 @@ const imageCards: ImageCard[] = [
     top: "68%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: "100vw",
-    flyFromY: "50vh",
+    flyFromX: 1,
+    flyFromY: 0.5,
   },
 ];
 
@@ -120,6 +120,12 @@ const imageCards: ImageCard[] = [
  * 5.0s  - Auto-transition to HP3
  *
  * User has ~2.4 seconds to read the text
+ *
+ * Performance Notes:
+ * - Using pixel values instead of viewport units (vw/vh) for GPU acceleration
+ * - Using tween with easeOut instead of spring to avoid micro-jitters
+ * - transform: translateZ(0) forces GPU layer creation
+ * - will-change: transform hints browser to optimize
  */
 
 // Container variants for staggered children animation
@@ -127,19 +133,22 @@ const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.2,    // Slower stagger (was 0.12)
-      delayChildren: 0.5,      // Start later (was 0.3)
+      staggerChildren: 0.2,
+      delayChildren: 0.5,
     },
   },
 };
 
-// Card variants - uses duration-based spring for smoother, predictable animation
-const cardVariants: Variants = {
-  hidden: (custom: { flyFromX: string; flyFromY: string }) => ({
-    x: custom.flyFromX,
-    y: custom.flyFromY,
+/**
+ * Creates card variants with pixel-based offsets for smooth GPU-accelerated animation.
+ * Using tween animation instead of spring to avoid micro-jitters.
+ */
+const createCardVariants = (viewportWidth: number, viewportHeight: number): Variants => ({
+  hidden: (custom: { flyFromX: number; flyFromY: number }) => ({
+    x: custom.flyFromX * viewportWidth,
+    y: custom.flyFromY * viewportHeight,
     opacity: 0,
-    scale: 0.8,               // Less dramatic scale (was 0.6)
+    scale: 0.9,
   }),
   visible: {
     x: 0,
@@ -147,13 +156,13 @@ const cardVariants: Variants = {
     opacity: 1,
     scale: 1,
     transition: {
-      // Duration-based spring - smoother and more predictable than physics-based
-      type: "spring",
-      duration: 1.2,          // Predictable 1.2 second duration
-      bounce: 0.15,           // Subtle bounce, not jerky
+      // Tween with easeOut is smoother than spring for fly-in animations
+      type: "tween",
+      duration: 1.0,
+      ease: [0.25, 0.1, 0.25, 1], // CSS ease equivalent - very smooth
     },
   },
-};
+});
 
 // Text variants - appears after cards with smooth fade
 const textVariants: Variants = {
@@ -179,6 +188,17 @@ const AUTO_TRANSITION_DELAY = 5000;
 export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
   const { mobile } = siteContent;
 
+  // Get viewport dimensions for pixel-based animations (avoids viewport unit jank)
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    // Calculate viewport size on mount for GPU-accelerated pixel animations
+    setViewportSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, []);
+
   // Auto-transition to next screen after animation completes
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -187,6 +207,12 @@ export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
 
     return () => clearTimeout(timer);
   }, [onComplete]);
+
+  // Create card variants with actual pixel values (not viewport units)
+  const cardVariants = createCardVariants(viewportSize.width, viewportSize.height);
+
+  // Don't render animation until viewport size is known
+  const isReady = viewportSize.width > 0;
 
   return (
     <motion.div
@@ -203,7 +229,7 @@ export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
         className="flex-1 relative"
         variants={containerVariants}
         initial="hidden"
-        animate="visible"
+        animate={isReady ? "visible" : "hidden"}
       >
         {/* Image cards with fly-in animation */}
         {imageCards.map((card) => (
@@ -217,10 +243,12 @@ export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
               top: card.top,
               width: card.width,
               aspectRatio: card.aspectRatio,
-              // Prevent white edges and improve animation performance
+              // GPU acceleration hints
               backgroundColor: "#e5e5e5",
               backfaceVisibility: "hidden",
               willChange: "transform, opacity",
+              // Force GPU layer creation
+              transform: "translateZ(0)",
             }}
           >
             <img
