@@ -19,9 +19,9 @@ import {
 } from "@/components/desktop";
 
 // Mobile components
-import { Splash, WelcomeIntro, MobileHome } from "@/components/mobile";
+import { Splash, WelcomeIntro, MobileHP3, MobileHome } from "@/components/mobile";
 
-type MobilePhase = "splash" | "intro" | "home";
+type MobilePhase = "splash" | "intro" | "hp3" | "home";
 
 const SESSION_KEY = "relogate_visited";
 const DESKTOP_SPLASH_KEY = "relogate_desktop_splash";
@@ -78,6 +78,10 @@ export default function Home() {
   };
 
   const handleIntroComplete = () => {
+    setMobilePhase("hp3");
+  };
+
+  const handleHP3Complete = () => {
     setMobilePhase("home");
   };
 
@@ -133,6 +137,9 @@ export default function Home() {
         )}
         {mobilePhase === "intro" && (
           <WelcomeIntro key="intro" onComplete={handleIntroComplete} />
+        )}
+        {mobilePhase === "hp3" && (
+          <MobileHP3 key="hp3" onComplete={handleHP3Complete} />
         )}
         {mobilePhase === "home" && <MobileHome key="home" />}
       </AnimatePresence>
