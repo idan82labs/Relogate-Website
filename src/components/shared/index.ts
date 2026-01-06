@@ -4,3 +4,4 @@ export { Accordion } from "./Accordion";
 export { Stars } from "./Stars";
 export { Icon } from "./Icon";
 export { GlobeWatermark } from "./GlobeWatermark";
+export { TextInput } from "./TextInput";

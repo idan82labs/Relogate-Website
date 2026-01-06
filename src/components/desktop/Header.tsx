@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
 
@@ -10,9 +11,9 @@ export const Header = () => {
     <header className="sticky top-0 z-50 bg-white h-[88px] border-b border-[#C6C6C6]">
       <div className="container h-full flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <img src="/logo-header.svg" alt="Relogate" style={{ width: '167px', height: '35.5px' }} />
-        </a>
+        </Link>
 
         {/* Navigation */}
         <nav className="hidden lg:flex items-center gap-6">
@@ -28,9 +29,11 @@ export const Header = () => {
         </nav>
 
         {/* CTA Button */}
-        <Button variant="primary" size="md">
-          {nav.cta}
-        </Button>
+        <Link href="/personal-area">
+          <Button variant="primary" size="md">
+            {nav.cta}
+          </Button>
+        </Link>
       </div>
     </header>
   );

@@ -11,3 +11,4 @@ export { ArticlesCarousel } from "./ArticlesCarousel";
 export { FAQ } from "./FAQ";
 export { Contact } from "./Contact";
 export { Footer } from "./Footer";
+export { PersonalAreaWelcome } from "./PersonalAreaWelcome";

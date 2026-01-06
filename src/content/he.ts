@@ -263,6 +263,24 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     copyright: "© 2025 RELOGATE Ltd | חברה רשומה באנגליה",
   },
 
+  // Personal Area
+  personalArea: {
+    welcome: {
+      title: "ברוכים הבאים לאזור האישי של Relogate",
+      emailLabel: "אימייל",
+      emailPlaceholder: "הזן כתובת אימייל",
+      passwordLabel: "סיסמה",
+      passwordPlaceholder: "הזן סיסמה",
+      loginButton: "התחברות",
+      registerButton: "הרשמה",
+      forgotPassword: "שכחת סיסמה?",
+      noAccount: "אין לך חשבון?",
+      hasAccount: "יש לך חשבון?",
+      register: "הירשם",
+      login: "התחבר",
+    },
+  },
+
   // Mobile specific
   mobile: {
     splash: {
