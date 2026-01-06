@@ -244,7 +244,7 @@ export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
               width: card.width,
               aspectRatio: card.aspectRatio,
               // GPU acceleration hints
-              backgroundColor: "#e5e5e5",
+              backgroundColor: "transparent",
               backfaceVisibility: "hidden",
               willChange: "transform, opacity",
               // Force GPU layer creation
