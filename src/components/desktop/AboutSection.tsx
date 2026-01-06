@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark } from "@/components/shared";
 
 export const AboutSection = () => {
+  const router = useRouter();
   const { about } = siteContent;
 
   return (
@@ -47,7 +49,7 @@ export const AboutSection = () => {
             <div className="text-lg text-[#1D1D1B] mb-8 whitespace-pre-line leading-relaxed">
               {about.description}
             </div>
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" onClick={() => router.push("/test")}>
               {about.cta}
             </Button>
           </motion.div>

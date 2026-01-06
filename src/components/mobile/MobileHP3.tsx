@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { MobileHeader } from "./MobileHeader";
@@ -16,7 +17,8 @@ interface MobileHP3Props {
  * Based on Figma design (mobile HP3: node 265-683)
  */
 export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
-  const { about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
+  const router = useRouter();
+  const { hero, about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
   const testimonialsRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -52,8 +54,8 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
 
           {/* CTA Button */}
           <div className="flex justify-end mb-6">
-            <Button size="sm" className="text-sm px-5 py-2.5">
-              {about.cta}
+            <Button size="sm" className="text-sm px-5 py-2.5" onClick={() => router.push("/test")}>
+              {hero.cta}
             </Button>
           </div>
 

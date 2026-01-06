@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark } from "@/components/shared";
 
 export const Hero = () => {
+  const router = useRouter();
   const { hero } = siteContent;
 
   return (
@@ -33,7 +35,7 @@ export const Hero = () => {
               <br />
               {hero.subtitle}
             </h1>
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" onClick={() => router.push("/test")}>
               {hero.cta}
             </Button>
           </motion.div>

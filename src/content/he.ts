@@ -42,7 +42,7 @@ export const siteContent = {
 Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרלוונטיים עבורכם ותרכז את כל המידע החשוב - מותאם אישית לצרכים, לאפשרויות ולהעדפות שלכם. והכל בצורה פשוטה, חכמה ויעילה.
 
 כל המידע הרלוונטי והחשוב - מותאם לכם אישית!`,
-    cta: "למילוי השאלון האישי",
+    cta: "התחל את המסע שלך",
   },
 
   // Green banner section
@@ -326,6 +326,31 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     },
     menu: {
       close: "סגור",
+    },
+  },
+
+  // Question Test (Eligibility Check) flow
+  questionTest: {
+    howItWorks: {
+      title: "מוכנים להתחיל?\n3 צעדים פשוטים ואתם בדרך לרילוקיישן",
+      cta: "מעבר לשאלון",
+      steps: [
+        {
+          id: "questionnaire",
+          title: "מענה על\nהשאלון שלנו",
+          icon: "questionnaire",
+        },
+        {
+          id: "payment",
+          title: "תשלום עבור\nהדו״ח האישי",
+          icon: "payment",
+        },
+        {
+          id: "report",
+          title: "קבלת דו״ח\nRelomach",
+          icon: "report",
+        },
+      ],
     },
   },
 };
