@@ -2,22 +2,37 @@
 
 ## Source of Truth
 
-- **Figma URLs**: `docs/design/figma_urls.md`
+- **Figma URLs**: `docs/design/figma_urls.md` (organized by Section > Platform > Label)
 - **Local cache**: `docs/design/figma_cache/<slug>/`
 - Do NOT copy/paste URLs into these rules; always reference the source file
+
+## Finding URLs
+
+The `figma_urls.md` file is organized hierarchically:
+
+```
+## Section (e.g., Homepage, Header, Personal Area)
+### Platform (Mobile / Desktop)
+- label: <url>
+```
+
+When user asks to implement a design:
+1. Identify the section (Homepage, Personal Area, etc.)
+2. Identify the platform (Mobile or Desktop)
+3. Find the specific label under that section/platform
 
 ## Cache Management (Agent-Managed)
 
 The Claude agent is responsible for managing the Figma cache directly using MCP tools.
 
-**No token setup required** - Figma MCP authentication is handled through Claude's settings.
+**IMPORTANT: Always save screenshots to cache after fetching from Figma MCP.**
 
 ### Cache Directory Structure
 
 ```
 docs/design/figma_cache/<slug>/
 ├── meta.json          # Curated metadata
-├── render@2x.png      # Screenshot (base64 decoded from MCP response)
+├── render@2x.png      # Screenshot (MUST be saved after MCP fetch)
 └── design_context.md  # Design context from MCP (optional)
 ```
 
@@ -61,33 +76,43 @@ Before calling any Figma MCP tool:
 
 When cache doesn't exist or refresh is needed:
 
-1. **Get screenshot** using `mcp__figma__get_screenshot`:
+1. **Create cache directory**:
+   ```bash
+   mkdir -p docs/design/figma_cache/<slug>
+   ```
+
+2. **Get screenshot** using `mcp__figma__get_screenshot`:
    ```
    fileKey: <extracted_file_key>
    nodeId: <extracted_node_id>
    ```
 
-2. **Save the screenshot**:
-   - The MCP tool returns base64-encoded image data
-   - Decode and save to `docs/design/figma_cache/<slug>/render@2x.png`
-   - Use Bash with base64 decoding:
+3. **MANDATORY: Save the screenshot to cache**:
+   The MCP tool returns an image. You MUST save it to the cache:
+
+   - If the response contains base64 data, decode and save:
      ```bash
      echo "<base64_data>" | base64 -d > docs/design/figma_cache/<slug>/render@2x.png
      ```
 
-3. **Create meta.json**:
+   - If you receive the image directly, use the Write tool to save it to:
+     `docs/design/figma_cache/<slug>/render@2x.png`
+
+4. **Create meta.json** (use Write tool):
    ```json
    {
      "url": "<original_figma_url>",
      "fileKey": "<file_key>",
      "nodeId": "<node_id>",
      "label": "<label_from_urls_file>",
+     "section": "<section_from_urls_file>",
+     "platform": "<mobile_or_desktop>",
      "slug": "<computed_slug>",
      "retrievedAt": "<ISO_timestamp>"
    }
    ```
 
-4. **Optionally save design context**:
+5. **Optionally save design context**:
    - If `mcp__figma__get_design_context` is called, save output to `design_context.md`
 
 ### Step 4: Use Cached Data
@@ -147,15 +172,16 @@ node_id: 270-1598 (API format: 270:1598)
 
 ```
 1. User asks to implement Figma design
-2. Find URL in docs/design/figma_urls.md
-3. Parse: fileKey, nodeId, label
-4. Compute slug
+2. Find URL in docs/design/figma_urls.md:
+   → Navigate: Section (Homepage, Personal Area, etc.) > Platform (Mobile/Desktop) > Label
+3. Parse: fileKey, nodeId, label, section, platform
+4. Compute slug: <sanitized-label>_<file_key>_<node_id>
 5. IF docs/design/figma_cache/<slug>/render@2x.png exists:
      → Read cached image, skip MCP call
    ELSE:
+     → mkdir -p docs/design/figma_cache/<slug>
      → Call mcp__figma__get_screenshot
-     → Create cache directory: mkdir -p docs/design/figma_cache/<slug>
-     → Save screenshot as render@2x.png
-     → Save meta.json with metadata
+     → MUST save screenshot to render@2x.png
+     → MUST save meta.json with metadata (including section/platform)
 6. Implement design based on screenshot
 ```
