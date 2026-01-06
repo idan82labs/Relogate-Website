@@ -306,7 +306,7 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
         </section>
 
         {/* Footer */}
-        <MobileFooter variant="default" showLegalLinks />
+        <MobileFooter />
       </main>
     </motion.div>
   );
