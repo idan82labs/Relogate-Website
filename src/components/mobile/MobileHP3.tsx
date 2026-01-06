@@ -3,10 +3,9 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { MobileHeader } from "./MobileHeader";
 import { siteContent } from "@/content/he";
-import { Button, Card, Accordion } from "@/components/shared";
+import { Button, Card, Accordion, MobileFooter } from "@/components/shared";
 
 interface MobileHP3Props {
   onComplete?: () => void;
@@ -17,7 +16,7 @@ interface MobileHP3Props {
  * Based on Figma design (mobile HP3: node 265-683)
  */
 export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
-  const { about, greenBanner, info, howItWorks, testimonials, articles, faq, contact, footer } = siteContent;
+  const { about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
   const testimonialsRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -307,53 +306,7 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
         </section>
 
         {/* Footer */}
-        <footer className="bg-[#215388] py-10 px-4">
-          <div className="flex flex-col items-center text-center">
-            {/* Logo */}
-            <Link href="/" className="mb-6">
-              <img
-                src="/logo-white.svg"
-                alt="Relogate"
-                className="h-9 w-auto"
-              />
-            </Link>
-
-            {/* Contact Info */}
-            <div className="text-sm text-white mb-4">
-              <p>{footer.email}</p>
-              <p>{footer.phone}</p>
-            </div>
-
-            {/* Social Icons */}
-            <div className="flex gap-3 mb-6">
-              <img
-                src="/icons/social-fb-ig.svg"
-                alt="Follow us on social media"
-                width={50}
-                height={25}
-              />
-            </div>
-
-            {/* Legal Links */}
-            <div className="text-[10px] text-white/80 mb-2">
-              <p>
-                {footer.links.map((link, i) => (
-                  <span key={link.href}>
-                    <a href={link.href} className="hover:text-white">
-                      {link.label}
-                    </a>
-                    {i < footer.links.length - 1 && ' | '}
-                  </span>
-                ))}
-              </p>
-            </div>
-
-            {/* Copyright */}
-            <p className="text-[10px] text-white/60">
-              {footer.copyright}
-            </p>
-          </div>
-        </footer>
+        <MobileFooter variant="default" showLegalLinks />
       </main>
     </motion.div>
   );
