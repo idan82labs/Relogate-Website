@@ -6,40 +6,104 @@
 - **Local cache**: `docs/design/figma_cache/<slug>/`
 - Do NOT copy/paste URLs into these rules; always reference the source file
 
-## Workflow
+## Cache Management (Agent-Managed)
 
-### 1. Select a Layer
-Pick a single layer/frame URL from `docs/design/figma_urls.md` for your task.
+The Claude agent is responsible for managing the Figma cache directly using MCP tools.
 
-### 2. Check Cache First
-Before calling Figma MCP:
+**No token setup required** - Figma MCP authentication is handled through Claude's settings.
+
+### Cache Directory Structure
+
 ```
 docs/design/figma_cache/<slug>/
-├── meta.json          # Node info, version, retrievedAt
-├── meta.raw.json      # Full API response
-├── render@2x.png      # Screenshot at 2x scale
-└── design_context.md  # Optional: MCP design context output
+├── meta.json          # Curated metadata
+├── render@2x.png      # Screenshot (base64 decoded from MCP response)
+└── design_context.md  # Design context from MCP (optional)
 ```
 
-If cache exists and is fresh (check `meta.json.version` against current file version), use cached data.
+### Slug Format
 
-### 3. Fetch via MCP (if needed)
-Only call Figma MCP tools when:
-- Cache doesn't exist for this node
-- Design has been updated (version mismatch)
-- You need live design context not in cache
+Create slugs from the label in `figma_urls.md`:
+```
+<sanitized-label>_<file_key>_<node_id>
+```
 
-MCP tools available:
-- `mcp__figma__get_screenshot` - Render node as image
+**Sanitization rules:**
+- Lowercase the label
+- Replace non-alphanumeric characters with hyphens
+- Remove leading/trailing hyphens
+- Replace `:` in node_id with `-`
+
+**Example:**
+- Label: `mobile HP2`
+- File key: `9iC5uUBVU3QoX9XIByWgB4`
+- Node ID: `276:4579` → `276-4579`
+- Slug: `mobile-hp2_9iC5uUBVU3QoX9XIByWgB4_276-4579`
+
+## Workflow
+
+### Step 1: Parse the Figma URL
+
+Extract from URL `https://www.figma.com/design/<file_key>/<name>?node-id=<node_id>&m=dev`:
+- `fileKey`: The file identifier
+- `nodeId`: Convert URL format `123-456` to API format `123:456`
+
+### Step 2: Check Cache
+
+Before calling any Figma MCP tool:
+
+1. Compute the slug from the label and URL
+2. Check if `docs/design/figma_cache/<slug>/render@2x.png` exists
+3. If it exists, read the cached screenshot instead of calling MCP
+4. If it doesn't exist, proceed to fetch and cache
+
+### Step 3: Fetch and Cache (when cache miss)
+
+When cache doesn't exist or refresh is needed:
+
+1. **Get screenshot** using `mcp__figma__get_screenshot`:
+   ```
+   fileKey: <extracted_file_key>
+   nodeId: <extracted_node_id>
+   ```
+
+2. **Save the screenshot**:
+   - The MCP tool returns base64-encoded image data
+   - Decode and save to `docs/design/figma_cache/<slug>/render@2x.png`
+   - Use Bash with base64 decoding:
+     ```bash
+     echo "<base64_data>" | base64 -d > docs/design/figma_cache/<slug>/render@2x.png
+     ```
+
+3. **Create meta.json**:
+   ```json
+   {
+     "url": "<original_figma_url>",
+     "fileKey": "<file_key>",
+     "nodeId": "<node_id>",
+     "label": "<label_from_urls_file>",
+     "slug": "<computed_slug>",
+     "retrievedAt": "<ISO_timestamp>"
+   }
+   ```
+
+4. **Optionally save design context**:
+   - If `mcp__figma__get_design_context` is called, save output to `design_context.md`
+
+### Step 4: Use Cached Data
+
+When cache exists:
+- Read `render@2x.png` directly using the Read tool to view the design
+- Use the cached image for implementation reference
+- No need to call Figma MCP tools
+
+## MCP Tools Reference
+
+Only call these when cache is missing:
+
+- `mcp__figma__get_screenshot` - Render node as PNG image
 - `mcp__figma__get_design_context` - Get layout/styling code hints
 - `mcp__figma__get_metadata` - Get node structure in XML
-
-### 4. Update Cache
-After fetching, run:
-```bash
-npm run figma:cache              # Cache all URLs
-npm run figma:cache:one <slug>   # Cache single entry
-```
 
 ## Implementation Guidelines
 
@@ -76,13 +140,22 @@ https://www.figma.com/design/<file_key>/<file_name>?node-id=<node_id>&m=dev
 Example from this project:
 ```
 file_key: 9iC5uUBVU3QoX9XIByWgB4
-node_id: 270-1598 (encoded as 270:1598 in API)
+node_id: 270-1598 (API format: 270:1598)
 ```
 
-## Cache Slug Format
+## Quick Reference: Cache Check Flow
 
-Slugs are derived from: `<label>_<file_key>_<node_id>`
-
-Example:
-- URL label: "mobile header without"
-- Slug: `mobile-header-without_9iC5uUBVU3QoX9XIByWgB4_270-1598`
+```
+1. User asks to implement Figma design
+2. Find URL in docs/design/figma_urls.md
+3. Parse: fileKey, nodeId, label
+4. Compute slug
+5. IF docs/design/figma_cache/<slug>/render@2x.png exists:
+     → Read cached image, skip MCP call
+   ELSE:
+     → Call mcp__figma__get_screenshot
+     → Create cache directory: mkdir -p docs/design/figma_cache/<slug>
+     → Save screenshot as render@2x.png
+     → Save meta.json with metadata
+6. Implement design based on screenshot
+```

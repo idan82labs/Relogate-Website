@@ -31,10 +31,6 @@ npm start
 
 # Lint
 npm run lint
-
-# Figma cache (see docs/design/figma_cache/README.md)
-npm run figma:cache
-npm run figma:cache:one <slug>
 ```
 
 ## Repo Structure
@@ -71,16 +67,19 @@ scripts/              # CLI utilities (figma_cache.mjs)
   - Update `docs/DEVELOPER_GUIDE.md` if changing workflows or setup steps
   - Update this file (`CLAUDE.md`) if changing tech stack or rules
 
-## Figma Workflow
+## Figma Workflow (Agent-Managed Cache)
 
 - **URLs**: Live in `docs/design/figma_urls.md` (do NOT copy URLs into rules files)
 - **Cache**: Stored in `docs/design/figma_cache/<slug>/`
+- **Agent manages cache directly** - no npm scripts needed
 - **Workflow**:
   1. Pick a layer/frame from `figma_urls.md`
-  2. Check cache first; if fresh, use it
-  3. Only call Figma MCP when cache is missing/stale
-  4. Run `npm run figma:cache` to update cache
+  2. Compute slug: `<sanitized-label>_<file_key>_<node_id>`
+  3. Check if `docs/design/figma_cache/<slug>/render@2x.png` exists
+  4. If cached: Read the image directly, skip MCP call
+  5. If not cached: Call Figma MCP, save screenshot + meta.json to cache
 - **Implementation**: Match layout, typography, spacing from Figma; reuse existing UI components; do not invent tokens.
+- **See**: `.claude/rules/design/figma.md` for detailed caching instructions
 
 ## Design Tokens (from globals.css)
 

@@ -17,8 +17,7 @@ This guide covers setting up your development environment, working with Figma de
 - Node.js 18+
 - npm 9+
 - Git
-- Figma account (for design access)
-- Claude Code CLI (optional, for AI-assisted development)
+- Claude Code CLI (for AI-assisted development with Figma MCP)
 
 ### Installation
 
@@ -30,20 +29,8 @@ cd Relogate-Website
 # Install dependencies
 npm install
 
-# Copy environment template
-cp .env.example .env
-
 # Start development server
 npm run dev
-```
-
-### Environment Variables
-
-Edit `.env` with your values:
-
-```bash
-# Figma Personal Access Token (required for figma:cache commands)
-FIGMA_TOKEN=your-figma-token-here
 ```
 
 ## Development Workflow
@@ -52,6 +39,7 @@ FIGMA_TOKEN=your-figma-token-here
 
 ```
 main                 # Production-ready code
+├── mobile_dev       # Mobile development integration
 ├── alex_dev         # Development integration
 └── feature/*        # Feature branches
     fix/*            # Bug fix branches
@@ -87,17 +75,9 @@ npm run lint
 
 ### Overview
 
-This project uses a design-to-code workflow with Figma as the source of truth. To avoid hitting the Figma API repeatedly, we cache screenshots and metadata locally.
+This project uses a design-to-code workflow with Figma as the source of truth. The Claude agent automatically manages a local cache of Figma screenshots and metadata using MCP tools.
 
-### Getting a Figma Token
-
-1. Log in to [Figma](https://figma.com)
-2. Go to **Account Settings** → **Personal Access Tokens**
-3. Generate a new token with read permissions
-4. Add to your `.env` file:
-   ```
-   FIGMA_TOKEN=figd_xxxxxxxxxxxxx
-   ```
+**No manual token setup or scripts required** - Figma MCP authentication is handled through Claude Code settings.
 
 ### Figma URLs
 
@@ -105,56 +85,39 @@ Design references are stored in `docs/design/figma_urls.md`:
 
 ```markdown
 mobile header without: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=270-1598
-mobile header with: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=270-1597
+mobile HP2: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=276-4579
 HP Relogate: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=167-1882
 ```
 
-### Caching Figma Assets
+### Agent-Managed Cache
 
-```bash
-# Cache all URLs from figma_urls.md
-npm run figma:cache
+The Claude agent automatically:
 
-# Cache a single entry by index
-npm run figma:cache:one 0
+1. Checks if a cached screenshot exists in `docs/design/figma_cache/<slug>/`
+2. If cached: Uses the local image (no API call)
+3. If not cached: Fetches via Figma MCP and saves to cache
 
-# Cache a single entry by slug
-npm run figma:cache:one hp-relogate_9iC5uUBVU3QoX9XIByWgB4_167-1882
-
-# Force refresh (ignore existing cache)
-npm run figma:cache -- --force
-```
-
-### Cache Structure
-
+Cache structure:
 ```
 docs/design/figma_cache/
 └── <slug>/
-    ├── meta.json         # Curated metadata
-    ├── meta.raw.json     # Full API response
+    ├── meta.json         # Metadata (url, nodeId, label)
     ├── render@2x.png     # Screenshot at 2x scale
-    └── design_context.md # Optional: MCP output
+    └── design_context.md # Optional: MCP design context
 ```
 
 ### Figma-to-Code Workflow
 
 1. **Find the design**: Look up the relevant frame in `docs/design/figma_urls.md`
 
-2. **Check cache**: Look for existing cached data:
-   ```bash
-   ls docs/design/figma_cache/
+2. **Ask Claude**: Reference the design by label:
+   ```
+   "Implement the mobile HP2 design from Figma"
    ```
 
-3. **Use cached screenshot**: View `render@2x.png` for visual reference
+3. **Claude handles caching**: The agent checks cache, fetches if needed, and uses the screenshot for implementation
 
-4. **Extract design values**: Reference `meta.json` for node information
-
-5. **Implement**: Match colors, spacing, typography from the design
-
-6. **Update cache if needed**:
-   ```bash
-   npm run figma:cache:one <slug>
-   ```
+4. **Implement**: Claude matches colors, spacing, typography from the design
 
 ### Design Token Mapping
 
@@ -199,8 +162,6 @@ The `.claude/` directory contains agent context:
 │   ├── Figma Workflow     # Design integration
 │   └── Design Tokens      # Color/spacing values
 │
-├── settings.local.json    # Local settings
-│
 └── rules/                 # Domain-specific rules
     ├── design/
     │   └── figma.md       # Figma workflow rules
@@ -231,7 +192,7 @@ The `.claude/` directory contains agent context:
    mcp__figma__get_metadata      # Get node structure
    ```
 
-   Before using MCP tools, Claude should check the local cache first.
+   The agent automatically manages the cache - checking local files before calling MCP.
 
 4. **Example prompts**:
    ```
@@ -247,17 +208,12 @@ The `.claude/` directory contains agent context:
    "Implement the design from docs/design/figma_urls.md - HP Relogate"
    ```
 
-2. **Ask for cache check first**:
-   ```
-   "Check the figma cache before fetching from API"
-   ```
-
-3. **Request small changes**:
+2. **Request small changes**:
    ```
    "Update just the button color to match the primary token"
    ```
 
-4. **Verify builds**:
+3. **Verify builds**:
    ```
    "Run npm run build after making changes"
    ```
@@ -266,24 +222,13 @@ The `.claude/` directory contains agent context:
 
 To use Figma MCP tools, configure your Claude Code MCP settings:
 
-1. Create or edit `~/.claude/mcp.json`:
-   ```json
-   {
-     "mcpServers": {
-       "figma": {
-         "command": "npx",
-         "args": ["-y", "@anthropic-ai/mcp-server-figma"],
-         "env": {
-           "FIGMA_TOKEN": "your-figma-token"
-         }
-       }
-     }
-   }
-   ```
+1. Create or edit `~/.claude/mcp.json` (or use Claude Code's MCP settings)
 
-2. Restart Claude Code to load the MCP server
+2. Add the Figma MCP server configuration
 
-3. Verify Figma tools are available:
+3. Restart Claude Code to load the MCP server
+
+4. Verify Figma tools are available:
    ```
    /mcp
    ```
@@ -323,19 +268,19 @@ export const siteContent = {
 
 ### Creating a New Page Section
 
-1. Create component in `src/components/desktop/`
+1. Create component in `src/components/desktop/` or `src/components/mobile/`
 2. Import content from `src/content/he.ts`
 3. Add to page.tsx in correct order
 4. Style using existing design tokens
 
-### Updating Figma Designs
+### Implementing a Figma Design
 
-1. Update URL in `docs/design/figma_urls.md`
-2. Run cache update:
-   ```bash
-   npm run figma:cache:one <slug>
+1. Find the URL in `docs/design/figma_urls.md`
+2. Ask Claude to implement:
    ```
-3. Implement changes based on new cache
+   "Implement the mobile HP3 design from Figma"
+   ```
+3. Claude will check cache, fetch if needed, and implement
 
 ### Debugging Scroll Animations
 
@@ -361,22 +306,6 @@ Key parameters:
 
 ## Troubleshooting
 
-### Figma Cache Issues
-
-**"FIGMA_TOKEN environment variable is required"**
-- Set your token in `.env` or export it:
-  ```bash
-  export FIGMA_TOKEN="your-token"
-  ```
-
-**"Node not found"**
-- The node ID may have changed in Figma
-- Update the URL in `docs/design/figma_urls.md`
-
-**"HTTP 403"**
-- Token may have expired
-- Generate a new Personal Access Token in Figma
-
 ### Build Errors
 
 **TypeScript errors**
@@ -393,8 +322,7 @@ Key parameters:
 ### Claude Code Issues
 
 **MCP tools not available**
-- Check MCP configuration in `~/.claude/mcp.json`
-- Verify FIGMA_TOKEN is set
+- Check MCP configuration
 - Restart Claude Code
 
 **Agent doesn't know project context**

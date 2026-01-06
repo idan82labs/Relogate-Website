@@ -53,9 +53,6 @@ docs/
     ├── figma_urls.md      # Source of truth for Figma links
     └── figma_cache/       # Cached Figma screenshots & metadata
 
-scripts/
-└── figma_cache.mjs        # CLI for caching Figma assets
-
 .claude/                   # Claude Code agent memory
 ├── CLAUDE.md             # Main agent context
 └── rules/                # Domain-specific rules
@@ -67,7 +64,7 @@ scripts/
 - **Responsive Design**: Separate mobile and desktop experiences
 - **Splash Screen**: Animated intro for first-time visitors
 - **Scroll Animations**: Framer Motion-powered scroll interactions
-- **Figma Integration**: Design-to-code workflow with caching
+- **Figma Integration**: Agent-managed design cache (no manual scripts needed)
 
 ## Documentation
 
@@ -82,29 +79,10 @@ scripts/
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
-| `npm run figma:cache` | Cache all Figma URLs |
-| `npm run figma:cache:one <id>` | Cache single Figma entry |
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-```bash
-# Required for Figma caching
-FIGMA_TOKEN=your-figma-personal-access-token
-```
 
 ## Design Resources
 
-Figma designs are tracked in `docs/design/figma_urls.md`. Use the caching system to avoid hitting Figma API repeatedly:
-
-```bash
-# Set your token
-export FIGMA_TOKEN="your-token"
-
-# Cache all designs
-npm run figma:cache
-```
+Figma designs are tracked in `docs/design/figma_urls.md`. The Claude agent automatically manages the design cache using Figma MCP tools - no manual token setup or scripts required.
 
 See [Developer Guide](docs/DEVELOPER_GUIDE.md) for detailed Figma workflow.
 

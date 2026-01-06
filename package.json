@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "figma:cache": "node scripts/figma_cache.mjs",
-    "figma:cache:one": "node scripts/figma_cache.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "framer-motion": "^12.23.26",
