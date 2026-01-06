@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, TextInput, Icon } from "@/components/shared";
+import { Button, TextInput, Icon, MobileFooter } from "@/components/shared";
 import { MobileHeader } from "./MobileHeader";
 
 // Globe watermark SVG for Mobile Personal Area (matches Figma design)
@@ -33,7 +33,7 @@ interface MobilePersonalAreaRegistrationProps {
 export const MobilePersonalAreaRegistration = ({
   onRegisterSuccess,
 }: MobilePersonalAreaRegistrationProps) => {
-  const { personalArea, footer } = siteContent;
+  const { personalArea } = siteContent;
   const { registration } = personalArea;
 
   const [formData, setFormData] = useState({
@@ -172,43 +172,7 @@ export const MobilePersonalAreaRegistration = ({
         </div>
       </main>
 
-      {/* Mobile Footer */}
-      <footer className="bg-[#215388] py-8 px-4">
-        <div className="flex flex-col items-center text-center">
-          {/* Logo */}
-          <a href="/" className="flex items-center mb-4">
-            <img
-              src="/logo-white.svg"
-              alt="Relogate"
-              style={{ width: "140px", height: "29px" }}
-            />
-          </a>
-
-          <div className="text-white/80 text-sm space-y-1 mb-4">
-            <p>{footer.email}</p>
-            <p>{footer.phone}</p>
-          </div>
-
-          <div className="flex gap-3 mb-4">
-            <a
-              href="#"
-              className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
-              aria-label="Facebook"
-            >
-              <Icon name="facebook" size={16} className="text-white" />
-            </a>
-            <a
-              href="#"
-              className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
-              aria-label="Instagram"
-            >
-              <Icon name="instagram" size={16} className="text-white" />
-            </a>
-          </div>
-
-          <p className="text-white/60 text-xs">{footer.copyright}</p>
-        </div>
-      </footer>
+      <MobileFooter />
     </div>
   );
 };
