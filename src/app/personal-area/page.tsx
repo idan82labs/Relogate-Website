@@ -1,16 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Desktop components
-import { PersonalAreaWelcome } from "@/components/desktop";
+import {
+  PersonalAreaWelcome,
+  PersonalAreaRegistration,
+} from "@/components/desktop";
 
 // Mobile components
-import { MobilePersonalAreaWelcome } from "@/components/mobile";
+import {
+  MobilePersonalAreaWelcome,
+  MobilePersonalAreaRegistration,
+} from "@/components/mobile";
+
+type ViewType = "login" | "register";
 
 export default function PersonalAreaPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [currentView, setCurrentView] = useState<ViewType>("login");
 
   // Detect viewport and set mobile state
   useEffect(() => {
@@ -22,6 +31,14 @@ export default function PersonalAreaPage() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const handleNavigateToRegister = () => {
+    setCurrentView("register");
+  };
+
+  const handleNavigateToLogin = () => {
+    setCurrentView("login");
+  };
 
   // Loading state
   if (isMobile === null) {
@@ -65,9 +82,61 @@ export default function PersonalAreaPage() {
 
   // Mobile Experience
   if (isMobile) {
-    return <MobilePersonalAreaWelcome />;
+    return (
+      <AnimatePresence mode="wait">
+        {currentView === "login" ? (
+          <motion.div
+            key="mobile-login"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MobilePersonalAreaWelcome
+              onNavigateToRegister={handleNavigateToRegister}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="mobile-register"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MobilePersonalAreaRegistration
+              onNavigateToLogin={handleNavigateToLogin}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
   }
 
   // Desktop Experience
-  return <PersonalAreaWelcome />;
+  return (
+    <AnimatePresence mode="wait">
+      {currentView === "login" ? (
+        <motion.div
+          key="desktop-login"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <PersonalAreaWelcome onNavigateToRegister={handleNavigateToRegister} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="desktop-register"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <PersonalAreaRegistration onNavigateToLogin={handleNavigateToLogin} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }

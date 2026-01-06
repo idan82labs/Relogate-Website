@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, TextInput } from "@/components/shared";
+import { Button, TextInput, Icon } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
@@ -26,21 +26,31 @@ const PersonalAreaGlobe = () => (
   </svg>
 );
 
-interface PersonalAreaWelcomeProps {
-  onNavigateToRegister?: () => void;
+interface PersonalAreaRegistrationProps {
+  onNavigateToLogin?: () => void;
 }
 
-export const PersonalAreaWelcome = ({
-  onNavigateToRegister,
-}: PersonalAreaWelcomeProps) => {
+export const PersonalAreaRegistration = ({
+  onNavigateToLogin,
+}: PersonalAreaRegistrationProps) => {
   const { personalArea } = siteContent;
-  const { welcome } = personalArea;
+  const { registration } = personalArea;
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    idNumber: "",
+    birthDate: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (field: keyof typeof formData) => (value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = () => {
-    console.log("TODO: Implement login", { email, password });
+    console.log("TODO: Implement registration", formData);
   };
 
   return (
@@ -58,11 +68,11 @@ export const PersonalAreaWelcome = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-[480px] mx-auto"
+            className="max-w-[740px] mx-auto"
           >
             {/* Title */}
             <h1 className="text-[32px] lg:text-[40px] font-bold text-[#1D1D1B] text-center leading-tight mb-12">
-              {welcome.title}
+              {personalArea.title}
             </h1>
 
             {/* Form */}
@@ -73,55 +83,88 @@ export const PersonalAreaWelcome = ({
               }}
               className="space-y-6"
             >
-              {/* Email Input */}
-              <TextInput
-                label={welcome.emailLabel}
-                type="email"
-                size="lg"
-                value={email}
-                onChange={setEmail}
-                placeholder={welcome.emailPlaceholder}
-              />
+              {/* Row 1: Full Name | ID Number */}
+              <div className="grid grid-cols-2 gap-4">
+                <TextInput
+                  label={registration.fullNameLabel}
+                  type="text"
+                  size="lg"
+                  value={formData.fullName}
+                  onChange={handleChange("fullName")}
+                  placeholder={registration.fullNamePlaceholder}
+                />
+                <TextInput
+                  label={registration.idLabel}
+                  type="text"
+                  size="lg"
+                  value={formData.idNumber}
+                  onChange={handleChange("idNumber")}
+                  placeholder={registration.idPlaceholder}
+                />
+              </div>
 
-              {/* Password Input */}
-              <TextInput
-                label={welcome.passwordLabel}
-                type="password"
-                size="lg"
-                value={password}
-                onChange={setPassword}
-                placeholder={welcome.passwordPlaceholder}
-              />
+              {/* Row 2: Birth Date | Phone */}
+              <div className="grid grid-cols-2 gap-4">
+                <TextInput
+                  label={registration.birthDateLabel}
+                  type="date"
+                  size="lg"
+                  value={formData.birthDate}
+                  onChange={handleChange("birthDate")}
+                  placeholder={registration.birthDatePlaceholder}
+                />
+                <TextInput
+                  label={registration.phoneLabel}
+                  type="tel"
+                  size="lg"
+                  value={formData.phone}
+                  onChange={handleChange("phone")}
+                  placeholder={registration.phonePlaceholder}
+                />
+              </div>
 
-              {/* Forgot Password Link */}
-              <div className="text-left">
-                <button
-                  type="button"
-                  className="text-sm text-[#215388] hover:underline transition-colors"
-                >
-                  {welcome.forgotPassword}
-                </button>
+              {/* Row 3: Email | Password */}
+              <div className="grid grid-cols-2 gap-4">
+                <TextInput
+                  label={registration.emailLabel}
+                  type="email"
+                  size="lg"
+                  value={formData.email}
+                  onChange={handleChange("email")}
+                  placeholder={registration.emailPlaceholder}
+                />
+                <TextInput
+                  label={registration.passwordLabel}
+                  type="password"
+                  size="lg"
+                  value={formData.password}
+                  onChange={handleChange("password")}
+                  placeholder={registration.passwordPlaceholder}
+                />
               </div>
 
               {/* Submit Button */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="w-full"
-              >
-                {welcome.loginButton}
-              </Button>
+              <div className="flex justify-center pt-4">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  className="min-w-[200px] flex items-center justify-center gap-2"
+                >
+                  {registration.submitButton}
+                  <Icon name="check" size={20} className="text-white" />
+                </Button>
+              </div>
 
-              {/* Register Link */}
+              {/* Login Link */}
               <p className="text-center text-[#706F6F]">
-                {welcome.noAccount}{" "}
+                {registration.hasAccount}{" "}
                 <button
                   type="button"
-                  onClick={onNavigateToRegister}
+                  onClick={onNavigateToLogin}
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {welcome.register}
+                  {registration.login}
                 </button>
               </p>
             </form>
@@ -134,4 +177,4 @@ export const PersonalAreaWelcome = ({
   );
 };
 
-export default PersonalAreaWelcome;
+export default PersonalAreaRegistration;

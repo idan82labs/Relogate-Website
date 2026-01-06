@@ -265,6 +265,38 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
 
   // Personal Area
   personalArea: {
+    // Shared
+    title: "ברוכים הבאים לאזור האישי של Relogate",
+
+    // Login page (ID verification flow)
+    login: {
+      idLabel: "הקלד/י מספר תעודת זהות",
+      idPlaceholder: "מספר תעודת זהות",
+      sendCodeViaEmail: "שלח אלי קוד באמצעות אימייל",
+      noAccount: "אין לך חשבון?",
+      register: "הירשם",
+    },
+
+    // Registration page
+    registration: {
+      fullNameLabel: "שם מלא",
+      fullNamePlaceholder: "הזן שם מלא",
+      idLabel: "תעודת זהות",
+      idPlaceholder: "הזן מספר תעודת זהות",
+      birthDateLabel: "תאריך לידה",
+      birthDatePlaceholder: "בחר תאריך",
+      phoneLabel: "מספר טלפון",
+      phonePlaceholder: "הזן מספר טלפון",
+      emailLabel: "אימייל",
+      emailPlaceholder: "הזן כתובת אימייל",
+      passwordLabel: "שינוי סיסמה",
+      passwordPlaceholder: "הזן סיסמה",
+      submitButton: "להרשמה",
+      hasAccount: "יש לך חשבון?",
+      login: "התחבר",
+    },
+
+    // Legacy (for backwards compatibility during transition)
     welcome: {
       title: "ברוכים הבאים לאזור האישי של Relogate",
       emailLabel: "אימייל",

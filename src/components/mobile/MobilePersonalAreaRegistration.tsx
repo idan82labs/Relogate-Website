@@ -25,21 +25,31 @@ const MobilePersonalAreaGlobe = () => (
   </svg>
 );
 
-interface MobilePersonalAreaWelcomeProps {
-  onNavigateToRegister?: () => void;
+interface MobilePersonalAreaRegistrationProps {
+  onNavigateToLogin?: () => void;
 }
 
-export const MobilePersonalAreaWelcome = ({
-  onNavigateToRegister,
-}: MobilePersonalAreaWelcomeProps) => {
+export const MobilePersonalAreaRegistration = ({
+  onNavigateToLogin,
+}: MobilePersonalAreaRegistrationProps) => {
   const { personalArea, footer } = siteContent;
-  const { welcome } = personalArea;
+  const { registration } = personalArea;
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    idNumber: "",
+    birthDate: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (field: keyof typeof formData) => (value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = () => {
-    console.log("TODO: Implement login", { email, password });
+    console.log("TODO: Implement registration", formData);
   };
 
   return (
@@ -61,7 +71,7 @@ export const MobilePersonalAreaWelcome = ({
           >
             {/* Title */}
             <h1 className="text-[24px] font-bold text-[#1D1D1B] text-center leading-tight mb-8">
-              {welcome.title}
+              {personalArea.title}
             </h1>
 
             {/* Form */}
@@ -72,50 +82,87 @@ export const MobilePersonalAreaWelcome = ({
               }}
               className="space-y-5"
             >
-              {/* Email Input */}
+              {/* Full Name */}
               <TextInput
-                label={welcome.emailLabel}
+                label={registration.fullNameLabel}
+                type="text"
+                size="md"
+                value={formData.fullName}
+                onChange={handleChange("fullName")}
+                placeholder={registration.fullNamePlaceholder}
+              />
+
+              {/* ID Number */}
+              <TextInput
+                label={registration.idLabel}
+                type="text"
+                size="md"
+                value={formData.idNumber}
+                onChange={handleChange("idNumber")}
+                placeholder={registration.idPlaceholder}
+              />
+
+              {/* Birth Date */}
+              <TextInput
+                label={registration.birthDateLabel}
+                type="date"
+                size="md"
+                value={formData.birthDate}
+                onChange={handleChange("birthDate")}
+                placeholder={registration.birthDatePlaceholder}
+              />
+
+              {/* Phone */}
+              <TextInput
+                label={registration.phoneLabel}
+                type="tel"
+                size="md"
+                value={formData.phone}
+                onChange={handleChange("phone")}
+                placeholder={registration.phonePlaceholder}
+              />
+
+              {/* Email */}
+              <TextInput
+                label={registration.emailLabel}
                 type="email"
                 size="md"
-                value={email}
-                onChange={setEmail}
-                placeholder={welcome.emailPlaceholder}
+                value={formData.email}
+                onChange={handleChange("email")}
+                placeholder={registration.emailPlaceholder}
               />
 
-              {/* Password Input */}
+              {/* Password */}
               <TextInput
-                label={welcome.passwordLabel}
+                label={registration.passwordLabel}
                 type="password"
                 size="md"
-                value={password}
-                onChange={setPassword}
-                placeholder={welcome.passwordPlaceholder}
+                value={formData.password}
+                onChange={handleChange("password")}
+                placeholder={registration.passwordPlaceholder}
               />
 
-              {/* Forgot Password Link */}
-              <div className="text-left">
-                <button
-                  type="button"
-                  className="text-sm text-[#215388] hover:underline transition-colors"
-                >
-                  {welcome.forgotPassword}
-                </button>
-              </div>
-
               {/* Submit Button */}
-              <Button type="submit" variant="primary" size="md" fullWidth>
-                {welcome.loginButton}
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                fullWidth
+                className="flex items-center justify-center gap-2"
+              >
+                {registration.submitButton}
+                <Icon name="check" size={18} className="text-white" />
               </Button>
 
-              {/* Register Link */}
+              {/* Login Link */}
               <p className="text-center text-sm text-[#706F6F]">
-                {welcome.noAccount}{" "}
+                {registration.hasAccount}{" "}
                 <button
                   type="button"
-                  onClick={onNavigateToRegister}
+                  onClick={onNavigateToLogin}
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {welcome.register}
+                  {registration.login}
                 </button>
               </p>
             </form>
@@ -164,4 +211,4 @@ export const MobilePersonalAreaWelcome = ({
   );
 };
 
-export default MobilePersonalAreaWelcome;
+export default MobilePersonalAreaRegistration;

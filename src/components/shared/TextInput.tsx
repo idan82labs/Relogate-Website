@@ -3,7 +3,7 @@
 import { forwardRef, useState, useCallback } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 
-type InputType = "text" | "email" | "password";
+type InputType = "text" | "email" | "password" | "tel" | "date";
 type InputSize = "sm" | "md" | "lg";
 
 interface TextInputProps
