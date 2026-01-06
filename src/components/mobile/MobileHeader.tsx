@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
@@ -57,12 +56,10 @@ export const MobileHeader = () => {
             <Icon name="menu" size={24} className="text-[#1D1D1B]" />
           </button>
 
-          {/* CTA Button - next to menu */}
-          <Link href="/personal-area">
-            <Button variant="primary" size="sm" className="ml-2 text-xs px-3 py-1.5">
-              {nav.cta}
-            </Button>
-          </Link>
+          {/* CTA Button - Placeholder (no navigation) */}
+          <Button variant="primary" size="sm" className="ml-2 text-xs px-3 py-1.5">
+            {nav.cta}
+          </Button>
 
           {/* Spacer */}
           <div className="flex-1" />
@@ -138,13 +135,11 @@ export const MobileHeader = () => {
                   ))}
                 </ul>
 
-                {/* CTA in menu */}
+                {/* CTA in menu - Placeholder (no navigation) */}
                 <div className="mt-8">
-                  <Link href="/personal-area" onClick={closeMenu}>
-                    <Button variant="primary" size="md" fullWidth>
-                      {nav.cta}
-                    </Button>
-                  </Link>
+                  <Button variant="primary" size="md" fullWidth onClick={closeMenu}>
+                    {nav.cta}
+                  </Button>
                 </div>
               </nav>
             </motion.div>

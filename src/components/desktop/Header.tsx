@@ -28,12 +28,10 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <Link href="/personal-area">
-          <Button variant="primary" size="md">
-            {nav.cta}
-          </Button>
-        </Link>
+        {/* CTA Button - Placeholder (no navigation) */}
+        <Button variant="primary" size="md">
+          {nav.cta}
+        </Button>
       </div>
     </header>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Desktop components
@@ -19,14 +20,12 @@ import {
 } from "@/components/desktop";
 
 // Mobile components
-import { Splash, WelcomeIntro, MobileHP3, MobileHome } from "@/components/mobile";
+import { Splash, MobileHP3 } from "@/components/mobile";
 
-type MobilePhase = "splash" | "intro" | "hp3" | "home";
-
-const SESSION_KEY = "relogate_visited";
-const DESKTOP_SPLASH_KEY = "relogate_desktop_splash";
+type MobilePhase = "splash" | "home";
 
 export default function Home() {
+  const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [mobilePhase, setMobilePhase] = useState<MobilePhase>("splash");
   const [showDesktopSplash, setShowDesktopSplash] = useState(true);
@@ -42,54 +41,32 @@ export default function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Check session storage for returning visitors
+  // Check if coming from auth (login/register) to skip splash
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Allow forcing splash screen with ?splash=1 query param
+    if (typeof window !== "undefined" && isMobile !== null) {
       const urlParams = new URLSearchParams(window.location.search);
-      const forceSplash = urlParams.get("splash") === "1";
+      // Skip splash ONLY when coming from auth (login/register success)
+      const fromAuth = urlParams.get("from") === "auth";
 
-      // Mobile returning visitors
-      if (isMobile) {
-        const hasVisited = sessionStorage.getItem(SESSION_KEY);
-        if (hasVisited && !forceSplash) {
+      if (fromAuth) {
+        // Skip splash and show main content
+        if (isMobile) {
           setMobilePhase("home");
-        }
-      }
-      // Desktop returning visitors
-      if (!isMobile && isMobile !== null) {
-        const hasSeenSplash = sessionStorage.getItem(DESKTOP_SPLASH_KEY);
-        if (hasSeenSplash && !forceSplash) {
+        } else {
           setShowDesktopSplash(false);
         }
       }
     }
   }, [isMobile]);
 
-  // Mark as visited when reaching home
-  useEffect(() => {
-    if (mobilePhase === "home" && typeof window !== "undefined") {
-      sessionStorage.setItem(SESSION_KEY, "true");
-    }
-  }, [mobilePhase]);
-
   const handleSplashComplete = () => {
-    setMobilePhase("intro");
-  };
-
-  const handleIntroComplete = () => {
-    setMobilePhase("hp3");
-  };
-
-  const handleHP3Complete = () => {
-    setMobilePhase("home");
+    // Navigate to login page instead of continuing phases
+    router.push("/login");
   };
 
   const handleDesktopSplashComplete = () => {
-    setShowDesktopSplash(false);
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(DESKTOP_SPLASH_KEY, "true");
-    }
+    // Navigate to login page instead of hiding splash
+    router.push("/login");
   };
 
   // Loading state
@@ -135,13 +112,7 @@ export default function Home() {
         {mobilePhase === "splash" && (
           <Splash key="splash" onComplete={handleSplashComplete} />
         )}
-        {mobilePhase === "intro" && (
-          <WelcomeIntro key="intro" onComplete={handleIntroComplete} />
-        )}
-        {mobilePhase === "hp3" && (
-          <MobileHP3 key="hp3" onComplete={handleHP3Complete} />
-        )}
-        {mobilePhase === "home" && <MobileHome key="home" />}
+        {mobilePhase === "home" && <MobileHP3 key="home" />}
       </AnimatePresence>
     );
   }

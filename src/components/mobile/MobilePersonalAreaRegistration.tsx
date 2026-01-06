@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, TextInput, Icon } from "@/components/shared";
@@ -26,11 +27,11 @@ const MobilePersonalAreaGlobe = () => (
 );
 
 interface MobilePersonalAreaRegistrationProps {
-  onNavigateToLogin?: () => void;
+  onRegisterSuccess?: () => void;
 }
 
 export const MobilePersonalAreaRegistration = ({
-  onNavigateToLogin,
+  onRegisterSuccess,
 }: MobilePersonalAreaRegistrationProps) => {
   const { personalArea, footer } = siteContent;
   const { registration } = personalArea;
@@ -50,6 +51,8 @@ export const MobilePersonalAreaRegistration = ({
 
   const handleSubmit = () => {
     console.log("TODO: Implement registration", formData);
+    // Call success callback after registration
+    onRegisterSuccess?.();
   };
 
   return (
@@ -157,13 +160,12 @@ export const MobilePersonalAreaRegistration = ({
               {/* Login Link */}
               <p className="text-center text-sm text-[#706F6F]">
                 {registration.hasAccount}{" "}
-                <button
-                  type="button"
-                  onClick={onNavigateToLogin}
+                <Link
+                  href="/login"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
                   {registration.login}
-                </button>
+                </Link>
               </p>
             </form>
           </motion.div>

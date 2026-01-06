@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, TextInput } from "@/components/shared";
@@ -27,11 +28,11 @@ const PersonalAreaGlobe = () => (
 );
 
 interface PersonalAreaWelcomeProps {
-  onNavigateToRegister?: () => void;
+  onLoginSuccess?: () => void;
 }
 
 export const PersonalAreaWelcome = ({
-  onNavigateToRegister,
+  onLoginSuccess,
 }: PersonalAreaWelcomeProps) => {
   const { personalArea } = siteContent;
   const { welcome } = personalArea;
@@ -41,6 +42,8 @@ export const PersonalAreaWelcome = ({
 
   const handleSubmit = () => {
     console.log("TODO: Implement login", { email, password });
+    // Call success callback after login
+    onLoginSuccess?.();
   };
 
   return (
@@ -116,13 +119,12 @@ export const PersonalAreaWelcome = ({
               {/* Register Link */}
               <p className="text-center text-[#706F6F]">
                 {welcome.noAccount}{" "}
-                <button
-                  type="button"
-                  onClick={onNavigateToRegister}
+                <Link
+                  href="/register"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
                   {welcome.register}
-                </button>
+                </Link>
               </p>
             </form>
           </motion.div>
