@@ -1,73 +1,360 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 import { MobileHeader } from "./MobileHeader";
+import { siteContent } from "@/content/he";
+import { Button, Card, Accordion } from "@/components/shared";
 
 interface MobileHP3Props {
   onComplete?: () => void;
 }
 
 /**
- * Mobile HP3 - Placeholder component
- * TODO: Implement based on Figma design (mobile HP3: node 265-683)
+ * Mobile HP3 - Full mobile homepage
+ * Based on Figma design (mobile HP3: node 265-683)
  */
-export const MobileHP3 = ({ onComplete }: MobileHP3Props) => {
+export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
+  const { about, greenBanner, info, howItWorks, testimonials, articles, faq, contact, footer } = siteContent;
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-40 bg-white flex flex-col"
+      className="min-h-screen bg-white"
     >
       {/* Header */}
       <MobileHeader />
 
-      {/* Placeholder content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#215388]/10 flex items-center justify-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-[#215388]"
-            >
-              <path
-                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+      {/* Main Content */}
+      <main className="pt-[52px]">
+        {/* Hero Section with Ribbon */}
+        <section className="relative px-4 pt-6">
+          {/* Globe Watermark */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-100 pointer-events-none">
+            <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-medium text-[#1D1D1B] mb-2">
-            Mobile HP3
+
+          {/* Ribbon Banner */}
+          <div className="relative mb-4">
+            <div className="bg-[#239083] rounded-full py-2.5 px-4 text-center">
+              <p className="text-white text-sm font-medium">
+                {siteContent.hero.banner}
+              </p>
+            </div>
+          </div>
+
+          {/* Hero Text */}
+          <div className="relative z-10 text-right mb-6">
+            <h1 className="text-lg font-medium text-[#1D1D1B] mb-3">
+              {about.title}<br />
+              {about.subtitle}
+            </h1>
+            <p className="text-sm text-[#1D1D1B] leading-relaxed whitespace-pre-line">
+              {about.description}
+            </p>
+          </div>
+
+          {/* CTA Button */}
+          <div className="flex justify-end mb-6">
+            <Button size="sm" className="text-sm px-5 py-2.5">
+              {about.cta}
+            </Button>
+          </div>
+
+          {/* Hero Image Card */}
+          <div className="relative rounded-[20px] overflow-hidden h-[268px] mb-8">
+            <Image
+              src="/hero-4.jpg"
+              alt="Family enjoying life abroad"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </section>
+
+        {/* Company Statement Card */}
+        <section className="px-4 mb-8">
+          <div className="relative rounded-[20px] overflow-hidden h-[811px]">
+            <Image
+              src="/hero-5.jpg"
+              alt="Relogate - International relocation"
+              fill
+              className="object-cover"
+            />
+            {/* Text Overlay */}
+            <div className="absolute inset-0 flex items-end p-6">
+              <p className="text-white text-[26px] font-medium leading-tight text-right">
+                {greenBanner.title}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="px-4 mb-8">
+          {/* Globe Watermark for this section */}
+          <div className="relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-100 pointer-events-none -z-10">
+              <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
+            </div>
+
+            <p className="text-lg text-[#1D1D1B] text-right mb-6 leading-relaxed">
+              {info.description}
+            </p>
+
+            {/* Checklist */}
+            <div className="space-y-3 mb-6">
+              {info.checklist.map((item, index) => (
+                <div key={index} className="flex items-start gap-3 flex-row-reverse">
+                  <img
+                    src="/icons/checkmark.svg"
+                    alt=""
+                    width={12}
+                    height={9}
+                    className="mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-[#1D1D1B] text-right">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <div className="flex justify-end">
+              <Button size="sm" className="text-sm px-6 py-2.5">
+                {info.cta}
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section className="bg-[#F7F7F7] py-10 px-4 mb-0">
+          <h2 className="text-[26px] font-medium text-[#1D1D1B] text-center mb-8">
+            {howItWorks.title}
           </h2>
-          <p className="text-[#706F6F] mb-8">
-            Placeholder - To be implemented
+
+          <div className="space-y-5">
+            {howItWorks.steps.map((step) => (
+              <Card
+                key={step.number}
+                padding="md"
+                className="bg-white"
+              >
+                <div className="flex gap-4">
+                  {/* Step Number */}
+                  <p className="font-['Satoshi',sans-serif] text-[40px] text-[#215388] leading-none">
+                    {step.number}
+                  </p>
+
+                  <div className="flex-1 text-right">
+                    {/* Step Title */}
+                    <h3 className="text-2xl text-[#215388] mb-2">
+                      {step.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm text-[#1D1D1B] mb-3">
+                      {step.shortDescription}
+                    </p>
+
+                    {/* Read More Link */}
+                    <button className="text-[11px] font-semibold text-[#1D1D1B] underline">
+                      {step.readMore}
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-10 px-4">
+          <h2 className="text-[26px] font-medium text-[#1D1D1B] text-right mb-6">
+            {testimonials.title}
+          </h2>
+
+          {/* Horizontal Scroll Container */}
+          <div
+            ref={testimonialsRef}
+            className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide"
+            style={{ scrollSnapType: 'x mandatory' }}
+          >
+            {testimonials.items.map((item, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-[214px] bg-[#F7F7F7] rounded-[20px] p-4"
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                {/* Stars */}
+                <div className="flex justify-end mb-2">
+                  <img
+                    src="/icons/stars-rating.svg"
+                    alt={`${item.rating} stars`}
+                    width={80}
+                    height={13}
+                  />
+                </div>
+
+                {/* Quote */}
+                <p className="text-sm text-[#1D1D1B] text-right mb-4 leading-relaxed">
+                  {item.text}
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center justify-end gap-2">
+                  <div className="text-right">
+                    <p className="text-sm text-[#1D1D1B]">{item.name},</p>
+                    <p className="text-sm text-[#1D1D1B]">{item.location}</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                    <Image
+                      src={`/testimonials/avatar-${(index % 4) + 1}.${index === 0 ? 'png' : 'jpg'}`}
+                      alt={item.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Press/Articles Section */}
+        <section className="px-4 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex gap-2">
+              <button className="p-1" aria-label="Previous article">
+                <img src="/icons/arrow-left.svg" alt="" width={9} height={11} />
+              </button>
+              <button className="p-1" aria-label="Next article">
+                <img src="/icons/arrow-right.svg" alt="" width={9} height={11} />
+              </button>
+            </div>
+            <h2 className="text-[26px] font-medium text-[#1D1D1B]">
+              {articles.title}
+            </h2>
+          </div>
+
+          {/* Article Card */}
+          <div className="relative rounded-[20px] overflow-hidden h-[450px]">
+            <Image
+              src="/hero-2.jpg"
+              alt={articles.items[0].title}
+              fill
+              className="object-cover"
+            />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(29,29,27,0.6)] to-transparent" />
+
+            {/* Article Info */}
+            <div className="absolute bottom-6 right-4 left-4 text-right">
+              <p className="text-white text-base leading-snug mb-2">
+                {articles.items[0].title}
+              </p>
+              <p className="text-white/80 text-xs">
+                {articles.items[0].date}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="px-4 py-10">
+          <h2 className="text-[26px] font-medium text-[#1D1D1B] text-right mb-6">
+            {faq.title}
+          </h2>
+
+          <Accordion items={faq.items} />
+        </section>
+
+        {/* Contact Section */}
+        <section className="px-4 py-10 text-center">
+          <h2 className="text-[26px] font-medium text-[#1D1D1B] mb-4">
+            {contact.title}
+          </h2>
+
+          {/* Social Icons */}
+          <div className="flex justify-center gap-2 mb-4">
+            <img
+              src="/icons/social-whatsapp-email.svg"
+              alt="Contact via WhatsApp or Email"
+              width={60}
+              height={20}
+            />
+          </div>
+
+          {/* Contact Details */}
+          <div className="text-sm text-[#1D1D1B] mb-4">
+            <p>{contact.email}</p>
+            <p>{contact.phone}</p>
+          </div>
+
+          {/* Description */}
+          <p className="text-sm text-[#1D1D1B] whitespace-pre-line leading-relaxed">
+            {contact.description}
           </p>
-          {onComplete && (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onComplete}
-              className="
-                px-8 py-3
-                bg-[#215388] text-white
-                rounded-[100px]
-                font-semibold text-base
-                transition-colors duration-200
-                hover:bg-[#1a4270]
-              "
-            >
-              Continue to Home
-            </motion.button>
-          )}
-        </div>
-      </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-[#215388] py-10 px-4">
+          <div className="flex flex-col items-center text-center">
+            {/* Logo */}
+            <Link href="/" className="mb-6">
+              <img
+                src="/logo-white.svg"
+                alt="Relogate"
+                className="h-9 w-auto"
+              />
+            </Link>
+
+            {/* Contact Info */}
+            <div className="text-sm text-white mb-4">
+              <p>{footer.email}</p>
+              <p>{footer.phone}</p>
+            </div>
+
+            {/* Social Icons */}
+            <div className="flex gap-3 mb-6">
+              <img
+                src="/icons/social-fb-ig.svg"
+                alt="Follow us on social media"
+                width={50}
+                height={25}
+              />
+            </div>
+
+            {/* Legal Links */}
+            <div className="text-[10px] text-white/80 mb-2">
+              <p>
+                {footer.links.map((link, i) => (
+                  <span key={link.href}>
+                    <a href={link.href} className="hover:text-white">
+                      {link.label}
+                    </a>
+                    {i < footer.links.length - 1 && ' | '}
+                  </span>
+                ))}
+              </p>
+            </div>
+
+            {/* Copyright */}
+            <p className="text-[10px] text-white/60">
+              {footer.copyright}
+            </p>
+          </div>
+        </footer>
+      </main>
     </motion.div>
   );
 };

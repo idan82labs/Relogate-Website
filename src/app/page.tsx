@@ -48,7 +48,7 @@ export default function Home() {
       // Allow forcing splash screen with ?splash=1 query param
       const urlParams = new URLSearchParams(window.location.search);
       const forceSplash = urlParams.get("splash") === "1";
-      
+
       // Mobile returning visitors
       if (isMobile) {
         const hasVisited = sessionStorage.getItem(SESSION_KEY);

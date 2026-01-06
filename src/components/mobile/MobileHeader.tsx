@@ -45,8 +45,8 @@ export const MobileHeader = () => {
     <>
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white h-[52px] border-b border-[#C6C6C6]">
-        <div className="h-full px-4 flex items-center justify-between">
-          {/* Menu button */}
+        <div className="h-full px-4 flex items-center" dir="ltr">
+          {/* Menu button - LEFT (visual) */}
           <button
             onClick={toggleMenu}
             className="w-10 h-10 flex items-center justify-center"
@@ -56,19 +56,22 @@ export const MobileHeader = () => {
             <Icon name="menu" size={24} className="text-[#1D1D1B]" />
           </button>
 
-          {/* Logo */}
-          <a href="/" className="flex items-center">
-            <img 
-              src="/logo-header.svg" 
-              alt="Relogate" 
-              style={{ width: '120px', height: '25.5px' }} 
-            />
-          </a>
-
-          {/* CTA Button */}
-          <Button variant="primary" size="sm" className="text-xs px-3 py-1.5">
+          {/* CTA Button - next to menu */}
+          <Button variant="primary" size="sm" className="ml-2 text-xs px-3 py-1.5">
             {nav.cta}
           </Button>
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Logo - RIGHT (visual) */}
+          <a href="/" className="flex items-center">
+            <img
+              src="/logo-header.svg"
+              alt="Relogate"
+              style={{ width: '120px', height: '25.5px' }}
+            />
+          </a>
         </div>
       </header>
 
