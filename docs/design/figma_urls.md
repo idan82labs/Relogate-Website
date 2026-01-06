@@ -55,3 +55,30 @@ Organized by section and platform. Use the label path for context (e.g., "Homepa
 - mobile id verification: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=272-1736&m=dev (NOT IMPLEMENTED)
 - mobile code entry: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=272-1795&m=dev (NOT IMPLEMENTED)
 - mobile profile: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=272-1574&m=dev (NOT IMPLEMENTED)
+
+---
+
+## Question Test
+
+> **Note:** Question test flow - user answers questions to determine eligibility/recommendations.
+> Includes "How it works" intro screens and multiple test question screens.
+
+### Desktop
+- how it works: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=242-3122&m=dev
+- how it works (hover): https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=109-4152&m=dev
+- test1: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=72-414&m=dev
+- test2: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=33-10868&m=dev
+- test2 (variant a): https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=167-1154&m=dev
+- test2 (variant b): https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=167-1206&m=dev
+- test3: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=33-10923&m=dev
+- test3 (variant): https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=72-261&m=dev
+
+### Mobile
+- mobile how it works: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-3441&m=dev
+- mobile how it works (hover): https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=310-2894&m=dev
+- mobile test1: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-3541&m=dev
+- mobile test2: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-3672&m=dev
+- mobile test3: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-3739&m=dev
+- mobile test4: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-3879&m=dev
+- mobile test5: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-4235&m=dev
+- mobile test6: https://www.figma.com/design/9iC5uUBVU3QoX9XIByWgB4/Relogate--Copy-?node-id=275-4343&m=dev
