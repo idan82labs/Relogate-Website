@@ -40,15 +40,6 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
             <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
           </div>
 
-          {/* Ribbon Banner */}
-          <div className="relative mb-4">
-            <div className="bg-[#239083] rounded-full py-2.5 px-4 text-center">
-              <p className="text-white text-sm font-medium">
-                {siteContent.hero.banner}
-              </p>
-            </div>
-          </div>
-
           {/* Hero Text */}
           <div className="relative z-10 text-right mb-6">
             <h1 className="text-lg font-medium text-[#1D1D1B] mb-3">
@@ -67,14 +58,23 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
             </Button>
           </div>
 
-          {/* Hero Image Card */}
+          {/* Hero Image Card with Ribbon Overlay */}
           <div className="relative rounded-[20px] overflow-hidden h-[268px] mb-8">
             <Image
-              src="/hero-4.jpg"
+              src="/about-image.jpg"
               alt="Family enjoying life abroad"
               fill
               className="object-cover"
             />
+
+            {/* Ribbon Banner - positioned at top of image, rounded top, square bottom */}
+            <div className="absolute top-0 left-0 right-0 z-10">
+              <div className="bg-[#239083] rounded-t-[20px] py-2.5 px-4 text-center">
+                <p className="text-white text-sm font-medium">
+                  {siteContent.hero.banner}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
