@@ -11,15 +11,6 @@ export const Hero = () => {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Banner */}
-      <div className="bg-[#215388] py-3">
-        <div className="container">
-          <p className="text-white text-center font-medium text-lg">
-            {hero.banner}
-          </p>
-        </div>
-      </div>
-
       {/* Main Hero Content */}
       <div className="container py-16 lg:py-24 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

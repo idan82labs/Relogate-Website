@@ -22,55 +22,42 @@ import {
 // Mobile components
 import { Splash, MobileHP3 } from "@/components/mobile";
 
-type MobilePhase = "splash" | "home";
+const SPLASH_SEEN_KEY = "relogate_splash_seen";
 
 export default function Home() {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
-  const [mobilePhase, setMobilePhase] = useState<MobilePhase>("splash");
-  const [showDesktopSplash, setShowDesktopSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState<boolean | null>(null);
 
-  // Detect viewport and set mobile state
+  // Detect viewport and check splash state
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
+
+    // Check if splash was already seen this session
+    const splashSeen = sessionStorage.getItem(SPLASH_SEEN_KEY) === "true";
+    setShowSplash(!splashSeen);
 
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Check if coming from auth (login/register) to skip splash
-  useEffect(() => {
-    if (typeof window !== "undefined" && isMobile !== null) {
-      const urlParams = new URLSearchParams(window.location.search);
-      // Skip splash ONLY when coming from auth (login/register success)
-      const fromAuth = urlParams.get("from") === "auth";
-
-      if (fromAuth) {
-        // Skip splash and show main content
-        if (isMobile) {
-          setMobilePhase("home");
-        } else {
-          setShowDesktopSplash(false);
-        }
-      }
-    }
-  }, [isMobile]);
-
   const handleSplashComplete = () => {
-    // Navigate to login page instead of continuing phases
+    // Mark splash as seen and navigate to login
+    sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
     router.push("/login");
   };
 
   const handleDesktopSplashComplete = () => {
-    // Navigate to login page instead of hiding splash
+    // Mark splash as seen and navigate to login
+    sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
     router.push("/login");
   };
 
-  // Loading state
-  if (isMobile === null) {
+  // Loading state - wait for both viewport and splash state to be determined
+  if (isMobile === null || showSplash === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="animate-pulse">
@@ -109,10 +96,10 @@ export default function Home() {
   if (isMobile) {
     return (
       <AnimatePresence mode="wait">
-        {mobilePhase === "splash" && (
+        {showSplash && (
           <Splash key="splash" onComplete={handleSplashComplete} />
         )}
-        {mobilePhase === "home" && <MobileHP3 key="home" />}
+        {!showSplash && <MobileHP3 key="home" />}
       </AnimatePresence>
     );
   }
@@ -121,13 +108,13 @@ export default function Home() {
   return (
     <>
       <AnimatePresence>
-        {showDesktopSplash && (
+        {showSplash && (
           <SplashScreen onComplete={handleDesktopSplashComplete} />
         )}
       </AnimatePresence>
       <motion.main
         initial={{ opacity: 0 }}
-        animate={{ opacity: showDesktopSplash ? 0 : 1 }}
+        animate={{ opacity: showSplash ? 0 : 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="min-h-screen bg-white"
       >

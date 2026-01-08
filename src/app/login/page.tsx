@@ -26,8 +26,8 @@ export default function LoginPage() {
   }, []);
 
   const handleLoginSuccess = () => {
-    // Redirect to homepage with param to skip splash
-    router.push("/?from=auth");
+    // Redirect to homepage (splash already marked as seen)
+    router.push("/");
   };
 
   // Loading state

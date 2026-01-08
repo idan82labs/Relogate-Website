@@ -43,11 +43,11 @@ export const BannerToInfoTransition = () => {
     [600, 600, 570, 540, 510, 485, 466, 466]
   );
 
-  // Border radius: 0 → 20px
+  // Border radius: starts at 20px (rounded), stays 20px throughout
   const borderTopRadius = useTransform(
     scrollYProgress,
     [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
-    [0, 0, 5, 12, 18, 20, 20]
+    [20, 20, 20, 20, 20, 20, 20]
   );
 
   // === TEAL BANNER TRANSFORMS ===
@@ -121,13 +121,11 @@ export const BannerToInfoTransition = () => {
                     </p>
                   </motion.div>
 
-                  {/* Image container */}
+                  {/* Image container - square top to connect with banner, rounded bottom */}
                   <motion.div
                     className="relative overflow-hidden rounded-b-[20px]"
                     style={{
                       height: imageHeight,
-                      borderTopLeftRadius: borderTopRadius,
-                      borderTopRightRadius: borderTopRadius,
                     }}
                   >
                     <img
