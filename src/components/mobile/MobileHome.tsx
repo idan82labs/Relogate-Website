@@ -112,10 +112,10 @@ export const MobileHome = () => {
             {articles.title}
           </h2>
           <div className="flex gap-1">
-            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center">
+            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center" aria-label="הקודם">
               <Icon name="chevronRight" size={16} className="text-[#1D1D1B]" />
             </button>
-            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center">
+            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center" aria-label="הבא">
               <Icon name="chevronLeft" size={16} className="text-[#1D1D1B]" />
             </button>
           </div>
@@ -123,7 +123,11 @@ export const MobileHome = () => {
 
         {/* Single article card for mobile */}
         <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1D1D1B] to-[#215388]" />
+          <img
+            src={articles.items[0].image}
+            alt={articles.items[0].title}
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1B]/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <h3 className="text-white text-base font-normal leading-snug">

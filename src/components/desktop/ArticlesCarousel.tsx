@@ -33,19 +33,19 @@ export const ArticlesCarousel = () => {
             {articles.title}
           </motion.h2>
 
-          {/* Navigation arrows */}
+          {/* Navigation arrows - RTL: right arrow scrolls to older (right), left arrow to newer (left) */}
           <div className="flex gap-2">
             <button
-              onClick={() => scroll("right")}
+              onClick={() => scroll("left")}
               className="w-10 h-10 rounded-full border border-[#C6C6C6] flex items-center justify-center hover:bg-[#F7F7F7] transition-colors"
-              aria-label="Previous"
+              aria-label="הקודם"
             >
               <Icon name="chevronRight" size={20} className="text-[#1D1D1B]" />
             </button>
             <button
-              onClick={() => scroll("left")}
+              onClick={() => scroll("right")}
               className="w-10 h-10 rounded-full border border-[#C6C6C6] flex items-center justify-center hover:bg-[#F7F7F7] transition-colors"
-              aria-label="Next"
+              aria-label="הבא"
             >
               <Icon name="chevronLeft" size={20} className="text-[#1D1D1B]" />
             </button>
@@ -68,7 +68,11 @@ export const ArticlesCarousel = () => {
             >
               {/* Image */}
               <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden mb-4 group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1D1D1B] to-[#215388]" />
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1B]/60 to-transparent" />
                 {/* Text overlay */}

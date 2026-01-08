@@ -179,22 +179,22 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       {
         title: "המדריך המלא לרילוקיישן – כל מה שצריך לדעת לפני המעבר הגדול",
         date: "פורסם במרץ 17, 2024 על ידי Relogate",
-        image: "/placeholder/article-1.jpg",
+        image: "/articles/article-1.jpg",
       },
       {
         title: "המדריך המלא לרילוקיישן – כל מה שצריך לדעת לפני המעבר הגדול",
         date: "פורסם במרץ 17, 2024 על ידי Relogate",
-        image: "/placeholder/article-2.jpg",
+        image: "/articles/article-2.jpg",
       },
       {
         title: "המדריך המלא לרילוקיישן – כל מה שצריך לדעת לפני המעבר הגדול",
         date: "פורסם במרץ 17, 2024 על ידי Relogate",
-        image: "/placeholder/article-3.jpg",
+        image: "/articles/article-3.jpg",
       },
       {
         title: "המדריך המלא לרילוקיישן – כל מה שצריך לדעת לפני המעבר הגדול",
         date: "פורסם במרץ 17, 2024 על ידי Relogate",
-        image: "/placeholder/article-4.jpg",
+        image: "/articles/article-4.jpg",
       },
     ],
   },

@@ -250,7 +250,7 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
           {/* Article Card */}
           <div className="relative rounded-[20px] overflow-hidden h-[450px]">
             <Image
-              src="/hero-2.jpg"
+              src={articles.items[0].image}
               alt={articles.items[0].title}
               fill
               className="object-cover"
