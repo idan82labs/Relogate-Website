@@ -16,8 +16,7 @@ export const MobileQuestionnaireLanding = () => {
   const { howItWorks } = questionTest;
 
   const handleStartQuestionnaire = () => {
-    // TODO: Navigate to first question when implemented
-    router.push("/test/question/1");
+    router.push("/questionnaire/countries");
   };
 
   return (

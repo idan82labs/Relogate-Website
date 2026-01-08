@@ -14,3 +14,4 @@ export { Footer } from "./Footer";
 export { LoginForm } from "./LoginForm";
 export { RegistrationForm } from "./RegistrationForm";
 export { QuestionnaireLanding } from "./QuestionnaireLanding";
+export { QuestionnaireStep } from "./QuestionnaireStep";

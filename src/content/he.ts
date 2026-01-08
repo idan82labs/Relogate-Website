@@ -340,6 +340,72 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         },
       ],
     },
+
+    // Progress sections
+    progress: {
+      eligibility: "בדיקת זכאות",
+      preferences: "העדפות",
+    },
+
+    // Navigation
+    navigation: {
+      back: "חזור",
+      continue: "המשך",
+      saveAndContinue: "שמור והמשך",
+    },
+
+    // Question steps
+    steps: {
+      // Step 1: Country preference
+      countryPreference: {
+        title: "מהן המדינות המועדפות שלך להגירה או רילוקיישן?",
+        hint: "אנא סמן את המדינות המועדפות שלך",
+        options: [
+          { id: "us", label: "ארצות הברית" },
+          { id: "au", label: "אוסטרליה" },
+          { id: "ca", label: "קנדה" },
+          { id: "any", label: "כולן טובות לי" },
+        ],
+      },
+
+      // Step 2: Relocation reason / Family status
+      relocationReason: {
+        title: "למה את/ה רוצה לעבור לחו\"ל?",
+        familyStatusLabel: "מצב משפחתי",
+        familyStatusPlaceholder: "בחר/י",
+        familyStatusOptions: [
+          { value: "single", label: "רווק/ה" },
+          { value: "common_law", label: "ידוע/ה בציבור" },
+          { value: "married", label: "נשוי/אה" },
+          { value: "separated", label: "פרוד/ה" },
+          { value: "divorced", label: "גרוש/ה" },
+          { value: "widowed", label: "אלמן/ה" },
+        ],
+      },
+
+      // Step 3: Personal details
+      personalDetails: {
+        title: "בדוק את הזכאות שלך לויזה",
+        fields: {
+          fullName: { label: "שם מלא", placeholder: "" },
+          email: { label: "אימייל", placeholder: "" },
+          phone: { label: "מספר טלפון", placeholder: "" },
+          birthDate: { label: "תאריך לידה", placeholder: "בחר תאריך" },
+          familyStatus: { label: "מצב משפחתי", placeholder: "בחר/י" },
+          spouseBirthDate: {
+            label: "תאריך לידה של בן/בת הזוג",
+            placeholder: "בחר תאריך",
+          },
+          citizenship: { label: "ארץ אזרחות", placeholder: "" },
+          spouseCitizenship: {
+            label: "ארץ אזרחות של בן/בת הזוג",
+            placeholder: "",
+          },
+          additionalCitizenship: { label: "ארץ אזרחות נוספת", placeholder: "" },
+          residenceCountry: { label: "ארץ מגורים", placeholder: "" },
+        },
+      },
+    },
   },
 };
 

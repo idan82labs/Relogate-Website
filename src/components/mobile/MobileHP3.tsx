@@ -54,7 +54,7 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
 
           {/* CTA Button */}
           <div className="flex justify-end mb-6">
-            <Button size="sm" className="text-sm px-5 py-2.5" onClick={() => router.push("/test")}>
+            <Button size="sm" className="text-sm px-5 py-2.5" onClick={() => router.push("/questionnaire")}>
               {hero.cta}
             </Button>
           </div>

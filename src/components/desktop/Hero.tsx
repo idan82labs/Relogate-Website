@@ -35,7 +35,7 @@ export const Hero = () => {
               <br />
               {hero.subtitle}
             </h1>
-            <Button variant="primary" size="lg" onClick={() => router.push("/test")}>
+            <Button variant="primary" size="lg" onClick={() => router.push("/questionnaire")}>
               {hero.cta}
             </Button>
           </motion.div>

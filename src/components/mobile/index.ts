@@ -7,3 +7,4 @@ export { MobileHome } from "./MobileHome";
 export { MobileLoginForm } from "./MobileLoginForm";
 export { MobileRegistrationForm } from "./MobileRegistrationForm";
 export { MobileQuestionnaireLanding } from "./MobileQuestionnaireLanding";
+export { MobileQuestionnaireStep } from "./MobileQuestionnaireStep";

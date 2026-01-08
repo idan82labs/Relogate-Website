@@ -9,7 +9,7 @@ import { QuestionnaireLanding } from "@/components/desktop/QuestionnaireLanding"
 // Mobile component
 import { MobileQuestionnaireLanding } from "@/components/mobile/MobileQuestionnaireLanding";
 
-export default function TestPage() {
+export default function QuestionnairePage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   // Detect viewport and set mobile state

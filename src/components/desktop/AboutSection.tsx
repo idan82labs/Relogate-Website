@@ -49,7 +49,7 @@ export const AboutSection = () => {
             <div className="text-lg text-[#1D1D1B] mb-8 whitespace-pre-line leading-relaxed">
               {about.description}
             </div>
-            <Button variant="primary" size="lg" onClick={() => router.push("/test")}>
+            <Button variant="primary" size="lg" onClick={() => router.push("/questionnaire")}>
               {about.cta}
             </Button>
           </motion.div>
