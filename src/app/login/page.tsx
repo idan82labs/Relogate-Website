@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Desktop components
 import { LoginForm } from "@/components/desktop";
 
 // Mobile components
-import { MobileLoginForm } from "@/components/mobile";
+import { MobileLoginForm, WelcomeIntro } from "@/components/mobile";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [showWelcomeIntro, setShowWelcomeIntro] = useState(false);
 
   // Detect viewport and set mobile state
   useEffect(() => {
@@ -26,7 +27,17 @@ export default function LoginPage() {
   }, []);
 
   const handleLoginSuccess = () => {
-    // Redirect to homepage (splash already marked as seen)
+    if (isMobile) {
+      // Show WelcomeIntro animation on mobile before redirecting
+      setShowWelcomeIntro(true);
+    } else {
+      // Desktop: redirect directly to homepage
+      router.push("/");
+    }
+  };
+
+  const handleWelcomeIntroComplete = () => {
+    // After WelcomeIntro animation, redirect to homepage
     router.push("/");
   };
 
@@ -72,7 +83,15 @@ export default function LoginPage() {
 
   // Mobile Experience
   if (isMobile) {
-    return <MobileLoginForm onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <AnimatePresence mode="wait">
+        {showWelcomeIntro ? (
+          <WelcomeIntro key="welcome" onComplete={handleWelcomeIntroComplete} />
+        ) : (
+          <MobileLoginForm key="login" onLoginSuccess={handleLoginSuccess} />
+        )}
+      </AnimatePresence>
+    );
   }
 
   // Desktop Experience

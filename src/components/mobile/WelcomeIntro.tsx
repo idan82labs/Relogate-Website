@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, Variants } from "framer-motion";
+import { useRef, useEffect } from "react";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { MobileHeader } from "./MobileHeader";
 
@@ -18,15 +18,15 @@ interface ImageCard {
   id: string;
   src: string;
   alt: string;
-  // Position as percentage of content area (below header)
+  // Final position as percentage of content area
   left: string;
   top: string;
   // Size
   width: string;
   aspectRatio: string;
-  // Animation direction multipliers (-1 = left/top, 1 = right/bottom, 0 = center)
-  flyFromX: number;
-  flyFromY: number;
+  // Starting position offset (in viewport units, will fly from edge)
+  startX: number; // -100 = left edge, 100 = right edge
+  startY: number; // -100 = top edge, 100 = bottom edge
 }
 
 const imageCards: ImageCard[] = [
@@ -39,8 +39,8 @@ const imageCards: ImageCard[] = [
     top: "6%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: -1,
-    flyFromY: -0.5,
+    startX: -120,
+    startY: -80,
   },
   {
     // Top-Right: Couple in Florence
@@ -51,8 +51,8 @@ const imageCards: ImageCard[] = [
     top: "3%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: 1,
-    flyFromY: -0.5,
+    startX: 120,
+    startY: -80,
   },
   {
     // Middle-Center: Amsterdam bikes
@@ -63,8 +63,8 @@ const imageCards: ImageCard[] = [
     top: "22%",
     width: "39%",
     aspectRatio: "146/116",
-    flyFromX: 0,
-    flyFromY: -1,
+    startX: 0,
+    startY: -120,
   },
   {
     // Bottom-Left: Elderly woman with dog
@@ -75,8 +75,8 @@ const imageCards: ImageCard[] = [
     top: "63%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: -1,
-    flyFromY: 0.5,
+    startX: -120,
+    startY: 80,
   },
   {
     // Bottom-Center: Family photo
@@ -87,8 +87,8 @@ const imageCards: ImageCard[] = [
     top: "55%",
     width: "39%",
     aspectRatio: "146/116",
-    flyFromX: 0,
-    flyFromY: 1,
+    startX: 0,
+    startY: 120,
   },
   {
     // Bottom-Right: Mother & child at beach
@@ -99,186 +99,176 @@ const imageCards: ImageCard[] = [
     top: "68%",
     width: "39%",
     aspectRatio: "146/197",
-    flyFromX: 1,
-    flyFromY: 0.5,
+    startX: 120,
+    startY: 80,
   },
 ];
 
 /**
- * Animation Configuration
- *
- * Timeline:
- * 0.0s  - Component mounts
- * 0.5s  - First card starts flying in
- * 0.7s  - Second card starts (stagger: 0.2s)
- * 0.9s  - Third card starts
- * 1.1s  - Fourth card starts
- * 1.3s  - Fifth card starts
- * 1.5s  - Sixth card starts
- * 1.8s  - Text starts appearing
- * 2.6s  - Text fully visible, cards settled
- * 5.0s  - Auto-transition to HP3
- *
- * User has ~2.4 seconds to read the text
- *
- * Performance Notes:
- * - Using pixel values instead of viewport units (vw/vh) for GPU acceleration
- * - Using tween with easeOut instead of spring to avoid micro-jitters
- * - transform: translateZ(0) forces GPU layer creation
- * - will-change: transform hints browser to optimize
+ * Scroll-triggered animation:
+ * 1. Text appears immediately
+ * 2. User scrolls → cards fly in from edges
+ * 3. When cards settle → navigate to homepage
  */
-
-// Container variants for staggered children animation
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.5,
-    },
-  },
-};
-
-/**
- * Creates card variants with pixel-based offsets for smooth GPU-accelerated animation.
- * Using tween animation instead of spring to avoid micro-jitters.
- */
-const createCardVariants = (viewportWidth: number, viewportHeight: number): Variants => ({
-  hidden: (custom: { flyFromX: number; flyFromY: number }) => ({
-    x: custom.flyFromX * viewportWidth,
-    y: custom.flyFromY * viewportHeight,
-    opacity: 0,
-    scale: 0.9,
-  }),
-  visible: {
-    x: 0,
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    transition: {
-      // Tween with easeOut is smoother than spring for fly-in animations
-      type: "tween",
-      duration: 1.0,
-      ease: [0.25, 0.1, 0.25, 1], // CSS ease equivalent - very smooth
-    },
-  },
-});
-
-// Text variants - appears after cards with smooth fade
-const textVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 20,                    // Slide up slightly for more natural feel
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: 1.8,             // After cards have mostly settled (was 1.2)
-      duration: 0.8,          // Slower fade-in (was 0.6)
-      ease: "easeOut",
-    },
-  },
-};
-
-// Total animation duration before auto-transition (in ms)
-// Gives user ~2.4 seconds to read the text after it appears
-const AUTO_TRANSITION_DELAY = 5000;
-
 export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
   const { mobile } = siteContent;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hasCompletedRef = useRef(false);
 
-  // Get viewport dimensions for pixel-based animations (avoids viewport unit jank)
-  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  // Track scroll progress within the container
+  const { scrollYProgress } = useScroll({
+    container: containerRef,
+  });
 
+  // Use scroll progress directly for immediate response
+  const smoothProgress = scrollYProgress;
+
+  // When scroll reaches the end, trigger completion
   useEffect(() => {
-    // Calculate viewport size on mount for GPU-accelerated pixel animations
-    setViewportSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      if (value >= 0.95 && !hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        // Small delay to let animation settle
+        setTimeout(() => {
+          onComplete();
+        }, 300);
+      }
     });
-  }, []);
 
-  // Auto-transition to next screen after animation completes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onComplete();
-    }, AUTO_TRANSITION_DELAY);
-
-    return () => clearTimeout(timer);
-  }, [onComplete]);
-
-  // Create card variants with actual pixel values (not viewport units)
-  const cardVariants = createCardVariants(viewportSize.width, viewportSize.height);
-
-  // Don't render animation until viewport size is known
-  const isReady = viewportSize.width > 0;
+    return () => unsubscribe();
+  }, [scrollYProgress, onComplete]);
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-40 bg-white flex flex-col"
+      className="fixed inset-0 z-40 bg-white overflow-y-auto"
     >
-      {/* Header with bottom border */}
-      <MobileHeader />
+      {/* Fixed header */}
+      <div className="sticky top-0 left-0 right-0 z-50 bg-white">
+        <MobileHeader />
+      </div>
 
-      {/* Main content area - no overflow hidden to allow fly-in animation */}
-      <motion.div
-        className="flex-1 relative"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isReady ? "visible" : "hidden"}
-      >
-        {/* Image cards with fly-in animation */}
-        {imageCards.map((card) => (
+      {/* Scrollable content - 400vh for slower animation */}
+      <div className="h-[400vh] relative">
+        {/* Fixed content area that animates based on scroll */}
+        <div className="fixed top-[52px] left-0 right-0 bottom-0 overflow-hidden pointer-events-none">
+          {/* Title text - visible immediately */}
           <motion.div
-            key={card.id}
-            custom={{ flyFromX: card.flyFromX, flyFromY: card.flyFromY }}
-            variants={cardVariants}
-            className="absolute rounded-[10px] overflow-hidden"
-            style={{
-              left: card.left,
-              top: card.top,
-              width: card.width,
-              aspectRatio: card.aspectRatio,
-              // GPU acceleration hints
-              backgroundColor: "transparent",
-              backfaceVisibility: "hidden",
-              willChange: "transform, opacity",
-              // Force GPU layer creation
-              transform: "translateZ(0)",
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="absolute left-0 right-0 flex flex-col items-center justify-center z-20 pointer-events-none"
+            style={{ top: "46%" }}
           >
-            <img
-              src={card.src}
-              alt={card.alt}
-              className="w-full h-full object-cover"
-              loading="eager"
-            />
+            <h1 className="text-[28px] font-medium text-[#1D1D1B] text-center leading-tight px-4">
+              {mobile.welcomeIntro.title}
+            </h1>
+            <p className="text-[28px] font-medium text-[#1D1D1B] text-center leading-tight px-4">
+              {mobile.welcomeIntro.subtitle}
+            </p>
           </motion.div>
-        ))}
 
-        {/* Center title text - positioned in gap between top and bottom cards */}
-        {/* Figma: text at Y=365 on 812px screen, header=52px, so ~41% of content area */}
-        {/* Gap is between middle card bottom (~38%) and bottom cards top (~55%) */}
-        {/* Center of gap: ~46% */}
-        <motion.div
-          variants={textVariants}
-          className="absolute left-0 right-0 flex flex-col items-center justify-center z-10 pointer-events-none"
-          style={{
-            top: "46%",
-          }}
-        >
-          <h1 className="text-[28px] font-medium text-[#1D1D1B] text-center leading-tight px-4">
-            {mobile.welcomeIntro.title}
-          </h1>
-          <p className="text-[28px] font-medium text-[#1D1D1B] text-center leading-tight px-4">
-            {mobile.welcomeIntro.subtitle}
-          </p>
-        </motion.div>
-      </motion.div>
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="absolute bottom-8 left-0 right-0 flex flex-col items-center z-20"
+          >
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="text-[#215388]"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 5v14M19 12l-7 7-7-7"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.div>
+            <span className="text-sm text-[#706F6F] mt-2">גלול למטה</span>
+          </motion.div>
+
+          {/* Image cards - animate based on scroll */}
+          {imageCards.map((card) => (
+            <ScrollCard
+              key={card.id}
+              card={card}
+              progress={smoothProgress}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+/**
+ * Individual card component that animates based on scroll progress
+ */
+interface ScrollCardProps {
+  card: ImageCard;
+  progress: MotionValue<number>;
+}
+
+const ScrollCard = ({ card, progress }: ScrollCardProps) => {
+  // Transform scroll progress to card position
+  // Animation spans entire scroll (0 to 1) for continuous movement
+  // At progress 0: card is off-screen
+  // At progress 1: card reaches final position
+  const x = useTransform(
+    progress,
+    [0, 1],
+    [`${card.startX}vw`, "0vw"]
+  );
+
+  const y = useTransform(
+    progress,
+    [0, 1],
+    [`${card.startY}vh`, "0vh"]
+  );
+
+  const opacity = useTransform(
+    progress,
+    [0, 0.3],
+    [0, 1]
+  );
+
+  const scale = useTransform(
+    progress,
+    [0, 1],
+    [0.8, 1]
+  );
+
+  return (
+    <motion.div
+      className="absolute rounded-[10px] overflow-hidden shadow-lg"
+      style={{
+        left: card.left,
+        top: card.top,
+        width: card.width,
+        aspectRatio: card.aspectRatio,
+        x,
+        y,
+        opacity,
+        scale,
+        // GPU acceleration
+        willChange: "transform, opacity",
+      }}
+    >
+      <img
+        src={card.src}
+        alt={card.alt}
+        className="w-full h-full object-cover"
+        loading="eager"
+      />
     </motion.div>
   );
 };
