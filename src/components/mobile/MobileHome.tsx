@@ -158,7 +158,7 @@ export const MobileHome = () => {
           <a href={`mailto:${contact.email}`} className="block text-sm text-[#1D1D1B]">
             {contact.email}
           </a>
-          <a href={`tel:${contact.phone}`} className="block text-sm text-[#1D1D1B]">
+          <a href={`tel:${contact.phone}`} className="block text-sm text-[#1D1D1B]" dir="ltr">
             {contact.phone}
           </a>
         </div>

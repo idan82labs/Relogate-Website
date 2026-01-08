@@ -298,7 +298,7 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
           {/* Contact Details */}
           <div className="text-sm text-[#1D1D1B] mb-4">
             <p>{contact.email}</p>
-            <p>{contact.phone}</p>
+            <p dir="ltr">{contact.phone}</p>
           </div>
 
           {/* Description */}

@@ -27,19 +27,20 @@ const AccordionItem = ({
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.25 }}
-          className="mr-4 text-[#215388]"
+          className="mr-4 text-[#1D1D1B]"
         >
+          {/* Diagonal arrow: points bottom-left when closed, top-right when open */}
           <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
+            width="17"
+            height="17"
+            viewBox="0 0 17 17"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M6 9L12 15L18 9"
+              d="M13 4L4 13M4 13H11M4 13V6"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -69,7 +70,7 @@ interface AccordionProps {
 }
 
 export const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
-  const [openIndexes, setOpenIndexes] = useState<number[]>([0]); // First item open by default
+  const [openIndexes, setOpenIndexes] = useState<number[]>([]); // All items closed by default
 
   const handleToggle = useCallback(
     (index: number) => {

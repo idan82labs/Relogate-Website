@@ -24,7 +24,7 @@ export const MobileFooter = () => {
         {/* Contact Info */}
         <div className="text-white/80 text-sm space-y-1 mb-4">
           <p>{footer.email}</p>
-          <p>{footer.phone}</p>
+          <p dir="ltr">{footer.phone}</p>
         </div>
 
         {/* Social Icons */}

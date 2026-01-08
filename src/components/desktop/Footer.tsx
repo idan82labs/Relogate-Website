@@ -27,6 +27,7 @@ export const Footer = () => {
             <a
               href={`tel:${footer.phone}`}
               className="hover:text-[#239083] transition-colors"
+              dir="ltr"
             >
               {footer.phone}
             </a>

@@ -52,7 +52,7 @@ export const Contact = () => {
                 className="flex items-center gap-3 text-[#1D1D1B] hover:text-[#215388] transition-colors"
               >
                 <Icon name="phone" size={20} />
-                <span>{contact.phone}</span>
+                <span dir="ltr">{contact.phone}</span>
               </a>
             </div>
 
