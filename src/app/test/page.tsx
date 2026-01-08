@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 // Desktop component
-import { QuestionTestHowItWorks } from "@/components/desktop/QuestionTestHowItWorks";
+import { QuestionnaireLanding } from "@/components/desktop/QuestionnaireLanding";
 
 // Mobile component
-import { MobileQuestionTestHowItWorks } from "@/components/mobile/MobileQuestionTestHowItWorks";
+import { MobileQuestionnaireLanding } from "@/components/mobile/MobileQuestionnaireLanding";
 
 export default function TestPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -39,5 +39,5 @@ export default function TestPage() {
   }
 
   // Render appropriate component based on viewport
-  return isMobile ? <MobileQuestionTestHowItWorks /> : <QuestionTestHowItWorks />;
+  return isMobile ? <MobileQuestionnaireLanding /> : <QuestionnaireLanding />;
 }

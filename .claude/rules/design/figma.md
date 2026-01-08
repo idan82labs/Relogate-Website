@@ -51,9 +51,9 @@ Create slugs from the label in `figma_urls.md`:
 
 **Example:**
 - Label: `mobile HP2`
-- File key: `9iC5uUBVU3QoX9XIByWgB4`
+- File key: `El5UXWl6BAyyV3TVPrArik`
 - Node ID: `276:4579` → `276-4579`
-- Slug: `mobile-hp2_9iC5uUBVU3QoX9XIByWgB4_276-4579`
+- Slug: `mobile-hp2_El5UXWl6BAyyV3TVPrArik_276-4579`
 
 ## Workflow
 
@@ -130,6 +130,16 @@ Only call these when cache is missing:
 - `mcp__figma__get_design_context` - Get layout/styling code hints
 - `mcp__figma__get_metadata` - Get node structure in XML
 
+### Rate Limits
+
+**IMPORTANT: Figma MCP has a rate limit of 10 requests per minute.**
+
+- Plan your MCP calls carefully to stay within this limit
+- Always check the cache first before making MCP calls
+- When verifying multiple URLs, space out requests or batch verification across sessions
+- If you hit a rate limit error, wait at least 1 minute before retrying
+- For bulk operations (like fetching metadata for multiple nodes), make requests incrementally
+
 ## Implementation Guidelines
 
 ### Match the Design
@@ -164,8 +174,8 @@ https://www.figma.com/design/<file_key>/<file_name>?node-id=<node_id>&m=dev
 
 Example from this project:
 ```
-file_key: 9iC5uUBVU3QoX9XIByWgB4
-node_id: 270-1598 (API format: 270:1598)
+file_key: El5UXWl6BAyyV3TVPrArik
+node_id: 276-9761 (API format: 276:9761)
 ```
 
 ## Quick Reference: Cache Check Flow

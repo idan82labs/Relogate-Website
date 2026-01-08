@@ -7,10 +7,10 @@ import { Button, MobileFooter, StepCard } from "@/components/shared";
 import { MobileHeader } from "./MobileHeader";
 
 /**
- * MobileQuestionTestHowItWorks - Mobile landing page for the question test flow
- * Shows "How it works" with 3 steps before starting the questionnaire
+ * MobileQuestionnaireLanding - Mobile landing page for the eligibility questionnaire
+ * Shows the 3-step process before users start the questionnaire
  */
-export const MobileQuestionTestHowItWorks = () => {
+export const MobileQuestionnaireLanding = () => {
   const router = useRouter();
   const { questionTest } = siteContent;
   const { howItWorks } = questionTest;
@@ -95,4 +95,4 @@ export const MobileQuestionTestHowItWorks = () => {
   );
 };
 
-export default MobileQuestionTestHowItWorks;
+export default MobileQuestionnaireLanding;

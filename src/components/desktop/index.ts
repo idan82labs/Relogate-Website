@@ -11,5 +11,6 @@ export { ArticlesCarousel } from "./ArticlesCarousel";
 export { FAQ } from "./FAQ";
 export { Contact } from "./Contact";
 export { Footer } from "./Footer";
-export { PersonalAreaWelcome } from "./PersonalAreaWelcome";
-export { PersonalAreaRegistration } from "./PersonalAreaRegistration";
+export { LoginForm } from "./LoginForm";
+export { RegistrationForm } from "./RegistrationForm";
+export { QuestionnaireLanding } from "./QuestionnaireLanding";

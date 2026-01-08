@@ -263,21 +263,25 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     copyright: "© 2025 RELOGATE Ltd | חברה רשומה באנגליה",
   },
 
-  // Personal Area
+  // Authentication (Login/Registration)
   personalArea: {
     // Shared
     title: "ברוכים הבאים לאזור האישי של Relogate",
 
-    // Login page (ID verification flow)
+    // Login form
     login: {
-      idLabel: "הקלד/י מספר תעודת זהות",
-      idPlaceholder: "מספר תעודת זהות",
-      sendCodeViaEmail: "שלח אלי קוד באמצעות אימייל",
+      title: "ברוכים הבאים לאזור האישי של Relogate",
+      emailLabel: "אימייל",
+      emailPlaceholder: "הזן כתובת אימייל",
+      passwordLabel: "סיסמה",
+      passwordPlaceholder: "הזן סיסמה",
+      loginButton: "התחברות",
+      forgotPassword: "שכחת סיסמה?",
       noAccount: "אין לך חשבון?",
       register: "הירשם",
     },
 
-    // Registration page
+    // Registration form
     registration: {
       fullNameLabel: "שם מלא",
       fullNamePlaceholder: "הזן שם מלא",
@@ -289,26 +293,10 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       phonePlaceholder: "הזן מספר טלפון",
       emailLabel: "אימייל",
       emailPlaceholder: "הזן כתובת אימייל",
-      passwordLabel: "שינוי סיסמה",
+      passwordLabel: "סיסמה",
       passwordPlaceholder: "הזן סיסמה",
       submitButton: "להרשמה",
       hasAccount: "יש לך חשבון?",
-      login: "התחבר",
-    },
-
-    // Legacy (for backwards compatibility during transition)
-    welcome: {
-      title: "ברוכים הבאים לאזור האישי של Relogate",
-      emailLabel: "אימייל",
-      emailPlaceholder: "הזן כתובת אימייל",
-      passwordLabel: "סיסמה",
-      passwordPlaceholder: "הזן סיסמה",
-      loginButton: "התחברות",
-      registerButton: "הרשמה",
-      forgotPassword: "שכחת סיסמה?",
-      noAccount: "אין לך חשבון?",
-      hasAccount: "יש לך חשבון?",
-      register: "הירשם",
       login: "התחבר",
     },
   },

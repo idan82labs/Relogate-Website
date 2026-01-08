@@ -8,10 +8,10 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 
 /**
- * QuestionTestHowItWorks - Desktop landing page for the question test flow
- * Shows "How it works" with 3 steps before starting the questionnaire
+ * QuestionnaireLanding - Desktop landing page for the eligibility questionnaire
+ * Shows the 3-step process before users start the questionnaire
  */
-export const QuestionTestHowItWorks = () => {
+export const QuestionnaireLanding = () => {
   const router = useRouter();
   const { questionTest } = siteContent;
   const { howItWorks } = questionTest;
@@ -101,4 +101,4 @@ export const QuestionTestHowItWorks = () => {
   );
 };
 
-export default QuestionTestHowItWorks;
+export default QuestionnaireLanding;

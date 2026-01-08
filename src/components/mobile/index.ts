@@ -4,5 +4,6 @@ export { MobileHP3 } from "./MobileHP3";
 export { MobileHeader } from "./MobileHeader";
 export { MobileHowItWorks } from "./MobileHowItWorks";
 export { MobileHome } from "./MobileHome";
-export { MobilePersonalAreaWelcome } from "./MobilePersonalAreaWelcome";
-export { MobilePersonalAreaRegistration } from "./MobilePersonalAreaRegistration";
+export { MobileLoginForm } from "./MobileLoginForm";
+export { MobileRegistrationForm } from "./MobileRegistrationForm";
+export { MobileQuestionnaireLanding } from "./MobileQuestionnaireLanding";

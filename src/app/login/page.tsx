@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 // Desktop components
-import { PersonalAreaWelcome } from "@/components/desktop";
+import { LoginForm } from "@/components/desktop";
 
 // Mobile components
-import { MobilePersonalAreaWelcome } from "@/components/mobile";
+import { MobileLoginForm } from "@/components/mobile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -72,9 +72,9 @@ export default function LoginPage() {
 
   // Mobile Experience
   if (isMobile) {
-    return <MobilePersonalAreaWelcome onLoginSuccess={handleLoginSuccess} />;
+    return <MobileLoginForm onLoginSuccess={handleLoginSuccess} />;
   }
 
   // Desktop Experience
-  return <PersonalAreaWelcome onLoginSuccess={handleLoginSuccess} />;
+  return <LoginForm onLoginSuccess={handleLoginSuccess} />;
 }

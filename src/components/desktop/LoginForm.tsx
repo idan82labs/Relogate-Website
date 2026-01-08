@@ -8,8 +8,8 @@ import { Button, TextInput } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-// Globe watermark SVG for Personal Area (matches Figma design)
-const PersonalAreaGlobe = () => (
+// Globe watermark SVG for Auth pages (matches Figma design)
+const AuthGlobe = () => (
   <svg
     className="absolute left-1/2 -translate-x-1/2 top-[85px] pointer-events-none"
     width="478"
@@ -27,15 +27,16 @@ const PersonalAreaGlobe = () => (
   </svg>
 );
 
-interface PersonalAreaWelcomeProps {
+interface LoginFormProps {
   onLoginSuccess?: () => void;
 }
 
-export const PersonalAreaWelcome = ({
-  onLoginSuccess,
-}: PersonalAreaWelcomeProps) => {
+/**
+ * LoginForm - Desktop login form for user authentication
+ */
+export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const { personalArea } = siteContent;
-  const { welcome } = personalArea;
+  const { login } = personalArea;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +54,7 @@ export const PersonalAreaWelcome = ({
       {/* Main Content */}
       <main className="flex-1 bg-white relative overflow-hidden">
         {/* Globe Watermark - matches Figma positioning */}
-        <PersonalAreaGlobe />
+        <AuthGlobe />
 
         {/* Form Container */}
         <div className="container relative z-10 py-16 lg:py-24">
@@ -65,7 +66,7 @@ export const PersonalAreaWelcome = ({
           >
             {/* Title */}
             <h1 className="text-[32px] lg:text-[40px] font-bold text-[#1D1D1B] text-center leading-tight mb-12">
-              {welcome.title}
+              {login.title}
             </h1>
 
             {/* Form */}
@@ -78,22 +79,22 @@ export const PersonalAreaWelcome = ({
             >
               {/* Email Input */}
               <TextInput
-                label={welcome.emailLabel}
+                label={login.emailLabel}
                 type="email"
                 size="lg"
                 value={email}
                 onChange={setEmail}
-                placeholder={welcome.emailPlaceholder}
+                placeholder={login.emailPlaceholder}
               />
 
               {/* Password Input */}
               <TextInput
-                label={welcome.passwordLabel}
+                label={login.passwordLabel}
                 type="password"
                 size="lg"
                 value={password}
                 onChange={setPassword}
-                placeholder={welcome.passwordPlaceholder}
+                placeholder={login.passwordPlaceholder}
               />
 
               {/* Forgot Password Link */}
@@ -102,7 +103,7 @@ export const PersonalAreaWelcome = ({
                   type="button"
                   className="text-sm text-[#215388] hover:underline transition-colors"
                 >
-                  {welcome.forgotPassword}
+                  {login.forgotPassword}
                 </button>
               </div>
 
@@ -113,17 +114,17 @@ export const PersonalAreaWelcome = ({
                 size="lg"
                 className="w-full"
               >
-                {welcome.loginButton}
+                {login.loginButton}
               </Button>
 
               {/* Register Link */}
               <p className="text-center text-[#706F6F]">
-                {welcome.noAccount}{" "}
+                {login.noAccount}{" "}
                 <Link
                   href="/register"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {welcome.register}
+                  {login.register}
                 </Link>
               </p>
             </form>
@@ -136,4 +137,4 @@ export const PersonalAreaWelcome = ({
   );
 };
 
-export default PersonalAreaWelcome;
+export default LoginForm;

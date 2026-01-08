@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 // Desktop components
-import { PersonalAreaRegistration } from "@/components/desktop";
+import { RegistrationForm } from "@/components/desktop";
 
 // Mobile components
-import { MobilePersonalAreaRegistration } from "@/components/mobile";
+import { MobileRegistrationForm } from "@/components/mobile";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -73,10 +73,10 @@ export default function RegisterPage() {
   // Mobile Experience
   if (isMobile) {
     return (
-      <MobilePersonalAreaRegistration onRegisterSuccess={handleRegisterSuccess} />
+      <MobileRegistrationForm onRegisterSuccess={handleRegisterSuccess} />
     );
   }
 
   // Desktop Experience
-  return <PersonalAreaRegistration onRegisterSuccess={handleRegisterSuccess} />;
+  return <RegistrationForm onRegisterSuccess={handleRegisterSuccess} />;
 }

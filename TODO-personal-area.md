@@ -1,24 +1,24 @@
-# Personal Area - Implementation Notes
+# Authentication - Implementation Notes
 
 ## Branch: personal_area
 
 ### Implemented Pages
 
-- [x] **Login Page (Welcome)**
+- [x] **Login Page**
   - Email input field
   - Password input field
   - Forgot password link
   - Login button
   - Link to registration page
-  - Desktop: `PersonalAreaWelcome`
-  - Mobile: `MobilePersonalAreaWelcome`
+  - Desktop: `LoginForm`
+  - Mobile: `MobileLoginForm`
 
 - [x] **Registration Page**
   - 6 fields: Full name, ID, Date of birth, Phone, Email, Password
   - Desktop: 2-column layout
   - Mobile: Single column layout
-  - Desktop: `PersonalAreaRegistration`
-  - Mobile: `MobilePersonalAreaRegistration`
+  - Desktop: `RegistrationForm`
+  - Mobile: `MobileRegistrationForm`
 
 - [x] **Navigation between Login/Register**
   - State-based navigation in `page.tsx`
@@ -39,7 +39,7 @@
 - [ ] **ID-based Login**
   - Figma shows ID number + code verification flow
   - **Decision:** Using email/password instead
-  - If ID-based login is needed, update `PersonalAreaWelcome` components
+  - If ID-based login is needed, update `LoginForm` components
 
 ---
 
@@ -61,5 +61,5 @@
 
 ## Reference
 
-- Figma URLs: See `docs/design/figma_urls.md` > Personal Area section
+- Figma URLs: See `docs/design/figma_urls.md` > Authentication section
 - Content strings: `src/content/he.ts` > personalArea

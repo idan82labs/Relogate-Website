@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, TextInput, Icon, MobileFooter } from "@/components/shared";
+import { Button, TextInput, MobileFooter } from "@/components/shared";
 import { MobileHeader } from "./MobileHeader";
 
-// Globe watermark SVG for Mobile Personal Area (matches Figma design)
-const MobilePersonalAreaGlobe = () => (
+// Globe watermark SVG for Mobile Auth pages (matches Figma design)
+const MobileAuthGlobe = () => (
   <svg
     className="absolute left-1/2 -translate-x-1/2 top-[60px] pointer-events-none"
     width="320"
@@ -26,33 +26,26 @@ const MobilePersonalAreaGlobe = () => (
   </svg>
 );
 
-interface MobilePersonalAreaRegistrationProps {
-  onRegisterSuccess?: () => void;
+interface MobileLoginFormProps {
+  onLoginSuccess?: () => void;
 }
 
-export const MobilePersonalAreaRegistration = ({
-  onRegisterSuccess,
-}: MobilePersonalAreaRegistrationProps) => {
+/**
+ * MobileLoginForm - Mobile login form for user authentication
+ */
+export const MobileLoginForm = ({
+  onLoginSuccess,
+}: MobileLoginFormProps) => {
   const { personalArea } = siteContent;
-  const { registration } = personalArea;
+  const { login } = personalArea;
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    idNumber: "",
-    birthDate: "",
-    phone: "",
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (field: keyof typeof formData) => (value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
-    console.log("TODO: Implement registration", formData);
-    // Call success callback after registration
-    onRegisterSuccess?.();
+    console.log("TODO: Implement login", { email, password });
+    // Call success callback after login
+    onLoginSuccess?.();
   };
 
   return (
@@ -62,7 +55,7 @@ export const MobilePersonalAreaRegistration = ({
       {/* Main Content */}
       <main className="flex-1 bg-white relative overflow-hidden">
         {/* Globe Watermark - matches Figma positioning */}
-        <MobilePersonalAreaGlobe />
+        <MobileAuthGlobe />
 
         {/* Form Container */}
         <div className="relative z-10 px-4 py-8">
@@ -74,7 +67,7 @@ export const MobilePersonalAreaRegistration = ({
           >
             {/* Title */}
             <h1 className="text-[24px] font-bold text-[#1D1D1B] text-center leading-tight mb-8">
-              {personalArea.title}
+              {login.title}
             </h1>
 
             {/* Form */}
@@ -85,86 +78,49 @@ export const MobilePersonalAreaRegistration = ({
               }}
               className="space-y-5"
             >
-              {/* Full Name */}
+              {/* Email Input */}
               <TextInput
-                label={registration.fullNameLabel}
-                type="text"
-                size="md"
-                value={formData.fullName}
-                onChange={handleChange("fullName")}
-                placeholder={registration.fullNamePlaceholder}
-              />
-
-              {/* ID Number */}
-              <TextInput
-                label={registration.idLabel}
-                type="text"
-                size="md"
-                value={formData.idNumber}
-                onChange={handleChange("idNumber")}
-                placeholder={registration.idPlaceholder}
-              />
-
-              {/* Birth Date */}
-              <TextInput
-                label={registration.birthDateLabel}
-                type="date"
-                size="md"
-                value={formData.birthDate}
-                onChange={handleChange("birthDate")}
-                placeholder={registration.birthDatePlaceholder}
-              />
-
-              {/* Phone */}
-              <TextInput
-                label={registration.phoneLabel}
-                type="tel"
-                size="md"
-                value={formData.phone}
-                onChange={handleChange("phone")}
-                placeholder={registration.phonePlaceholder}
-              />
-
-              {/* Email */}
-              <TextInput
-                label={registration.emailLabel}
+                label={login.emailLabel}
                 type="email"
                 size="md"
-                value={formData.email}
-                onChange={handleChange("email")}
-                placeholder={registration.emailPlaceholder}
+                value={email}
+                onChange={setEmail}
+                placeholder={login.emailPlaceholder}
               />
 
-              {/* Password */}
+              {/* Password Input */}
               <TextInput
-                label={registration.passwordLabel}
+                label={login.passwordLabel}
                 type="password"
                 size="md"
-                value={formData.password}
-                onChange={handleChange("password")}
-                placeholder={registration.passwordPlaceholder}
+                value={password}
+                onChange={setPassword}
+                placeholder={login.passwordPlaceholder}
               />
 
+              {/* Forgot Password Link */}
+              <div className="text-left">
+                <button
+                  type="button"
+                  className="text-sm text-[#215388] hover:underline transition-colors"
+                >
+                  {login.forgotPassword}
+                </button>
+              </div>
+
               {/* Submit Button */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-                fullWidth
-                className="flex items-center justify-center gap-2"
-              >
-                {registration.submitButton}
-                <Icon name="check" size={18} className="text-white" />
+              <Button type="submit" variant="primary" size="md" fullWidth>
+                {login.loginButton}
               </Button>
 
-              {/* Login Link */}
+              {/* Register Link */}
               <p className="text-center text-sm text-[#706F6F]">
-                {registration.hasAccount}{" "}
+                {login.noAccount}{" "}
                 <Link
-                  href="/login"
+                  href="/register"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {registration.login}
+                  {login.register}
                 </Link>
               </p>
             </form>
@@ -177,4 +133,4 @@ export const MobilePersonalAreaRegistration = ({
   );
 };
 
-export default MobilePersonalAreaRegistration;
+export default MobileLoginForm;

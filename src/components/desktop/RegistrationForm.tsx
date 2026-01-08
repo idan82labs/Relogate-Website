@@ -8,8 +8,8 @@ import { Button, TextInput, Icon } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-// Globe watermark SVG for Personal Area (matches Figma design)
-const PersonalAreaGlobe = () => (
+// Globe watermark SVG for Auth pages (matches Figma design)
+const AuthGlobe = () => (
   <svg
     className="absolute left-1/2 -translate-x-1/2 top-[85px] pointer-events-none"
     width="478"
@@ -27,13 +27,16 @@ const PersonalAreaGlobe = () => (
   </svg>
 );
 
-interface PersonalAreaRegistrationProps {
+interface RegistrationFormProps {
   onRegisterSuccess?: () => void;
 }
 
-export const PersonalAreaRegistration = ({
+/**
+ * RegistrationForm - Desktop registration form for new users
+ */
+export const RegistrationForm = ({
   onRegisterSuccess,
-}: PersonalAreaRegistrationProps) => {
+}: RegistrationFormProps) => {
   const { personalArea } = siteContent;
   const { registration } = personalArea;
 
@@ -63,7 +66,7 @@ export const PersonalAreaRegistration = ({
       {/* Main Content */}
       <main className="flex-1 bg-white relative overflow-hidden">
         {/* Globe Watermark - matches Figma positioning */}
-        <PersonalAreaGlobe />
+        <AuthGlobe />
 
         {/* Form Container */}
         <div className="container relative z-10 py-16 lg:py-24">
@@ -179,4 +182,4 @@ export const PersonalAreaRegistration = ({
   );
 };
 
-export default PersonalAreaRegistration;
+export default RegistrationForm;
