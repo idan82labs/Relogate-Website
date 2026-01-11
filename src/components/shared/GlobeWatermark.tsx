@@ -11,7 +11,7 @@ export const GlobeWatermark = ({
   position = "left",
   size = 480,
   className = "",
-  opacity = 1,
+  opacity = 0.2,
 }: GlobeWatermarkProps) => {
   const positionClasses = {
     left: "left-0 -translate-x-1/2",

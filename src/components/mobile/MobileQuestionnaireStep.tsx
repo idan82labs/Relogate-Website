@@ -65,7 +65,7 @@ export const MobileQuestionnaireStep = ({
           <img
             src="/globe-watermark.svg"
             alt=""
-            className="w-[280px] h-[280px] object-contain opacity-40"
+            className="w-[280px] h-[280px] object-contain opacity-20"
             aria-hidden="true"
           />
         </div>

@@ -38,7 +38,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         {/* Hero Section with Ribbon */}
         <section className="relative px-4 pt-6">
           {/* Globe Watermark */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-100 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none">
             <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
           </div>
 
@@ -102,7 +102,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         <section className="px-4 mb-8">
           {/* Globe Watermark for this section */}
           <div className="relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-100 pointer-events-none -z-10">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none -z-10">
               <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
             </div>
 

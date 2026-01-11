@@ -65,7 +65,7 @@ export const QuestionnaireStep = ({
           <img
             src="/globe-watermark.svg"
             alt=""
-            className="w-[500px] h-[500px] object-contain opacity-40"
+            className="w-[500px] h-[500px] object-contain opacity-20"
             aria-hidden="true"
           />
         </div>
