@@ -68,7 +68,7 @@ export default function FamilyStatusStepPage() {
   const canContinue = !!data.familyStatus;
 
   const content = (
-    <div className="max-w-[400px] mx-auto">
+    <div className="max-w-[450px] lg:max-w-[500px] mx-auto">
       <SelectDropdown
         label={steps.familyStatus.label}
         options={steps.familyStatus.options}

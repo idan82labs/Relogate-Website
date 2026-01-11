@@ -121,13 +121,13 @@ export const QuestionnaireStep = ({
             <div className="max-w-[600px] mx-auto">
               {/* Subtitle */}
               {subtitle && (
-                <p className="text-[16px] text-[#706F6F] text-center mb-8">
+                <p className="text-[16px] text-[#706F6F] text-center mb-10">
                   {subtitle}
                 </p>
               )}
 
               {/* Step Content */}
-              <div className="mb-12">{children}</div>
+              <div className="mb-14">{children}</div>
 
               {/* Continue Button - always shows "שמור והמשך" with arrow pointing bottom-left */}
               <div className="flex justify-center">

@@ -81,7 +81,7 @@ export default function RelocationReasonStepPage() {
         value={data.relocationReason || ""}
         onChange={(e) => updateData({ relocationReason: e.target.value })}
         placeholder={steps.relocationReason.placeholder}
-        className="w-full h-[120px] lg:h-[150px] p-4 border border-[#C6C6C6] rounded-[10px]
+        className="w-full h-[140px] lg:h-[180px] p-4 border border-[#C6C6C6] rounded-[10px]
                    text-[14px] lg:text-[16px] text-[#1D1D1B] placeholder-[#C6C6C6]
                    focus:outline-none focus:border-[#215388] focus:ring-1 focus:ring-[#215388]
                    resize-none"

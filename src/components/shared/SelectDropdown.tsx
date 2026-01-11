@@ -61,7 +61,7 @@ export const SelectDropdown = ({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          w-full h-[50px] px-4 rounded-[10px] text-right
+          w-full h-[56px] lg:h-[60px] px-4 rounded-[10px] text-right
           flex items-center justify-between
           bg-white border-2 transition-colors duration-200
           ${error ? "border-red-500" : isOpen ? "border-[#215388]" : "border-[#C6C6C6]"}

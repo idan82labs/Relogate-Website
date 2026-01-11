@@ -119,13 +119,13 @@ export const MobileQuestionnaireStep = ({
 
           {/* Subtitle */}
           {subtitle && (
-            <p className="text-[14px] text-[#706F6F] text-center mb-6">
+            <p className="text-[14px] text-[#706F6F] text-center mb-8">
               {subtitle}
             </p>
           )}
 
           {/* Step Content */}
-          <div className="mb-8">{children}</div>
+          <div className="mb-10">{children}</div>
 
           {/* Continue Button - always shows "שמור והמשך" with arrow pointing bottom-left */}
           <Button

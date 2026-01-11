@@ -50,14 +50,14 @@ export const CountrySelector = ({
   const isSelected = (id: string) => selected.includes(id);
 
   return (
-    <div className={`grid grid-cols-2 gap-4 ${className}`}>
+    <div className={`grid grid-cols-2 gap-4 lg:gap-5 ${className}`}>
       {options.map((option) => (
         <motion.button
           key={option.id}
           type="button"
           onClick={() => handleSelect(option.id)}
           className={`
-            h-[50px] rounded-[10px] font-medium text-[16px]
+            h-[56px] lg:h-[64px] rounded-[10px] font-medium text-[16px] lg:text-[18px]
             transition-colors duration-200
             ${
               isSelected(option.id)
