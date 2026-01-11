@@ -7,6 +7,7 @@ import { siteContent } from "@/content/he";
 import { Button, TextInput, Icon } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
+import { register } from "@/services/auth";
 
 // Globe watermark SVG for Mobile Auth pages (matches Figma design)
 const MobileAuthGlobe = () => (
@@ -48,15 +49,44 @@ export const MobileRegistrationForm = ({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field: keyof typeof formData) => (value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
-    console.log("TODO: Implement registration", formData);
-    // Call success callback after registration
-    onRegisterSuccess?.();
+  const handleSubmit = async () => {
+    setError("");
+    setIsLoading(true);
+
+    try {
+      // Split full name into first and last name
+      const nameParts = formData.fullName.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      const result = await register({
+        email: formData.email,
+        password: formData.password,
+        firstName,
+        lastName,
+        phone: formData.phone || undefined,
+      });
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      // Call success callback after registration
+      onRegisterSuccess?.();
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error("Registration error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,6 +119,13 @@ export const MobileRegistrationForm = ({
               }}
               className="space-y-5"
             >
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
               {/* Full Name */}
               <TextInput
                 label={registration.fullNameLabel}
@@ -97,6 +134,7 @@ export const MobileRegistrationForm = ({
                 value={formData.fullName}
                 onChange={handleChange("fullName")}
                 placeholder={registration.fullNamePlaceholder}
+                disabled={isLoading}
               />
 
               {/* ID Number */}
@@ -107,6 +145,7 @@ export const MobileRegistrationForm = ({
                 value={formData.idNumber}
                 onChange={handleChange("idNumber")}
                 placeholder={registration.idPlaceholder}
+                disabled={isLoading}
               />
 
               {/* Birth Date */}
@@ -117,6 +156,7 @@ export const MobileRegistrationForm = ({
                 value={formData.birthDate}
                 onChange={handleChange("birthDate")}
                 placeholder={registration.birthDatePlaceholder}
+                disabled={isLoading}
               />
 
               {/* Phone */}
@@ -127,6 +167,7 @@ export const MobileRegistrationForm = ({
                 value={formData.phone}
                 onChange={handleChange("phone")}
                 placeholder={registration.phonePlaceholder}
+                disabled={isLoading}
               />
 
               {/* Email */}
@@ -137,6 +178,7 @@ export const MobileRegistrationForm = ({
                 value={formData.email}
                 onChange={handleChange("email")}
                 placeholder={registration.emailPlaceholder}
+                disabled={isLoading}
               />
 
               {/* Password */}
@@ -147,6 +189,7 @@ export const MobileRegistrationForm = ({
                 value={formData.password}
                 onChange={handleChange("password")}
                 placeholder={registration.passwordPlaceholder}
+                disabled={isLoading}
               />
 
               {/* Submit Button */}
@@ -156,9 +199,10 @@ export const MobileRegistrationForm = ({
                 size="md"
                 fullWidth
                 className="flex items-center justify-center gap-2"
+                disabled={isLoading}
               >
-                {registration.submitButton}
-                <Icon name="check" size={18} className="text-white" />
+                {isLoading ? "..." : registration.submitButton}
+                {!isLoading && <Icon name="check" size={18} className="text-white" />}
               </Button>
 
               {/* Login Link */}

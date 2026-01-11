@@ -7,6 +7,7 @@ import { siteContent } from "@/content/he";
 import { Button, TextInput } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { login } from "@/services/auth";
 
 // Globe watermark SVG for Auth pages (matches Figma design)
 const AuthGlobe = () => (
@@ -36,15 +37,33 @@ interface LoginFormProps {
  */
 export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const { personalArea } = siteContent;
-  const { login } = personalArea;
+  const { login: loginContent } = personalArea;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
-    console.log("TODO: Implement login", { email, password });
-    // Call success callback after login
-    onLoginSuccess?.();
+  const handleSubmit = async () => {
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const result = await login(email, password);
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      // Call success callback after login
+      onLoginSuccess?.();
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -66,7 +85,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           >
             {/* Title */}
             <h1 className="text-[32px] lg:text-[40px] font-bold text-[#1D1D1B] text-center leading-tight mb-12">
-              {login.title}
+              {loginContent.title}
             </h1>
 
             {/* Form */}
@@ -77,24 +96,33 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
               }}
               className="space-y-6"
             >
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
               {/* Email Input */}
               <TextInput
-                label={login.emailLabel}
+                label={loginContent.emailLabel}
                 type="email"
                 size="lg"
                 value={email}
                 onChange={setEmail}
-                placeholder={login.emailPlaceholder}
+                placeholder={loginContent.emailPlaceholder}
+                disabled={isLoading}
               />
 
               {/* Password Input */}
               <TextInput
-                label={login.passwordLabel}
+                label={loginContent.passwordLabel}
                 type="password"
                 size="lg"
                 value={password}
                 onChange={setPassword}
-                placeholder={login.passwordPlaceholder}
+                placeholder={loginContent.passwordPlaceholder}
+                disabled={isLoading}
               />
 
               {/* Forgot Password Link */}
@@ -102,8 +130,9 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 <button
                   type="button"
                   className="text-sm text-[#215388] hover:underline transition-colors"
+                  disabled={isLoading}
                 >
-                  {login.forgotPassword}
+                  {loginContent.forgotPassword}
                 </button>
               </div>
 
@@ -113,18 +142,19 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 variant="primary"
                 size="lg"
                 className="w-full"
+                disabled={isLoading}
               >
-                {login.loginButton}
+                {isLoading ? "..." : loginContent.loginButton}
               </Button>
 
               {/* Register Link */}
               <p className="text-center text-[#706F6F]">
-                {login.noAccount}{" "}
+                {loginContent.noAccount}{" "}
                 <Link
                   href="/register"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {login.register}
+                  {loginContent.register}
                 </Link>
               </p>
             </form>
