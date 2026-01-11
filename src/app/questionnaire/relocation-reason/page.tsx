@@ -67,11 +67,12 @@ export default function RelocationReasonStepPage() {
   // Relocation reason is optional, so always allow continue
   const canContinue = true;
 
-  const content = (
+  // Mobile content - keep info box above textarea
+  const mobileContent = (
     <div className="max-w-[400px] mx-auto">
       {/* Info box with subtitle */}
       <div className="bg-[#F7F7F7] rounded-[10px] p-4 mb-6">
-        <p className="text-[12px] lg:text-[14px] text-[#1D1D1B] font-light leading-relaxed">
+        <p className="text-[12px] text-[#1D1D1B] font-light leading-relaxed">
           {steps.relocationReason.subtitle}
         </p>
       </div>
@@ -81,10 +82,27 @@ export default function RelocationReasonStepPage() {
         value={data.relocationReason || ""}
         onChange={(e) => updateData({ relocationReason: e.target.value })}
         placeholder={steps.relocationReason.placeholder}
-        className="w-full h-[140px] lg:h-[180px] p-4 border border-[#C6C6C6] rounded-[10px]
-                   text-[14px] lg:text-[16px] text-[#1D1D1B] placeholder-[#C6C6C6]
+        className="w-full h-[140px] p-4 border border-[#C6C6C6] rounded-[10px]
+                   text-[14px] text-[#1D1D1B] placeholder-[#C6C6C6]
                    focus:outline-none focus:border-[#215388] focus:ring-1 focus:ring-[#215388]
                    resize-none"
+        dir="rtl"
+      />
+    </div>
+  );
+
+  // Desktop content - subtitle as placeholder inside larger textarea
+  const desktopContent = (
+    <div className="max-w-[550px] mx-auto">
+      {/* Larger text area with subtitle as placeholder */}
+      <textarea
+        value={data.relocationReason || ""}
+        onChange={(e) => updateData({ relocationReason: e.target.value })}
+        placeholder={`${steps.relocationReason.subtitle}\n\n${steps.relocationReason.placeholder}`}
+        className="w-full h-[240px] p-5 border-2 border-[#C6C6C6] rounded-[12px]
+                   text-[16px] text-[#1D1D1B] placeholder-[#B2B2B2]
+                   focus:outline-none focus:border-[#215388] focus:ring-1 focus:ring-[#215388]
+                   resize-none leading-relaxed"
         dir="rtl"
       />
     </div>
@@ -102,10 +120,10 @@ export default function RelocationReasonStepPage() {
   if (isMobile) {
     return (
       <MobileQuestionnaireStep {...wrapperProps}>
-        {content}
+        {mobileContent}
       </MobileQuestionnaireStep>
     );
   }
 
-  return <QuestionnaireStep {...wrapperProps}>{content}</QuestionnaireStep>;
+  return <QuestionnaireStep {...wrapperProps}>{desktopContent}</QuestionnaireStep>;
 }
