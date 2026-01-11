@@ -388,12 +388,20 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         ],
       },
 
-      // Step 2: Relocation reason / Family status
+      // Step 2: Relocation reason (text input)
       relocationReason: {
         title: "למה את/ה רוצה לעבור לחו\"ל?",
-        familyStatusLabel: "מצב משפחתי",
-        familyStatusPlaceholder: "בחר/י",
-        familyStatusOptions: [
+        subtitle:
+          "ככל שתשתפו אותנו ביותר פרטים - נוכל לדייק את ההמלצות, כך שיהיו מותאמות באמת לכם.",
+        placeholder: "ספרו לנו על הסיבות והמוטיבציות שלכם...",
+      },
+
+      // Step 3: Family status (dropdown)
+      familyStatus: {
+        title: "למה את/ה רוצה לעבור לחו\"ל?",
+        label: "מצב משפחתי",
+        placeholder: "בחר/י",
+        options: [
           { value: "single", label: "רווק/ה" },
           { value: "common_law", label: "ידוע/ה בציבור" },
           { value: "married", label: "נשוי/אה" },
@@ -403,7 +411,7 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         ],
       },
 
-      // Step 3: Personal details
+      // Step 4: Personal details
       personalDetails: {
         title: "בדוק את הזכאות שלך לויזה",
         fields: {

@@ -6,18 +6,17 @@ import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { useQuestionnaire } from "@/hooks/useQuestionnaire";
 import { QUESTIONNAIRE_STEPS, TOTAL_STEPS } from "@/services/questionnaire";
-import { SelectDropdown } from "@/components/shared";
 import { QuestionnaireStep } from "@/components/desktop";
 import { MobileQuestionnaireStep } from "@/components/mobile";
 
-const STEP_NAME = "family-status" as const;
+const STEP_NAME = "relocation-reason" as const;
 const STEP_CONFIG = QUESTIONNAIRE_STEPS[STEP_NAME];
 
 /**
- * Family status step
- * Route: /questionnaire/family-status
+ * Relocation reason step
+ * Route: /questionnaire/relocation-reason
  */
-export default function FamilyStatusStepPage() {
+export default function RelocationReasonStepPage() {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
@@ -47,7 +46,7 @@ export default function FamilyStatusStepPage() {
   };
 
   const handleBack = () => {
-    router.push(QUESTIONNAIRE_STEPS["relocation-reason"].path);
+    router.push(QUESTIONNAIRE_STEPS.countries.path);
   };
 
   // Loading state
@@ -65,16 +64,28 @@ export default function FamilyStatusStepPage() {
     );
   }
 
-  const canContinue = !!data.familyStatus;
+  // Relocation reason is optional, so always allow continue
+  const canContinue = true;
 
   const content = (
     <div className="max-w-[400px] mx-auto">
-      <SelectDropdown
-        label={steps.familyStatus.label}
-        options={steps.familyStatus.options}
-        value={data.familyStatus || ""}
-        onChange={(value) => updateData({ familyStatus: value })}
-        placeholder={steps.familyStatus.placeholder}
+      {/* Info box with subtitle */}
+      <div className="bg-[#F7F7F7] rounded-[10px] p-4 mb-6">
+        <p className="text-[12px] lg:text-[14px] text-[#1D1D1B] font-light leading-relaxed">
+          {steps.relocationReason.subtitle}
+        </p>
+      </div>
+
+      {/* Text area for relocation reason */}
+      <textarea
+        value={data.relocationReason || ""}
+        onChange={(e) => updateData({ relocationReason: e.target.value })}
+        placeholder={steps.relocationReason.placeholder}
+        className="w-full h-[120px] lg:h-[150px] p-4 border border-[#C6C6C6] rounded-[10px]
+                   text-[14px] lg:text-[16px] text-[#1D1D1B] placeholder-[#C6C6C6]
+                   focus:outline-none focus:border-[#215388] focus:ring-1 focus:ring-[#215388]
+                   resize-none"
+        dir="rtl"
       />
     </div>
   );
@@ -82,7 +93,7 @@ export default function FamilyStatusStepPage() {
   const wrapperProps = {
     currentStep: STEP_CONFIG.stepNumber,
     totalSteps: TOTAL_STEPS,
-    title: steps.familyStatus.title,
+    title: steps.relocationReason.title,
     onContinue: handleContinue,
     onBack: handleBack,
     canContinue,

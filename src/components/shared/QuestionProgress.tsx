@@ -28,13 +28,13 @@ export const QuestionProgress = ({
     section.steps.includes(currentStep)
   );
 
-  // Calculate progress position
+  // Calculate progress position (RTL: starts from right)
   const getSectionPosition = (section: ProgressSection) => {
     const sectionIndex = sections.indexOf(section);
     const totalSections = sections.length;
     const segmentWidth = 100 / totalSections;
     return {
-      left: `${sectionIndex * segmentWidth}%`,
+      right: `${sectionIndex * segmentWidth}%`,
       width: `${segmentWidth}%`,
     };
   };
@@ -55,7 +55,7 @@ export const QuestionProgress = ({
         />
       )}
 
-      {/* Section label */}
+      {/* Section label - positioned centered within active section (RTL) */}
       {activeSection && (
         <motion.p
           initial={{ opacity: 0, y: -5 }}
@@ -63,8 +63,8 @@ export const QuestionProgress = ({
           transition={{ duration: 0.3 }}
           className="absolute top-3 text-[16px] font-medium text-[#215388]"
           style={{
-            right: `calc(100% - ${
-              parseFloat(getSectionPosition(activeSection).left) +
+            right: `calc(${
+              parseFloat(getSectionPosition(activeSection).right) +
               parseFloat(getSectionPosition(activeSection).width) / 2
             }%)`,
             transform: "translateX(50%)",

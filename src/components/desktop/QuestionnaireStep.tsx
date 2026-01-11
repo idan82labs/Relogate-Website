@@ -40,10 +40,11 @@ export const QuestionnaireStep = ({
   const { questionTest } = siteContent;
   const { navigation, progress } = questionTest;
 
-  // Define sections for progress indicator
+  // Define sections for progress indicator (RTL: right to left)
+  // Section 0 = rightmost (eligibility), Section 1 = leftmost (preferences)
   const sections = [
-    { label: progress.preferences, steps: [1, 2] },
-    { label: progress.eligibility, steps: [3] },
+    { label: progress.eligibility, steps: [1, 2] },
+    { label: progress.preferences, steps: [3, 4] },
   ];
 
   const handleBack = () => {
@@ -72,32 +73,24 @@ export const QuestionnaireStep = ({
             />
           </div>
 
-          {/* Back Button */}
+          {/* Back Button - positioned on right for RTL */}
           <motion.button
             type="button"
             onClick={handleBack}
-            className="flex items-center gap-2 text-[#C6C6C6] hover:text-[#706F6F] transition-colors mb-8 mr-auto"
+            className="flex items-center gap-2 text-[#C6C6C6] hover:text-[#706F6F] transition-colors mb-8 ml-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            {/* Chevron icon pointing right for RTL */}
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              className="rotate-90"
-            >
-              <path
-                d="M5 7.5L10 12.5L15 7.5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
             <span className="text-[16px]">{navigation.back}</span>
+            {/* Arrow icon pointing right for RTL back navigation */}
+            <img
+              src="/icons/arrow-right.svg"
+              alt=""
+              width={9}
+              height={11}
+              className="opacity-70"
+            />
           </motion.button>
 
           {/* Content Area */}

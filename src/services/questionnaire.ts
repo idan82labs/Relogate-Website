@@ -15,16 +15,21 @@ export const QUESTIONNAIRE_STEPS = {
   countries: {
     path: "/questionnaire/countries",
     stepNumber: 1,
+    next: "relocation-reason",
+  },
+  "relocation-reason": {
+    path: "/questionnaire/relocation-reason",
+    stepNumber: 2,
     next: "family-status",
   },
   "family-status": {
     path: "/questionnaire/family-status",
-    stepNumber: 2,
+    stepNumber: 3,
     next: "personal-details",
   },
   "personal-details": {
     path: "/questionnaire/personal-details",
-    stepNumber: 3,
+    stepNumber: 4,
     next: null,
   },
 } as const;
@@ -37,10 +42,13 @@ export interface QuestionnaireData {
   // Step 1: Country preferences
   preferredCountries: string[];
 
-  // Step 2: Family status
+  // Step 2: Relocation reason
+  relocationReason: string;
+
+  // Step 3: Family status
   familyStatus: string;
 
-  // Step 3: Personal details
+  // Step 4: Personal details
   fullName: string;
   email: string;
   phone: string;
@@ -63,6 +71,7 @@ export interface QuestionnaireState {
 // Initial state
 const initialData: Partial<QuestionnaireData> = {
   preferredCountries: [],
+  relocationReason: "",
   familyStatus: "",
   fullName: "",
   email: "",
@@ -127,8 +136,11 @@ export const questionnaireService = {
       case 1:
         return (data.preferredCountries?.length ?? 0) > 0;
       case 2:
-        return !!data.familyStatus;
+        // Relocation reason is optional (text input)
+        return true;
       case 3:
+        return !!data.familyStatus;
+      case 4:
         return !!(
           data.fullName &&
           data.email &&
