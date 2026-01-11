@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, MobileFooter, QuestionProgress } from "@/components/shared";
+import { Button, QuestionProgress } from "@/components/shared";
+import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 
 interface MobileQuestionnaireStepProps {

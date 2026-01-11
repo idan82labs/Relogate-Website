@@ -1,6 +1,6 @@
-export { Splash } from "./Splash";
+export { MobileSplashScreen } from "./MobileSplashScreen";
 export { WelcomeIntro } from "./WelcomeIntro";
-export { MobileHP3 } from "./MobileHP3";
+export { MobileHomepage } from "./MobileHomepage";
 export { MobileHeader } from "./MobileHeader";
 export { MobileHowItWorks } from "./MobileHowItWorks";
 export { MobileHome } from "./MobileHome";
@@ -8,3 +8,4 @@ export { MobileLoginForm } from "./MobileLoginForm";
 export { MobileRegistrationForm } from "./MobileRegistrationForm";
 export { MobileQuestionnaireLanding } from "./MobileQuestionnaireLanding";
 export { MobileQuestionnaireStep } from "./MobileQuestionnaireStep";
+export { MobileFooter } from "./MobileFooter";

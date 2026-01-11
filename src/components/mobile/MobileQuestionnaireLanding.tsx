@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, MobileFooter, StepCard } from "@/components/shared";
+import { Button, StepCard } from "@/components/shared";
+import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 
 /**

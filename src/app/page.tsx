@@ -20,7 +20,7 @@ import {
 } from "@/components/desktop";
 
 // Mobile components
-import { Splash, MobileHP3 } from "@/components/mobile";
+import { MobileSplashScreen, MobileHomepage } from "@/components/mobile";
 
 const SPLASH_SEEN_KEY = "relogate_splash_seen";
 
@@ -97,9 +97,9 @@ export default function Home() {
     return (
       <AnimatePresence mode="wait">
         {showSplash && (
-          <Splash key="splash" onComplete={handleSplashComplete} />
+          <MobileSplashScreen key="splash" onComplete={handleSplashComplete} />
         )}
-        {!showSplash && <MobileHP3 key="home" />}
+        {!showSplash && <MobileHomepage key="home" />}
       </AnimatePresence>
     );
   }

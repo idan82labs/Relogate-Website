@@ -3,11 +3,11 @@
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 
-interface SplashProps {
+interface MobileSplashScreenProps {
   onComplete: () => void;
 }
 
-export const Splash = ({ onComplete }: SplashProps) => {
+export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
   const { mobile } = siteContent;
 
   return (
@@ -86,4 +86,4 @@ export const Splash = ({ onComplete }: SplashProps) => {
   );
 };
 
-export default Splash;
+export default MobileSplashScreen;

@@ -6,17 +6,18 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { MobileHeader } from "./MobileHeader";
 import { siteContent } from "@/content/he";
-import { Button, Card, Accordion, MobileFooter } from "@/components/shared";
+import { Button, Card, Accordion } from "@/components/shared";
+import { MobileFooter } from "./MobileFooter";
 
-interface MobileHP3Props {
+interface MobileHomepageProps {
   onComplete?: () => void;
 }
 
 /**
- * Mobile HP3 - Full mobile homepage
+ * MobileHomepage - Full mobile homepage
  * Based on Figma design (mobile HP3: node 265-683)
  */
-export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
+export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps) => {
   const router = useRouter();
   const { hero, about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
   const testimonialsRef = useRef<HTMLDivElement>(null);
@@ -314,4 +315,4 @@ export const MobileHP3 = ({ onComplete: _onComplete }: MobileHP3Props) => {
   );
 };
 
-export default MobileHP3;
+export default MobileHomepage;

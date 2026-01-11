@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, Card, Stars, Accordion, Icon, MobileFooter } from "@/components/shared";
+import { Button, Card, Stars, Accordion, Icon } from "@/components/shared";
+import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 import { MobileHowItWorks } from "./MobileHowItWorks";
 

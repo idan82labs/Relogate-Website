@@ -1,7 +1,7 @@
 "use client";
 
 import { siteContent } from "@/content/he";
-import { Icon } from "./Icon";
+import { Icon } from "@/components/shared";
 
 /**
  * MobileFooter - Shared footer component for all mobile pages

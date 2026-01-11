@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 
-export const GreenBanner = () => {
+export const PromoBanner = () => {
   const { greenBanner } = siteContent;
 
   return (
@@ -43,4 +43,4 @@ export const GreenBanner = () => {
   );
 };
 
-export default GreenBanner;
+export default PromoBanner;

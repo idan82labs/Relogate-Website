@@ -5,7 +5,6 @@ export { Stars } from "./Stars";
 export { Icon } from "./Icon";
 export { GlobeWatermark } from "./GlobeWatermark";
 export { TextInput } from "./TextInput";
-export { MobileFooter } from "./MobileFooter";
 export { StepCard } from "./StepCard";
 export { QuestionProgress } from "./QuestionProgress";
 export { CountrySelector } from "./CountrySelector";

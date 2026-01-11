@@ -11,7 +11,7 @@ const TealCheckmark = () => (
   </svg>
 );
 
-export const InfoSection = () => {
+export const BenefitsSection = () => {
   const { info } = siteContent;
 
   return (
@@ -77,4 +77,4 @@ export const InfoSection = () => {
   );
 };
 
-export default InfoSection;
+export default BenefitsSection;

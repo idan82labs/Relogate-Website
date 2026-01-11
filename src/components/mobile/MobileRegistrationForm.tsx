@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, TextInput, Icon, MobileFooter } from "@/components/shared";
+import { Button, TextInput, Icon } from "@/components/shared";
+import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 
 // Globe watermark SVG for Mobile Auth pages (matches Figma design)
