@@ -12,7 +12,7 @@
 | Fonts | Noto Sans Hebrew (Google), Satoshi (local) |
 | Package Manager | npm |
 | Lint | ESLint 9 + eslint-config-next |
-| Testing | None configured |
+| Visual Testing | Playwright (screenshots for design verification) |
 
 ## Commands
 
@@ -31,6 +31,14 @@ npm start
 
 # Lint
 npm run lint
+
+# Visual verification screenshot (mobile)
+npx --yes playwright screenshot --viewport-size=375,812 --wait-for-timeout=1000 \
+  http://localhost:3000/<page> docs/design/verify/<name>-mobile.png
+
+# Visual verification screenshot (desktop)
+npx --yes playwright screenshot --viewport-size=1440,900 --wait-for-timeout=1000 \
+  http://localhost:3000/<page> docs/design/verify/<name>-desktop.png
 ```
 
 ## Repo Structure
@@ -48,8 +56,9 @@ public/               # Static assets, fonts, images
 docs/
 └── design/
     ├── figma_urls.md           # Source of truth for Figma links
-    └── figma_cache/            # Cached screenshots + metadata
-scripts/              # CLI utilities (figma_cache.mjs)
+    ├── figma_cache/            # Cached screenshots + metadata
+    └── verify/                 # Implementation screenshots for comparison
+scripts/              # CLI utilities (figma-cache.mjs, screenshot.mjs)
 ```
 
 ## Rules of Engagement
@@ -81,6 +90,30 @@ scripts/              # CLI utilities (figma_cache.mjs)
 - **Implementation**: Match layout, typography, spacing from Figma; reuse existing UI components; do not invent tokens.
 - **See**: `.claude/rules/design/figma.md` for detailed caching instructions
 
+## Visual Verification Workflow
+
+After implementing UI changes, verify they match Figma designs using Playwright screenshots:
+
+1. **Take screenshot** of your implementation:
+   ```bash
+   # Mobile
+   npx --yes playwright screenshot --viewport-size=375,812 --wait-for-timeout=1000 \
+     http://localhost:3000/questionnaire/countries docs/design/verify/countries-mobile.png
+   ```
+
+2. **Compare** with Figma cache:
+   - Read implementation: `docs/design/verify/<page>-mobile.png`
+   - Read Figma reference: `docs/design/figma_cache/<slug>/render@2x.png`
+
+3. **Iterate** if differences found:
+   - Identify specific CSS/layout issues
+   - Make adjustments
+   - Take new screenshot
+   - Compare again
+
+**Viewport sizes**: Mobile `375,812` | Desktop `1440,900`
+**See**: `.claude/rules/design/visual-verification.md` for full documentation
+
 ## Design Tokens (from globals.css)
 
 ```css
@@ -105,6 +138,7 @@ scripts/              # CLI utilities (figma_cache.mjs)
 - `.claude/rules/frontend/styling.md` - Tailwind & tokens
 - `.claude/rules/frontend/testing.md` - Test guidance
 - `.claude/rules/design/figma.md` - Figma-to-code workflow
+- `.claude/rules/design/visual-verification.md` - Playwright screenshot verification
 
 ## Project Documentation
 

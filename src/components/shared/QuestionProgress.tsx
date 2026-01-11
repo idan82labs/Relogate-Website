@@ -15,11 +15,13 @@ interface QuestionProgressProps {
 }
 
 /**
- * QuestionProgress - Progress indicator for questionnaire steps
- * Shows a horizontal line with highlighted section and label
+ * QuestionProgress - Accumulated progress indicator for questionnaire steps
+ * Shows a horizontal line with accumulated fill (RTL: fills from right to left)
+ * Progress: Step 1 = 25%, Step 2 = 50%, Step 3 = 75%, Step 4 = 100%
  */
 export const QuestionProgress = ({
   currentStep,
+  totalSteps,
   sections,
   className = "",
 }: QuestionProgressProps) => {
@@ -28,47 +30,30 @@ export const QuestionProgress = ({
     section.steps.includes(currentStep)
   );
 
-  // Calculate progress position (RTL: starts from right)
-  const getSectionPosition = (section: ProgressSection) => {
-    const sectionIndex = sections.indexOf(section);
-    const totalSections = sections.length;
-    const segmentWidth = 100 / totalSections;
-    return {
-      right: `${sectionIndex * segmentWidth}%`,
-      width: `${segmentWidth}%`,
-    };
-  };
+  // Calculate accumulated progress percentage (RTL: fills from right)
+  // 4 states: 25%, 50%, 75%, 100% - full at last step
+  const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
     <div className={`relative ${className}`}>
       {/* Background line */}
       <div className="h-[1px] bg-[#C6C6C6] w-full" />
 
-      {/* Active section highlight */}
-      {activeSection && (
-        <motion.div
-          className="absolute top-0 h-[6px] bg-[#215388] -translate-y-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          style={getSectionPosition(activeSection)}
-          transition={{ duration: 0.3 }}
-        />
-      )}
+      {/* Accumulated progress bar (RTL: grows from right to left) */}
+      <motion.div
+        className="absolute top-0 h-[6px] bg-[#215388] -translate-y-1/2 right-0"
+        initial={{ width: 0 }}
+        animate={{ width: `${progressPercentage}%` }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      />
 
-      {/* Section label - positioned centered within active section (RTL) */}
+      {/* Section label - fixed at start of progress bar (right edge in RTL) */}
       {activeSection && (
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute top-3 text-[16px] font-medium text-[#215388]"
-          style={{
-            right: `calc(${
-              parseFloat(getSectionPosition(activeSection).right) +
-              parseFloat(getSectionPosition(activeSection).width) / 2
-            }%)`,
-            transform: "translateX(50%)",
-          }}
+          className="absolute top-3 right-0 text-[12px] lg:text-[16px] font-normal text-[#215388]"
         >
           {activeSection.label}
         </motion.p>

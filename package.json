@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "figma:cache": "node scripts/figma-cache.mjs"
+    "figma:cache": "node scripts/figma-cache.mjs",
+    "screenshot": "npx --yes playwright screenshot",
+    "screenshot:help": "node scripts/screenshot.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.26",
@@ -16,6 +18,7 @@
     "react-dom": "19.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

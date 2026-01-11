@@ -59,73 +59,87 @@ export const QuestionnaireStep = ({
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
-      <main className="flex-1 relative">
-        {/* Globe Watermark */}
-        <GlobeWatermark position="center" size={600} className="top-[20%]" />
+      <main className="flex-1 relative flex flex-col">
+        {/* Globe Watermark - centered in main area, more visible */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src="/globe-watermark.svg"
+            alt=""
+            className="w-[500px] h-[500px] object-contain opacity-40"
+            aria-hidden="true"
+          />
+        </div>
 
-        <div className="container relative z-10 pt-8 pb-16">
+        {/* Progress Bar Section - fixed at top */}
+        <div className="container relative z-10 pt-8">
+          {/* Back Button - positioned above progress bar, aligned right */}
+          <div className="max-w-[800px] mx-auto mb-2">
+            <motion.button
+              type="button"
+              onClick={handleBack}
+              className="flex items-center gap-2 text-[#C6C6C6] hover:text-[#706F6F] transition-colors ml-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {/* Arrow before text in DOM = appears on RIGHT in RTL, rotated 45deg for bottom-right */}
+              <img
+                src="/icons/arrow-right.svg"
+                alt=""
+                width={13}
+                height={15}
+                className="opacity-70 rotate-45"
+              />
+              <span className="text-[16px] font-medium">{navigation.back}</span>
+            </motion.button>
+          </div>
+
           {/* Progress Bar */}
-          <div className="max-w-[800px] mx-auto mb-8">
+          <div className="max-w-[800px] mx-auto">
             <QuestionProgress
               currentStep={currentStep}
               totalSteps={totalSteps}
               sections={sections}
             />
           </div>
+        </div>
 
-          {/* Back Button - positioned on right for RTL */}
-          <motion.button
-            type="button"
-            onClick={handleBack}
-            className="flex items-center gap-2 text-[#C6C6C6] hover:text-[#706F6F] transition-colors mb-8 ml-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <span className="text-[16px]">{navigation.back}</span>
-            {/* Arrow icon pointing right for RTL back navigation */}
-            <img
-              src="/icons/arrow-right.svg"
-              alt=""
-              width={9}
-              height={11}
-              className="opacity-70"
-            />
-          </motion.button>
-
-          {/* Content Area */}
+        {/* Content Area - centered in remaining space */}
+        <div className="flex-1 flex items-center justify-center container relative z-10 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-[600px] mx-auto"
+            className="max-w-[800px] w-full"
           >
-            {/* Title */}
-            <h1 className="text-[40px] font-medium text-[#1D1D1B] text-center mb-4 leading-[1.2]">
+            {/* Title - 36px font, single line, centered relative to progress bar */}
+            <h1 className="text-[36px] font-medium text-[#1D1D1B] text-center mb-4 leading-[1.2] whitespace-nowrap">
               {title}
             </h1>
 
-            {/* Subtitle */}
-            {subtitle && (
-              <p className="text-[16px] text-[#706F6F] text-center mb-8">
-                {subtitle}
-              </p>
-            )}
+            {/* Inner content centered within the 800px container */}
+            <div className="max-w-[600px] mx-auto">
+              {/* Subtitle */}
+              {subtitle && (
+                <p className="text-[16px] text-[#706F6F] text-center mb-8">
+                  {subtitle}
+                </p>
+              )}
 
-            {/* Step Content */}
-            <div className="mb-12">{children}</div>
+              {/* Step Content */}
+              <div className="mb-12">{children}</div>
 
-            {/* Continue Button */}
-            <div className="flex justify-center">
+              {/* Continue Button - always shows "שמור והמשך" with arrow pointing bottom-left */}
+              <div className="flex justify-center">
               <Button
                 variant="primary"
                 size="lg"
                 onClick={onContinue}
                 disabled={!canContinue || isSubmitting}
-                className="px-12 py-4 text-[18px] rounded-[100px] min-w-[200px]"
+                className="px-12 py-4 rounded-[100px] min-w-[212px] h-[60px]"
               >
                 {isSubmitting ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center justify-center gap-2">
                     <svg
                       className="animate-spin h-5 w-5"
                       viewBox="0 0 24 24"
@@ -147,29 +161,21 @@ export const QuestionnaireStep = ({
                     </svg>
                     שולח...
                   </span>
-                ) : isLastStep ? (
-                  navigation.saveAndContinue
                 ) : (
-                  <>
-                    {navigation.continue}
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      className="mr-2 rotate-180"
-                    >
-                      <path
-                        d="M12.5 5L7.5 10L12.5 15"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </>
+                  <span className="flex items-center justify-center gap-2 text-[21px] font-semibold">
+                    {navigation.saveAndContinue}
+                    {/* Arrow after text in DOM = appears on LEFT in RTL, rotated 135deg for bottom-left */}
+                    <img
+                      src="/icons/arrow-right.svg"
+                      alt=""
+                      width={13}
+                      height={13}
+                      className="rotate-[135deg] brightness-0 invert"
+                    />
+                  </span>
                 )}
               </Button>
+              </div>
             </div>
           </motion.div>
         </div>

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, QuestionProgress } from "@/components/shared";
+import { Button, QuestionProgress, GlobeWatermark } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 
@@ -59,44 +59,61 @@ export const MobileQuestionnaireStep = ({
     <div className="min-h-screen flex flex-col bg-white">
       <MobileHeader />
 
-      <main className="flex-1 px-4 pt-4 pb-8">
-        {/* Progress Bar */}
-        <div className="mb-6">
-          <QuestionProgress
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            sections={sections}
+      <main className="flex-1 px-4 pt-4 pb-6 relative flex flex-col">
+        {/* Globe Watermark - centered in main area, more visible */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+          <img
+            src="/globe-watermark.svg"
+            alt=""
+            className="w-[280px] h-[280px] object-contain opacity-40"
+            aria-hidden="true"
           />
         </div>
 
-        {/* Back Button - positioned on right for RTL */}
-        <motion.button
-          type="button"
-          onClick={handleBack}
-          className="flex items-center gap-1 text-[#C6C6C6] hover:text-[#706F6F] transition-colors mb-6 ml-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <span className="text-[12px]">{navigation.back}</span>
-          {/* Arrow icon pointing right for RTL back navigation */}
-          <img
-            src="/icons/arrow-right.svg"
-            alt=""
-            width={9}
-            height={11}
-            className="opacity-70"
-          />
-        </motion.button>
+        {/* Progress Bar Section - at top */}
+        <div className="relative z-10">
+          {/* Back Button - positioned above progress bar, aligned right */}
+          <div className="w-full mb-2">
+            <motion.button
+              type="button"
+              onClick={handleBack}
+              className="flex items-center gap-1 text-[#C6C6C6] hover:text-[#706F6F] transition-colors ml-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {/* Arrow before text in DOM = appears on RIGHT in RTL, rotated 45deg for bottom-right */}
+              <img
+                src="/icons/arrow-right.svg"
+                alt=""
+                width={9}
+                height={9}
+                className="opacity-70 rotate-45"
+              />
+              <span className="text-[12px] font-medium">{navigation.back}</span>
+            </motion.button>
+          </div>
 
-        {/* Content Area */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          {/* Title */}
-          <h1 className="text-[24px] font-medium text-[#1D1D1B] text-center mb-3 leading-[1.3]">
+          {/* Progress Bar - full width of padded container */}
+          <div className="w-full">
+            <QuestionProgress
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              sections={sections}
+            />
+          </div>
+        </div>
+
+        {/* Content Area - centered in remaining space */}
+        <div className="flex-1 flex items-center justify-center relative z-10 py-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="w-full"
+          >
+          {/* Title - 16px font to fit single line on mobile, centered */}
+          <h1 className="text-[16px] font-medium text-[#1D1D1B] text-center mb-3 leading-[1.3] w-full whitespace-nowrap">
             {title}
           </h1>
 
@@ -110,14 +127,14 @@ export const MobileQuestionnaireStep = ({
           {/* Step Content */}
           <div className="mb-8">{children}</div>
 
-          {/* Continue Button */}
+          {/* Continue Button - always shows "שמור והמשך" with arrow pointing bottom-left */}
           <Button
             variant="primary"
             size="md"
             fullWidth
             onClick={onContinue}
             disabled={!canContinue || isSubmitting}
-            className="rounded-[100px]"
+            className="rounded-[100px] h-[50px]"
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
@@ -142,30 +159,22 @@ export const MobileQuestionnaireStep = ({
                 </svg>
                 שולח...
               </span>
-            ) : isLastStep ? (
-              navigation.saveAndContinue
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                {navigation.continue}
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  className="rotate-180"
-                >
-                  <path
-                    d="M12.5 5L7.5 10L12.5 15"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <span className="flex items-center justify-center gap-2 text-[16px] font-semibold">
+                {navigation.saveAndContinue}
+                {/* Arrow after text in DOM = appears on LEFT in RTL, rotated 135deg for bottom-left */}
+                <img
+                  src="/icons/arrow-right.svg"
+                  alt=""
+                  width={9}
+                  height={9}
+                  className="rotate-[135deg] brightness-0 invert"
+                />
               </span>
             )}
           </Button>
-        </motion.div>
+          </motion.div>
+        </div>
       </main>
 
       <MobileFooter />

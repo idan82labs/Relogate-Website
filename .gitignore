@@ -39,6 +39,9 @@ yarn-error.log*
 docs/design/figma_cache/*
 !docs/design/figma_cache/README.md
 
+# Visual verification screenshots (temporary, not committed)
+docs/design/verify/
+
 # vercel
 .vercel
 
