@@ -9,3 +9,6 @@ export { StepCard } from "./StepCard";
 export { QuestionProgress } from "./QuestionProgress";
 export { CountrySelector } from "./CountrySelector";
 export { SelectDropdown } from "./SelectDropdown";
+export { MatchScoreCircle } from "./MatchScoreCircle";
+export { CountryCard } from "./CountryCard";
+export { CategoryTag } from "./CategoryTag";

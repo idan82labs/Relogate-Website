@@ -337,6 +337,166 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     },
   },
 
+  // Report Results (Relomatch) - Personalized relocation recommendations
+  reportResults: {
+    heroBanner: {
+      title: "תוצאות דו״ח Relomatch",
+    },
+    greeting: "היי",
+    profileSummary: {
+      title: "סיכום נתונים אישיים והעדפות שלך",
+      profileDataTitle: "נתוני הפרופיל שלכם",
+      fields: {
+        citizenship: "אזרחות:",
+        age: "גיל:",
+        profession: "מקצוע/ות:",
+        familyStatus: "מצב משפחתי:",
+        netIncome: "הכנסה כוללת נטו:",
+        passiveIncome: "הכנסה פסיבית:",
+        relocationGoals: "מטרות רילוקיישן:",
+      },
+    },
+    reportSection: {
+      title: "דו״ח Relomach",
+      description:
+        "הדו״ח האישי שלך מוכן! להלן 5 מדינות שהותאמו עבורך על בסיס הצרכים והיכולות שהגדרת. לכל מדינה מוצגים שם המסלול המומלץ, דירוג התאמה כללי ויתרונות מרכזיים במעבר.",
+    },
+    matchScore: "ציון התאמה:",
+    countryDetail: {
+      visaPathTitle: "מסלול ויזה",
+      matchReasonsTitle: "סיבות התאמה:",
+      overallScoreTitle: "ציון התאמה כללי:",
+    },
+    categories: [
+      { id: "visa", label: "מסלול ויזה" },
+      { id: "generalInfo", label: "מידע כללי" },
+      { id: "healthcare", label: "מערכת הבריאות" },
+      { id: "safety", label: "ביטחון אישי" },
+      { id: "immigration", label: "פתיחות למהגרים" },
+      { id: "jewishCommunity", label: "קהילה יהודית" },
+      { id: "weather", label: "מזג אוויר" },
+      { id: "distance", label: "מרחק מישראל" },
+      { id: "education", label: "חינוך" },
+      { id: "language", label: "שפה" },
+      { id: "publicTransport", label: "תחבורה ציבורית" },
+      { id: "costOfLiving", label: "יוקר מחייה" },
+      { id: "employment", label: "תעסוקה" },
+    ],
+    sharing: {
+      title: "שתף את התוצאות",
+      placeholder: "שיתוף יהיה זמין בקרוב",
+    },
+    // Mock data for demonstration (to be replaced with backend data)
+    mockData: {
+      userName: "משפחת ברנע",
+      profile: {
+        citizenship: "ישראלית",
+        age: "34",
+        profession: "מהנדס תוכנה, מנהלת מוצר",
+        familyStatus: "נשואים + ילד אחד",
+        netIncome: "28,000 ₪ לחודש",
+        passiveIncome: "2,000 ₪ (השקעות נדל״ן)",
+        relocationGoals:
+          "איכות חיים גבוהה, מערכת חינוך מצוינת לילדים, אפשרויות קריירה בהייטק",
+      },
+      countries: [
+        {
+          id: "london",
+          name: "לונדון",
+          englishName: "London",
+          matchScore: 92,
+          visaType: "Skilled Worker Visa",
+          image: "/countries/london.jpg",
+          matchReasons: [
+            "שוק עבודה חזק בתחומי הקריאייטיב והעיצוב, עם ביקוש למקצועות שלכם.",
+            "רמת שפה אנגלית גבוהה שתאפשר השתלבות קלה ומהירה.",
+            "אפשרויות מגורים מגוונות ורמת חיים התואמת את הצרכים והתקציב שלכם.",
+            "תשתיות מתקדמות ושירותי בריאות וחינוך איכותיים למשפחות.",
+          ],
+          description:
+            "לונדון, בירת אנגליה, אחת הערים האהובות ביותר באירופה ובעולם כולו, היא גם יעד נחשק עבור מהגרים מכל רחבי העולם. אז מהן הסיבות לאטרקטיביות הרבה שלה עבור המתעניינים ברילוקיישן? ומה כדאי לדעת לפני שבוחרים להגר אליה? הכנו לכם את המדריך המקיף לקראת מגורים בממלכה המאוחדת.",
+          visaInfo: `כיוון שכיום בריטניה כבר אינה חלק מהאיחוד האירופי (החל משנת 2021), גם חוקי ההגירה שלה השתנו וכל הבקשות לאשרות עבודה נבחנות באמצעות שיטת ניקוד חדשה.
+
+על פי השיטה החדשה, כל אדם שאינו אזרח בריטניה, כולל אזרחי האיחוד האירופי, נדרש להוציא אשרת עבודה ושהייה.
+
+לבריטניה יש כמה סוגי ויזות המאפשרות שהייה קבועה ואפשרות לעבוד באופן חוקי:
+
+**ויזת עבודה רגילה (Tier 2 General)**
+עובד שאינו אזרח בריטי ומעוניין לעבוד בלונדון, נדרש לקבל חסות (Sponsorship) ממעסיק מקומי.
+
+**ויזת סטודנט (Tier 4 General)**
+סטודנט זר שמתכנן ללמוד בלונדון, מחויב להוציא ויזת סטודנט התקפה לכל תקופת הלימודים.
+
+**ויזת השקעה/חדשנות (Innovator visa – Tier 1)**
+ויזת המתאימה ליזמים ובעלי הון המעוניינים לפתוח עסק חדשני ועצמאי בבריטניה.`,
+        },
+        {
+          id: "paris",
+          name: "פריז",
+          englishName: "Paris",
+          matchScore: 87,
+          visaType: "Talent Passport",
+          image: "/countries/paris.jpg",
+          matchReasons: [
+            "תרבות עשירה ואיכות חיים גבוהה.",
+            "הזדמנויות קריירה בהייטק ועיצוב.",
+            "מערכת חינוך מצוינת.",
+          ],
+          description: "פריז, עיר האורות, מציעה שילוב ייחודי של תרבות, קריירה ואיכות חיים.",
+          visaInfo: "מידע על ויזות לצרפת יתווסף בקרוב.",
+        },
+        {
+          id: "canada",
+          name: "קנדה",
+          englishName: "Canada",
+          matchScore: 87,
+          visaType: "Express Entry",
+          image: "/countries/canada.jpg",
+          matchReasons: [
+            "מדיניות הגירה ידידותית.",
+            "איכות חיים גבוהה.",
+            "שוק עבודה חזק בהייטק.",
+          ],
+          description: "קנדה היא אחת המדינות הפתוחות ביותר להגירה בעולם.",
+          visaInfo: "מידע על ויזות לקנדה יתווסף בקרוב.",
+        },
+        {
+          id: "milan",
+          name: "מילאנו",
+          englishName: "Milan",
+          matchScore: 87,
+          visaType: "EU Blue Card",
+          image: "/countries/milan.jpg",
+          matchReasons: [
+            "מרכז עסקי מוביל באירופה.",
+            "תרבות ואמנות עשירה.",
+            "קרבה לישראל.",
+          ],
+          description: "מילאנו היא הבירה הכלכלית של איטליה.",
+          visaInfo: "מידע על ויזות לאיטליה יתווסף בקרוב.",
+        },
+        {
+          id: "slovakia",
+          name: "סלובקיה",
+          englishName: "Slovakia",
+          matchScore: 87,
+          visaType: "D Visa",
+          image: "/countries/slovakia.jpg",
+          matchReasons: [
+            "עלויות מחיה נמוכות.",
+            "חבר באיחוד האירופי.",
+            "קהילה יהודית פעילה.",
+          ],
+          description: "סלובקיה מציעה איכות חיים גבוהה במחיר נוח.",
+          visaInfo: "מידע על ויזות לסלובקיה יתווסף בקרוב.",
+        },
+      ],
+    },
+    relatedArticles: {
+      title: "מאמרים קשורים",
+    },
+  },
+
   // Question Test (Eligibility Check) flow
   questionTest: {
     howItWorks: {

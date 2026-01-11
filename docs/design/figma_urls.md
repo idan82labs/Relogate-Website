@@ -79,3 +79,30 @@ Organized by section and platform. Use the label path for context (e.g., "Homepa
 - mobile step-family-status: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=275-3879&t=UZcc9fHQZSMiC6Nu-4
 - mobile step-timeline: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=275-4235&t=UZcc9fHQZSMiC6Nu-4
 - mobile step-contact-info: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=275-4343&t=UZcc9fHQZSMiC6Nu-4
+
+---
+
+## Report Results (Relomatch)
+
+> **Note:** Personalized relocation report showing country recommendations based on user's
+> questionnaire answers. Displays match scores, visa paths, and detailed country information.
+> The report has two main states: summary view (cards collapsed) and detail view (card expanded).
+
+- report-results (all frames): https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=492-1436&t=n6DlCKcnmwoyTpf1-4
+
+### Desktop
+- results-summary: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=74-479&t=n6DlCKcnmwoyTpf1-4
+  > Summary page with 5 country recommendation cards (collapsed state)
+  > Shows: hero banner, user greeting, profile summary, country cards with match scores
+- results-country-detail: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=167-2489&t=n6DlCKcnmwoyTpf1-4
+  > Expanded view when a country card is clicked (e.g., London)
+  > Shows: expanded card with visa type & match reasons, country intro, category tags,
+  > expandable visa info sections, related articles
+
+### Mobile
+- mobile results-summary: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=272-3157&t=n6DlCKcnmwoyTpf1-4
+  > Mobile summary with horizontal scrolling country cards
+- mobile results-country-detail: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=273-1916&t=n6DlCKcnmwoyTpf1-4
+  > Mobile expanded view with country detail section
+- mobile results-section-expanded: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=275-3280&t=n6DlCKcnmwoyTpf1-4
+  > Mobile with info accordion expanded showing category list

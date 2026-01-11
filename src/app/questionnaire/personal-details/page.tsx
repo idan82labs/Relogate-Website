@@ -52,8 +52,8 @@ export default function PersonalDetailsStepPage() {
   const handleContinue = async () => {
     const result = await submit();
     if (result.success) {
-      // TODO: Navigate to success/results page
-      router.push("/questionnaire");
+      // Navigate to results page
+      router.push("/questionnaire/results");
     }
   };
 

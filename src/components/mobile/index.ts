@@ -9,3 +9,4 @@ export { MobileRegistrationForm } from "./MobileRegistrationForm";
 export { MobileQuestionnaireLanding } from "./MobileQuestionnaireLanding";
 export { MobileQuestionnaireStep } from "./MobileQuestionnaireStep";
 export { MobileFooter } from "./MobileFooter";
+export { MobileResultsPage } from "./MobileResultsPage";
