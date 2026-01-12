@@ -6,16 +6,38 @@ import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
 import { isAuthenticated as hasToken } from "@/services/auth";
+import { debugLog } from "@/utils/debug";
 
 export const MobileHeader = () => {
   const { nav, mobile } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Track token status in state to handle hydration properly
+  const [tokenExists, setTokenExists] = useState(false);
+
+  useEffect(() => {
+    const token = hasToken();
+    setTokenExists(token);
+
+    debugLog('MobileHeader', 'Auth state check', {
+      tokenExists: token,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
+
   // Determine logo link destination based on auth status
   // Also check token existence during loading to prevent bypass
-  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
   const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
+
+  debugLog('MobileHeader', 'Logo href computed', {
+    shouldRestrictNavigation,
+    logoHref,
+    tokenExists,
+  });
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);

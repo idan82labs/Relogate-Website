@@ -1,19 +1,45 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
 import { useAuth } from "@/contexts";
 import { isAuthenticated as hasToken } from "@/services/auth";
+import { debugLog } from "@/utils/debug";
 
 export const Header = () => {
   const { nav } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
+  // Track token status in state to handle hydration properly
+  const [tokenExists, setTokenExists] = useState(false);
+
+  useEffect(() => {
+    const token = hasToken();
+    setTokenExists(token);
+
+    debugLog('Header', 'Auth state check', {
+      tokenExists: token,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
+
   // Determine logo link destination based on auth status
   // Also check token existence during loading to prevent bypass
-  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
   const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
+
+  debugLog('Header', 'Logo href computed', {
+    shouldRestrictNavigation,
+    logoHref,
+    tokenExists,
+    isLoading,
+    isAuthenticated,
+    hasCompletedOnboarding,
+  });
 
   return (
     <header className="sticky top-0 z-50 bg-white h-[88px] border-b border-[#C6C6C6]">

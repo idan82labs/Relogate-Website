@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
 import { isAuthenticated as hasToken } from "@/services/auth";
+import { debugLog } from "@/utils/debug";
 
 /**
  * MobileFooter - Shared footer component for all mobile pages
@@ -12,9 +14,24 @@ export const MobileFooter = () => {
   const { footer } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
+  // Track token status in state to handle hydration properly
+  const [tokenExists, setTokenExists] = useState(false);
+
+  useEffect(() => {
+    const token = hasToken();
+    setTokenExists(token);
+
+    debugLog('MobileFooter', 'Auth state check', {
+      tokenExists: token,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
+
   // Determine logo link destination based on auth status
   // Also check token existence during loading to prevent bypass
-  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
   const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
   return (
