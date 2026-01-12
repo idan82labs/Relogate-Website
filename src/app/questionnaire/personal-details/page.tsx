@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { useQuestionnaire } from "@/hooks/useQuestionnaire";
 import { useAuth } from "@/contexts/AuthContext";
+import { setOnboardingCookie } from "@/services/auth";
 import { QUESTIONNAIRE_STEPS, TOTAL_STEPS } from "@/services/questionnaire";
 import { TextInput } from "@/components/shared";
 import { QuestionnaireStep } from "@/components/desktop";
@@ -90,8 +91,10 @@ export default function PersonalDetailsStepPage() {
   const handleContinue = async () => {
     const result = await submit();
     if (result.success) {
-      // Navigate to results page
-      router.push("/questionnaire/results");
+      // Update onboarding cookie so proxy allows home access
+      setOnboardingCookie("completed");
+      // Navigate to home page
+      router.push("/");
     }
   };
 
