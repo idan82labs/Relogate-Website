@@ -4,10 +4,15 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 export const MobileHeader = () => {
   const { nav, mobile } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Determine logo link destination based on auth status
+  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -65,7 +70,7 @@ export const MobileHeader = () => {
           <div className="flex-1" />
 
           {/* Logo - RIGHT (visual) */}
-          <a href="/" className="flex items-center">
+          <a href={logoHref} className="flex items-center">
             <img
               src="/logo-header.svg"
               alt="Relogate"

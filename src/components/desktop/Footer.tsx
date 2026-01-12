@@ -2,16 +2,21 @@
 
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 export const Footer = () => {
   const { footer } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+
+  // Determine logo link destination based on auth status
+  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
 
   return (
     <footer className="bg-[#215388] py-12 lg:py-16">
       <div className="container">
         <div className="flex flex-col items-center text-center">
           {/* Logo */}
-          <a href="/" className="flex items-center mb-6">
+          <a href={logoHref} className="flex items-center mb-6">
             <img src="/logo-white.svg" alt="Relogate" style={{ width: '245px', height: '51px' }} />
           </a>
 

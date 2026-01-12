@@ -2,18 +2,23 @@
 
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 /**
  * MobileFooter - Shared footer component for all mobile pages
  */
 export const MobileFooter = () => {
   const { footer } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+
+  // Determine logo link destination based on auth status
+  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
 
   return (
     <footer className="bg-[#215388] py-8 px-4">
       <div className="flex flex-col items-center text-center">
         {/* Logo */}
-        <a href="/" className="flex items-center mb-4">
+        <a href={logoHref} className="flex items-center mb-4">
           <img
             src="/logo-white.svg"
             alt="Relogate"

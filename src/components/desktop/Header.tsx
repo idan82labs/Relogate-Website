@@ -3,15 +3,20 @@
 import Link from "next/link";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 export const Header = () => {
   const { nav } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+
+  // Determine logo link destination based on auth status
+  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
 
   return (
     <header className="sticky top-0 z-50 bg-white h-[88px] border-b border-[#C6C6C6]">
       <div className="container h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href={logoHref} className="flex items-center">
           <img src="/logo-header.svg" alt="Relogate" style={{ width: '167px', height: '35.5px' }} />
         </Link>
 

@@ -2,20 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAuth } from "@/contexts";
 
 // Desktop components
 import { LoginForm } from "@/components/desktop";
 
 // Mobile components
-import { MobileLoginForm, WelcomeIntro } from "@/components/mobile";
+import { MobileLoginForm } from "@/components/mobile";
 
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
-  const [showWelcomeIntro, setShowWelcomeIntro] = useState(false);
 
   // Detect viewport and set mobile state
   useEffect(() => {
@@ -42,20 +41,8 @@ export default function LoginPage() {
   }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   const handleLoginSuccess = () => {
-    if (isMobile) {
-      // Show WelcomeIntro animation on mobile before redirecting
-      setShowWelcomeIntro(true);
-    } else {
-      // Desktop: redirect based on onboarding status
-      // After login, useAuth will update and the useEffect above will handle redirect
-      // But we need to refresh the auth state first
-      router.push("/questionnaire");
-    }
-  };
-
-  const handleWelcomeIntroComplete = () => {
-    // After WelcomeIntro animation, redirect to questionnaire
-    // (AuthGuard will redirect to home if onboarding is complete)
+    // Redirect to questionnaire - auth context will handle further redirects
+    // based on onboarding status
     router.push("/questionnaire");
   };
 
@@ -106,15 +93,7 @@ export default function LoginPage() {
 
   // Mobile Experience
   if (isMobile) {
-    return (
-      <AnimatePresence mode="wait">
-        {showWelcomeIntro ? (
-          <WelcomeIntro key="welcome" onComplete={handleWelcomeIntroComplete} />
-        ) : (
-          <MobileLoginForm key="login" onLoginSuccess={handleLoginSuccess} />
-        )}
-      </AnimatePresence>
-    );
+    return <MobileLoginForm onLoginSuccess={handleLoginSuccess} />;
   }
 
   // Desktop Experience
