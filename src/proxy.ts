@@ -122,7 +122,19 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // Not authenticated or no redirect needed
+  // If user is NOT authenticated and trying to access questionnaire routes
+  if (!isAuthenticated && QUESTIONNAIRE_ROUTES.some(route => pathname.startsWith(route))) {
+    logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing questionnaire', {
+      pathname,
+      redirectTo: '/login',
+      reason: 'User not authenticated',
+    });
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return createResponse(NextResponse.redirect(url), 'redirect-to-login');
+  }
+
+  // No redirect needed - allow access
   logDebug(sessionId, 'Proxy', 'Passing through', {
     pathname,
     isAuthenticated,
