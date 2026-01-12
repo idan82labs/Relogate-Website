@@ -17,7 +17,7 @@ const QUESTIONNAIRE_ROUTES = [
 // Routes that should be accessible without auth
 const PUBLIC_ROUTES = ['/login', '/register'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Get auth cookies
@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
   const hasCompletedOnboarding = onboardingStatus === 'completed';
 
   // Debug logging (visible in server console)
-  console.log(`[Middleware] Path: ${pathname}, Auth: ${isAuthenticated}, Onboarding: ${onboardingStatus}`);
+  console.log(`[Proxy] Path: ${pathname}, Auth: ${isAuthenticated}, Onboarding: ${onboardingStatus}`);
 
   // If user is authenticated but hasn't completed onboarding
   if (isAuthenticated && !hasCompletedOnboarding) {
@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
 
     // Redirect from protected routes (like home) to questionnaire
     if (PROTECTED_ROUTES.includes(pathname)) {
-      console.log(`[Middleware] Redirecting to questionnaire - incomplete onboarding`);
+      console.log(`[Proxy] Redirecting to questionnaire - incomplete onboarding`);
       const url = request.nextUrl.clone();
       url.pathname = '/questionnaire/countries';
       return NextResponse.redirect(url);
@@ -53,7 +53,7 @@ export function middleware(request: NextRequest) {
   if (isAuthenticated && hasCompletedOnboarding) {
     // Redirect from questionnaire to home (they already completed it)
     if (QUESTIONNAIRE_ROUTES.some(route => pathname === route) && pathname !== '/questionnaire/results') {
-      console.log(`[Middleware] Redirecting to home - onboarding already completed`);
+      console.log(`[Proxy] Redirecting to home - onboarding already completed`);
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);
