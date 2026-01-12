@@ -304,7 +304,7 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     // Registration form
     registration: {
       fullNameLabel: "שם מלא",
-      fullNamePlaceholder: "הזן שם מלא",
+      fullNamePlaceholder: "הזן שם פרטי ושם משפחה",
       idLabel: "תעודת זהות",
       idPlaceholder: "הזן מספר תעודת זהות",
       birthDateLabel: "תאריך לידה",
@@ -318,6 +318,19 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       submitButton: "להרשמה",
       hasAccount: "יש לך חשבון?",
       login: "התחבר",
+    },
+
+    // Validation errors (Hebrew)
+    errors: {
+      fullNameRequired: "נא להזין שם פרטי ושם משפחה",
+      emailRequired: "נא להזין כתובת אימייל",
+      emailInvalid: "כתובת אימייל לא תקינה",
+      passwordRequired: "נא להזין סיסמה",
+      passwordTooShort: "הסיסמה חייבת להכיל לפחות 8 תווים",
+      emailAlreadyExists: "כתובת האימייל כבר רשומה במערכת",
+      validationFailed: "אנא בדוק את הפרטים שהזנת",
+      networkError: "שגיאת רשת. אנא נסה שוב.",
+      unexpectedError: "אירעה שגיאה. אנא נסה שוב.",
     },
   },
 

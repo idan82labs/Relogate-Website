@@ -4,6 +4,50 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+/**
+ * Translate API error messages to Hebrew for user display
+ * Logs original error in English for debugging
+ */
+function translateError(error: string, code?: string): string {
+  // Map common error patterns to Hebrew messages
+  const errorMap: Record<string, string> = {
+    'Validation failed': 'אנא בדוק את הפרטים שהזנת',
+    'Email already registered': 'כתובת האימייל כבר רשומה במערכת',
+    'Invalid email or password': 'אימייל או סיסמה שגויים',
+    'Invalid email address': 'כתובת אימייל לא תקינה',
+    'Email address is not allowed': 'כתובת האימייל אינה מותרת. נסה כתובת אחרת.',
+    'Password must be at least 8 characters': 'הסיסמה חייבת להכיל לפחות 8 תווים',
+    'First name is required': 'נא להזין שם פרטי',
+    'Last name is required': 'נא להזין שם משפחה',
+    'Network error. Please try again.': 'שגיאת רשת. אנא נסה שוב.',
+    'Registration failed': 'ההרשמה נכשלה. אנא נסה שוב.',
+    'Login failed': 'ההתחברות נכשלה. אנא נסה שוב.',
+  };
+
+  // Check for exact match
+  if (errorMap[error]) {
+    return errorMap[error];
+  }
+
+  // Check for partial matches (for errors like "Validation failed" with details)
+  for (const [pattern, translation] of Object.entries(errorMap)) {
+    if (error.toLowerCase().includes(pattern.toLowerCase())) {
+      return translation;
+    }
+  }
+
+  // Check error code for specific cases
+  if (code === 'VALIDATION_ERROR') {
+    return 'אנא בדוק את הפרטים שהזנת';
+  }
+  if (code === 'CONFLICT') {
+    return 'כתובת האימייל כבר רשומה במערכת';
+  }
+
+  // Default error message in Hebrew
+  return 'אירעה שגיאה. אנא נסה שוב.';
+}
+
 // Types for API responses
 interface ApiResponse<T> {
   success: boolean;
@@ -100,7 +144,10 @@ export async function login(email: string, password: string): Promise<{ user: Us
     const data: ApiResponse<LoginResponse> = await response.json();
 
     if (!response.ok || !data.success) {
-      return { user: null as unknown as User, error: data.error || 'Login failed' };
+      // Log original error in English for debugging
+      console.error('Login failed:', data.error, data.code);
+      // Return translated Hebrew error for user display
+      return { user: null as unknown as User, error: translateError(data.error || 'Login failed', data.code) };
     }
 
     if (data.data?.session) {
@@ -110,7 +157,7 @@ export async function login(email: string, password: string): Promise<{ user: Us
     return { user: data.data!.user };
   } catch (error) {
     console.error('Login error:', error);
-    return { user: null as unknown as User, error: 'Network error. Please try again.' };
+    return { user: null as unknown as User, error: translateError('Network error. Please try again.') };
   }
 }
 
@@ -136,7 +183,10 @@ export async function register(userData: {
     const data: ApiResponse<RegisterResponse> = await response.json();
 
     if (!response.ok || !data.success) {
-      return { user: null as unknown as User, error: data.error || 'Registration failed' };
+      // Log original error in English for debugging
+      console.error('Registration failed:', data.error, data.code);
+      // Return translated Hebrew error for user display
+      return { user: null as unknown as User, error: translateError(data.error || 'Registration failed', data.code) };
     }
 
     if (data.data?.session) {
@@ -146,7 +196,7 @@ export async function register(userData: {
     return { user: data.data!.user };
   } catch (error) {
     console.error('Registration error:', error);
-    return { user: null as unknown as User, error: 'Network error. Please try again.' };
+    return { user: null as unknown as User, error: translateError('Network error. Please try again.') };
   }
 }
 

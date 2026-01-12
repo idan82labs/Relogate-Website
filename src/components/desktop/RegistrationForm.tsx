@@ -39,7 +39,7 @@ export const RegistrationForm = ({
   onRegisterSuccess,
 }: RegistrationFormProps) => {
   const { personalArea } = siteContent;
-  const { registration } = personalArea;
+  const { registration, errors: errorMessages } = personalArea;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -61,10 +61,35 @@ export const RegistrationForm = ({
     setIsLoading(true);
 
     try {
-      // Split full name into first and last name
+      // Validate full name has both first and last name
       const nameParts = formData.fullName.trim().split(/\s+/);
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
+      if (nameParts.length < 2 || !nameParts[0] || !nameParts[1]) {
+        setError(errorMessages.fullNameRequired);
+        setIsLoading(false);
+        return;
+      }
+
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ");
+
+      // Validate email
+      if (!formData.email.trim()) {
+        setError(errorMessages.emailRequired);
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate password
+      if (!formData.password) {
+        setError(errorMessages.passwordRequired);
+        setIsLoading(false);
+        return;
+      }
+      if (formData.password.length < 8) {
+        setError(errorMessages.passwordTooShort);
+        setIsLoading(false);
+        return;
+      }
 
       const result = await register({
         email: formData.email,
@@ -82,7 +107,7 @@ export const RegistrationForm = ({
       // Call success callback after registration
       onRegisterSuccess?.();
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      setError(errorMessages.unexpectedError);
       console.error("Registration error:", err);
     } finally {
       setIsLoading(false);
