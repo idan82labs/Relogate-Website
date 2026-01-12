@@ -48,3 +48,6 @@ docs/design/verify/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Debug logs
+logs/

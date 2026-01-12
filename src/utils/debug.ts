@@ -1,6 +1,6 @@
 /**
  * Debug utility for logging auth flow
- * Logs are stored in sessionStorage and can be viewed in browser console
+ * Logs are stored in sessionStorage AND sent to server for file logging
  */
 
 const DEBUG_KEY = 'relogate_debug_logs';
@@ -17,7 +17,38 @@ function getTimestamp(): string {
   return new Date().toISOString();
 }
 
-export function debugLog(component: string, message: string, data?: Record<string, unknown>): void {
+// Send log to server API for file-based logging
+async function sendLogToServer(
+  level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG',
+  source: string,
+  message: string,
+  data?: Record<string, unknown>
+): Promise<void> {
+  try {
+    await fetch('/api/log', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        level,
+        source,
+        message,
+        data,
+      }),
+    });
+  } catch (e) {
+    // Don't log fetch errors to avoid infinite loops
+    console.warn('Failed to send log to server:', e);
+  }
+}
+
+export function debugLog(
+  component: string,
+  message: string,
+  data?: Record<string, unknown>,
+  level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG' = 'INFO'
+): void {
   if (typeof window === 'undefined') return;
 
   const log: DebugLog = {
@@ -45,6 +76,26 @@ export function debugLog(component: string, message: string, data?: Record<strin
   } catch (e) {
     console.error('Failed to store debug log:', e);
   }
+
+  // Send to server for file logging (fire and forget)
+  sendLogToServer(level, component, message, data);
+}
+
+// Convenience methods for different log levels
+export function debugInfo(component: string, message: string, data?: Record<string, unknown>): void {
+  debugLog(component, message, data, 'INFO');
+}
+
+export function debugWarn(component: string, message: string, data?: Record<string, unknown>): void {
+  debugLog(component, message, data, 'WARN');
+}
+
+export function debugError(component: string, message: string, data?: Record<string, unknown>): void {
+  debugLog(component, message, data, 'ERROR');
+}
+
+export function debugDebug(component: string, message: string, data?: Record<string, unknown>): void {
+  debugLog(component, message, data, 'DEBUG');
 }
 
 export function getDebugLogs(): DebugLog[] {
@@ -72,11 +123,23 @@ export function printDebugLogs(): void {
   console.log('=== END DEBUG LOGS ===');
 }
 
+// Get current session ID from server
+export async function getSessionId(): Promise<string | null> {
+  try {
+    const response = await fetch('/api/log');
+    const data = await response.json();
+    return data.sessionId || null;
+  } catch {
+    return null;
+  }
+}
+
 // Expose to window for easy access in browser console
 if (typeof window !== 'undefined') {
   (window as unknown as Record<string, unknown>).relogateDebug = {
     getLogs: getDebugLogs,
     printLogs: printDebugLogs,
     clearLogs: clearDebugLogs,
+    getSessionId,
   };
 }

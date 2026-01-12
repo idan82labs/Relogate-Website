@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
-import { isAuthenticated as hasToken } from "@/services/auth";
+import { isAuthenticated as hasToken, getAccessToken } from "@/services/auth";
 import { debugLog } from "@/utils/debug";
 
 export const MobileHeader = () => {
@@ -17,16 +17,36 @@ export const MobileHeader = () => {
 
   // Track token status in state to handle hydration properly
   const [tokenExists, setTokenExists] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const renderCount = useRef(0);
+  const mountTime = useRef(Date.now());
+
+  // Log on every render to track state changes
+  renderCount.current += 1;
+  debugLog('MobileHeader', 'RENDER', {
+    renderCount: renderCount.current,
+    timeSinceMount: Date.now() - mountTime.current,
+    tokenExists,
+    isHydrated,
+    isAuthenticated,
+    hasCompletedOnboarding,
+    isLoading,
+  });
 
   useEffect(() => {
     const token = hasToken();
+    const accessToken = getAccessToken();
     setTokenExists(token);
+    setIsHydrated(true);
 
-    debugLog('MobileHeader', 'Auth state check', {
+    debugLog('MobileHeader', 'useEffect - Auth state check', {
       tokenExists: token,
+      hasAccessToken: !!accessToken,
+      accessTokenPreview: accessToken ? `${accessToken.substring(0, 20)}...` : null,
       isAuthenticated,
       hasCompletedOnboarding,
       isLoading,
+      timeSinceMount: Date.now() - mountTime.current,
     });
   }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
 
@@ -35,21 +55,38 @@ export const MobileHeader = () => {
 
   // Handle logo click - intercept and redirect if needed
   const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    debugLog('MobileHeader', 'Logo clicked', {
+    // Read token directly at click time to avoid stale closure
+    const currentToken = hasToken();
+    const currentShouldRestrict = currentToken && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+
+    debugLog('MobileHeader', 'LOGO CLICKED', {
+      eventType: e.type,
+      eventDefaultPrevented: e.defaultPrevented,
       shouldRestrictNavigation,
+      currentShouldRestrict,
       tokenExists,
+      currentToken,
       isAuthenticated,
       hasCompletedOnboarding,
       isLoading,
+      isHydrated,
+      timeSinceMount: Date.now() - mountTime.current,
     });
 
-    if (shouldRestrictNavigation) {
+    if (currentShouldRestrict) {
       e.preventDefault();
-      debugLog('MobileHeader', 'Preventing navigation, redirecting to questionnaire');
+      e.stopPropagation();
+      debugLog('MobileHeader', 'NAVIGATION PREVENTED - redirecting to questionnaire', {
+        from: window.location.pathname,
+        to: '/questionnaire/countries',
+      });
       router.push('/questionnaire/countries');
+    } else {
+      debugLog('MobileHeader', 'NAVIGATION ALLOWED - letting anchor navigate to home', {
+        reason: !currentToken ? 'No token' : 'Onboarding completed or not authenticated',
+      });
     }
-    // If not restricted, the default anchor behavior will navigate to "/"
-  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, router]);
+  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, isHydrated, router]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
