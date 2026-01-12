@@ -78,12 +78,12 @@ interface User {
 
 interface LoginResponse {
   user: User;
-  session: AuthTokens;
+  tokens: AuthTokens;
 }
 
 interface RegisterResponse {
   user: User;
-  session: AuthTokens;
+  tokens: AuthTokens;
 }
 
 // Storage keys
@@ -190,8 +190,8 @@ export async function login(email: string, password: string): Promise<{ user: Us
       return { user: null as unknown as User, error: translateError(data.error || 'Login failed', data.code) };
     }
 
-    if (data.data?.session) {
-      storeTokens(data.data.session, data.data.user.onboardingStatus);
+    if (data.data?.tokens) {
+      storeTokens(data.data.tokens, data.data.user.onboardingStatus);
     }
 
     return { user: data.data!.user };
@@ -229,8 +229,8 @@ export async function register(userData: {
       return { user: null as unknown as User, error: translateError(data.error || 'Registration failed', data.code) };
     }
 
-    if (data.data?.session) {
-      storeTokens(data.data.session, data.data.user.onboardingStatus);
+    if (data.data?.tokens) {
+      storeTokens(data.data.tokens, data.data.user.onboardingStatus);
     }
 
     return { user: data.data!.user };
