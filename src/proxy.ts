@@ -122,9 +122,9 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // If user is NOT authenticated and trying to access questionnaire routes
-  if (!isAuthenticated && QUESTIONNAIRE_ROUTES.some(route => pathname.startsWith(route))) {
-    logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing questionnaire', {
+  // If user is NOT authenticated and trying to access any protected page
+  if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+    logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing protected route', {
       pathname,
       redirectTo: '/login',
       reason: 'User not authenticated',
