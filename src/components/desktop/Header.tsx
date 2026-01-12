@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
 import { useAuth } from "@/contexts";
@@ -10,6 +11,7 @@ import { debugLog } from "@/utils/debug";
 
 export const Header = () => {
   const { nav } = siteContent;
+  const router = useRouter();
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
   // Track token status in state to handle hydration properly
@@ -27,25 +29,36 @@ export const Header = () => {
     });
   }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
 
-  // Determine logo link destination based on auth status
-  // Also check token existence during loading to prevent bypass
+  // Determine if navigation should be restricted
   const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
-  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
-  debugLog('Header', 'Logo href computed', {
-    shouldRestrictNavigation,
-    logoHref,
-    tokenExists,
-    isLoading,
-    isAuthenticated,
-    hasCompletedOnboarding,
-  });
+  // Handle logo click - intercept and redirect if needed
+  const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    debugLog('Header', 'Logo clicked', {
+      shouldRestrictNavigation,
+      tokenExists,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+
+    if (shouldRestrictNavigation) {
+      e.preventDefault();
+      debugLog('Header', 'Preventing navigation, redirecting to questionnaire');
+      router.push('/questionnaire/countries');
+    }
+    // If not restricted, the default Link behavior will navigate to "/"
+  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   return (
     <header className="sticky top-0 z-50 bg-white h-[88px] border-b border-[#C6C6C6]">
       <div className="container h-full flex items-center justify-between">
-        {/* Logo */}
-        <Link href={logoHref} className="flex items-center">
+        {/* Logo - always href="/" but onClick intercepts if needed */}
+        <Link
+          href="/"
+          className="flex items-center"
+          onClick={handleLogoClick}
+        >
           <img src="/logo-header.svg" alt="Relogate" style={{ width: '167px', height: '35.5px' }} />
         </Link>
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
@@ -9,6 +10,7 @@ import { debugLog } from "@/utils/debug";
 
 export const Footer = () => {
   const { footer } = siteContent;
+  const router = useRouter();
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
   // Track token status in state to handle hydration properly
@@ -26,17 +28,36 @@ export const Footer = () => {
     });
   }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
 
-  // Determine logo link destination based on auth status
-  // Also check token existence during loading to prevent bypass
+  // Determine if navigation should be restricted
   const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
-  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
+
+  // Handle logo click - intercept and redirect if needed
+  const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    debugLog('Footer', 'Logo clicked', {
+      shouldRestrictNavigation,
+      tokenExists,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+
+    if (shouldRestrictNavigation) {
+      e.preventDefault();
+      debugLog('Footer', 'Preventing navigation, redirecting to questionnaire');
+      router.push('/questionnaire/countries');
+    }
+  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   return (
     <footer className="bg-[#215388] py-12 lg:py-16">
       <div className="container">
         <div className="flex flex-col items-center text-center">
-          {/* Logo */}
-          <a href={logoHref} className="flex items-center mb-6">
+          {/* Logo - always href="/" but onClick intercepts if needed */}
+          <a
+            href="/"
+            className="flex items-center mb-6"
+            onClick={handleLogoClick}
+          >
             <img src="/logo-white.svg" alt="Relogate" style={{ width: '245px', height: '51px' }} />
           </a>
 

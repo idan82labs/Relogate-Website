@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
@@ -10,6 +11,7 @@ import { debugLog } from "@/utils/debug";
 
 export const MobileHeader = () => {
   const { nav, mobile } = siteContent;
+  const router = useRouter();
   const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -28,16 +30,26 @@ export const MobileHeader = () => {
     });
   }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
 
-  // Determine logo link destination based on auth status
-  // Also check token existence during loading to prevent bypass
+  // Determine if navigation should be restricted
   const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
-  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
-  debugLog('MobileHeader', 'Logo href computed', {
-    shouldRestrictNavigation,
-    logoHref,
-    tokenExists,
-  });
+  // Handle logo click - intercept and redirect if needed
+  const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    debugLog('MobileHeader', 'Logo clicked', {
+      shouldRestrictNavigation,
+      tokenExists,
+      isAuthenticated,
+      hasCompletedOnboarding,
+      isLoading,
+    });
+
+    if (shouldRestrictNavigation) {
+      e.preventDefault();
+      debugLog('MobileHeader', 'Preventing navigation, redirecting to questionnaire');
+      router.push('/questionnaire/countries');
+    }
+    // If not restricted, the default anchor behavior will navigate to "/"
+  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -94,8 +106,12 @@ export const MobileHeader = () => {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Logo - RIGHT (visual) */}
-          <a href={logoHref} className="flex items-center">
+          {/* Logo - RIGHT (visual) - always href="/" but onClick intercepts if needed */}
+          <a
+            href="/"
+            className="flex items-center"
+            onClick={handleLogoClick}
+          >
             <img
               src="/logo-header.svg"
               alt="Relogate"

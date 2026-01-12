@@ -89,23 +89,60 @@ interface RegisterResponse {
 // Storage keys
 const ACCESS_TOKEN_KEY = 'relogate_access_token';
 const REFRESH_TOKEN_KEY = 'relogate_refresh_token';
+const AUTH_COOKIE_KEY = 'relogate_auth';
+const ONBOARDING_COOKIE_KEY = 'relogate_onboarding';
 
 /**
- * Store auth tokens in localStorage
+ * Set a cookie with proper options
  */
-function storeTokens(tokens: AuthTokens): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+function setCookie(name: string, value: string, days: number = 7): void {
+  if (typeof document === 'undefined') return;
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 }
 
 /**
- * Clear stored tokens
+ * Delete a cookie
+ */
+function deleteCookie(name: string): void {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+}
+
+/**
+ * Store auth tokens in localStorage and set auth cookie for middleware
+ */
+function storeTokens(tokens: AuthTokens, onboardingStatus?: OnboardingStatus): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+
+  // Set cookies for middleware access
+  setCookie(AUTH_COOKIE_KEY, 'true');
+  if (onboardingStatus) {
+    setCookie(ONBOARDING_COOKIE_KEY, onboardingStatus);
+  }
+}
+
+/**
+ * Update onboarding status cookie
+ */
+export function setOnboardingCookie(status: OnboardingStatus): void {
+  setCookie(ONBOARDING_COOKIE_KEY, status);
+}
+
+/**
+ * Clear stored tokens and cookies
  */
 function clearTokens(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+
+  // Clear auth cookies
+  deleteCookie(AUTH_COOKIE_KEY);
+  deleteCookie(ONBOARDING_COOKIE_KEY);
 }
 
 /**
@@ -154,7 +191,7 @@ export async function login(email: string, password: string): Promise<{ user: Us
     }
 
     if (data.data?.session) {
-      storeTokens(data.data.session);
+      storeTokens(data.data.session, data.data.user.onboardingStatus);
     }
 
     return { user: data.data!.user };
@@ -193,7 +230,7 @@ export async function register(userData: {
     }
 
     if (data.data?.session) {
-      storeTokens(data.data.session);
+      storeTokens(data.data.session, data.data.user.onboardingStatus);
     }
 
     return { user: data.data!.user };

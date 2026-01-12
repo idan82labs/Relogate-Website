@@ -14,6 +14,7 @@ import {
   register as authRegister,
   logout as authLogout,
   isAuthenticated,
+  setOnboardingCookie,
   type User,
   type OnboardingStatus,
 } from '@/services/auth';
@@ -62,6 +63,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
+        // Sync onboarding cookie with current user status
+        if (currentUser?.onboardingStatus) {
+          setOnboardingCookie(currentUser.onboardingStatus);
+        }
       } catch (error) {
         console.error('Failed to load user:', error);
         setUser(null);
@@ -123,6 +128,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const updateOnboardingStatus = useCallback((status: OnboardingStatus) => {
     if (user) {
       setUser({ ...user, onboardingStatus: status });
+      // Sync cookie for middleware access
+      setOnboardingCookie(status);
     }
   }, [user]);
 
