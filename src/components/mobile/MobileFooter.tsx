@@ -3,16 +3,19 @@
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
+import { isAuthenticated as hasToken } from "@/services/auth";
 
 /**
  * MobileFooter - Shared footer component for all mobile pages
  */
 export const MobileFooter = () => {
   const { footer } = siteContent;
-  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
   // Determine logo link destination based on auth status
-  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
+  // Also check token existence during loading to prevent bypass
+  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
   return (
     <footer className="bg-[#215388] py-8 px-4">

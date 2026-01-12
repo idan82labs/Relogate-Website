@@ -5,14 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
+import { isAuthenticated as hasToken } from "@/services/auth";
 
 export const MobileHeader = () => {
   const { nav, mobile } = siteContent;
-  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Determine logo link destination based on auth status
-  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
+  // Also check token existence during loading to prevent bypass
+  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);

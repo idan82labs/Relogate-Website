@@ -35,14 +35,14 @@ export default function RegisterPage() {
       if (hasCompletedOnboarding) {
         router.replace("/");
       } else {
-        router.replace("/questionnaire");
+        router.replace("/questionnaire/countries");
       }
     }
   }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   const handleRegisterSuccess = () => {
-    // New users always go to questionnaire first
-    router.push("/questionnaire");
+    // New users go directly to first questionnaire step
+    router.push("/questionnaire/countries");
   };
 
   // Show loading while checking auth state

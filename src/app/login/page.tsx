@@ -35,15 +35,14 @@ export default function LoginPage() {
       if (hasCompletedOnboarding) {
         router.replace("/");
       } else {
-        router.replace("/questionnaire");
+        router.replace("/questionnaire/countries");
       }
     }
   }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
 
   const handleLoginSuccess = () => {
-    // Redirect to questionnaire - auth context will handle further redirects
-    // based on onboarding status
-    router.push("/questionnaire");
+    // Redirect directly to first questionnaire step
+    router.push("/questionnaire/countries");
   };
 
   // Show loading while checking auth state

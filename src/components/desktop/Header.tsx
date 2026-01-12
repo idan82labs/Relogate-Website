@@ -4,13 +4,16 @@ import Link from "next/link";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
 import { useAuth } from "@/contexts";
+import { isAuthenticated as hasToken } from "@/services/auth";
 
 export const Header = () => {
   const { nav } = siteContent;
-  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
   // Determine logo link destination based on auth status
-  const logoHref = isAuthenticated && !hasCompletedOnboarding ? "/questionnaire" : "/";
+  // Also check token existence during loading to prevent bypass
+  const shouldRestrictNavigation = hasToken() && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
+  const logoHref = shouldRestrictNavigation ? "/questionnaire/countries" : "/";
 
   return (
     <header className="sticky top-0 z-50 bg-white h-[88px] border-b border-[#C6C6C6]">
