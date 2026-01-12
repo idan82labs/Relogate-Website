@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   questionnaireService,
   QuestionnaireData,
 } from "@/services/questionnaire";
+import { isAuthenticated } from "@/services/auth";
 
 /**
  * React hook for managing questionnaire state
  *
  * Provides a clean interface for components to interact with
  * the questionnaire service, with reactive state updates.
+ * Automatically syncs with backend API when user is authenticated.
  */
 export function useQuestionnaire() {
   // Local state to trigger re-renders
   const [, forceUpdate] = useState({});
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Get current state from service
   const state = questionnaireService.getState();
@@ -25,6 +28,18 @@ export function useQuestionnaire() {
     forceUpdate({});
   }, []);
 
+  // Load questionnaire from API on mount (for authenticated users)
+  useEffect(() => {
+    async function loadQuestionnaire() {
+      if (isAuthenticated()) {
+        await questionnaireService.loadFromApi();
+        refresh();
+      }
+      setIsLoaded(true);
+    }
+    loadQuestionnaire();
+  }, [refresh]);
+
   // Update data and refresh
   const updateData = useCallback(
     (updates: Partial<QuestionnaireData>) => {
@@ -34,10 +49,16 @@ export function useQuestionnaire() {
     [refresh]
   );
 
-  // Set step and refresh
+  // Set step, save to API, and refresh
   const setStep = useCallback(
-    (step: number) => {
+    async (step: number) => {
       questionnaireService.setStep(step);
+
+      // Save progress to API when changing steps
+      if (isAuthenticated()) {
+        await questionnaireService.saveToApi();
+      }
+
       refresh();
     },
     [refresh]
@@ -66,13 +87,26 @@ export function useQuestionnaire() {
     refresh();
   }, [refresh]);
 
+  // Save current progress to API
+  const saveProgress = useCallback(async () => {
+    if (isAuthenticated()) {
+      const result = await questionnaireService.saveToApi();
+      refresh();
+      return result;
+    }
+    return { success: true };
+  }, [refresh]);
+
   return {
     // State
     currentStep: state.currentStep,
     data,
     isSubmitting: state.isSubmitting,
     isComplete: state.isComplete,
+    isSyncing: state.isSyncing,
     error: state.error,
+    isLoaded,
+    questionnaireId: questionnaireService.getId(),
 
     // Actions
     updateData,
@@ -81,5 +115,6 @@ export function useQuestionnaire() {
     showSpouseFields,
     submit,
     reset,
+    saveProgress,
   };
 }

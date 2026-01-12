@@ -12,3 +12,4 @@ export { SelectDropdown } from "./SelectDropdown";
 export { MatchScoreCircle } from "./MatchScoreCircle";
 export { CountryCard } from "./CountryCard";
 export { CategoryTag } from "./CategoryTag";
+export { AuthGuard } from "./AuthGuard";

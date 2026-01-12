@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Hebrew } from "next/font/google";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const notoSansHebrew = Noto_Sans_Hebrew({
@@ -39,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl">
       <body className={`${notoSansHebrew.variable} font-sans antialiased`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

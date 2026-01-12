@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts";
 
 // Desktop components
 import { LoginForm } from "@/components/desktop";
@@ -12,6 +13,7 @@ import { MobileLoginForm, WelcomeIntro } from "@/components/mobile";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [showWelcomeIntro, setShowWelcomeIntro] = useState(false);
 
@@ -26,23 +28,39 @@ export default function LoginPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isAuthenticated) {
+      if (hasCompletedOnboarding) {
+        router.replace("/");
+      } else {
+        router.replace("/questionnaire");
+      }
+    }
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
+
   const handleLoginSuccess = () => {
     if (isMobile) {
       // Show WelcomeIntro animation on mobile before redirecting
       setShowWelcomeIntro(true);
     } else {
-      // Desktop: redirect directly to homepage
-      router.push("/");
+      // Desktop: redirect based on onboarding status
+      // After login, useAuth will update and the useEffect above will handle redirect
+      // But we need to refresh the auth state first
+      router.push("/questionnaire");
     }
   };
 
   const handleWelcomeIntroComplete = () => {
-    // After WelcomeIntro animation, redirect to homepage
-    router.push("/");
+    // After WelcomeIntro animation, redirect to questionnaire
+    // (AuthGuard will redirect to home if onboarding is complete)
+    router.push("/questionnaire");
   };
 
-  // Loading state
-  if (isMobile === null) {
+  // Show loading while checking auth state
+  if (isLoading || isMobile === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <motion.div
@@ -79,6 +97,11 @@ export default function LoginPage() {
         </motion.div>
       </div>
     );
+  }
+
+  // Don't render login form if already authenticated
+  if (isAuthenticated) {
+    return null;
   }
 
   // Mobile Experience

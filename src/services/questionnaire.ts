@@ -1,14 +1,13 @@
 /**
  * Questionnaire Service
  *
- * Handles questionnaire data management. Currently stores in memory,
- * but designed for easy API integration later.
- *
- * To integrate with API:
- * 1. Replace the in-memory storage with API calls
- * 2. Update submitQuestionnaire to POST to your endpoint
- * 3. Add authentication headers if needed
+ * Handles questionnaire data management with backend API integration.
+ * Falls back to local storage for non-authenticated users.
  */
+
+import { getAccessToken } from './auth';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Step configuration
 export const QUESTIONNAIRE_STEPS = {
@@ -37,6 +36,14 @@ export const QUESTIONNAIRE_STEPS = {
 export type StepName = keyof typeof QUESTIONNAIRE_STEPS;
 export const TOTAL_STEPS = Object.keys(QUESTIONNAIRE_STEPS).length;
 
+// Step name to path mapping
+const STEP_TO_PATH: Record<string, StepName> = {
+  'countries': 'countries',
+  'relocation-reason': 'relocation-reason',
+  'family-status': 'family-status',
+  'personal-details': 'personal-details',
+};
+
 // Types
 export interface QuestionnaireData {
   // Step 1: Country preferences
@@ -61,11 +68,50 @@ export interface QuestionnaireData {
 }
 
 export interface QuestionnaireState {
+  id: string | null;
   currentStep: number;
   data: Partial<QuestionnaireData>;
   isSubmitting: boolean;
   isComplete: boolean;
+  isSyncing: boolean;
   error: string | null;
+}
+
+// API response types
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+interface ApiQuestionnaire {
+  id: string;
+  userId: string;
+  schemaVersion: number;
+  responses: {
+    version: number;
+    preferredCountries?: string[];
+    relocationReason?: string;
+    familyStatus?: string;
+    personalDetails?: {
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      birthDate?: string;
+      citizenship?: string;
+      residenceCountry?: string;
+      additionalCitizenship?: string;
+    };
+    spouseDetails?: {
+      birthDate?: string;
+      citizenship?: string;
+    };
+  };
+  status: 'in_progress' | 'completed' | 'archived';
+  currentStep: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
 }
 
 // Initial state
@@ -81,14 +127,102 @@ const initialData: Partial<QuestionnaireData> = {
   residenceCountry: "",
 };
 
-// In-memory storage (replace with API calls later)
+// In-memory state
 let questionnaireState: QuestionnaireState = {
+  id: null,
   currentStep: 1,
   data: { ...initialData },
   isSubmitting: false,
   isComplete: false,
+  isSyncing: false,
   error: null,
 };
+
+/**
+ * Convert API response to local data format
+ */
+function apiToLocalData(api: ApiQuestionnaire): Partial<QuestionnaireData> {
+  return {
+    preferredCountries: api.responses.preferredCountries ?? [],
+    relocationReason: api.responses.relocationReason ?? "",
+    familyStatus: api.responses.familyStatus ?? "",
+    fullName: api.responses.personalDetails?.fullName ?? "",
+    email: api.responses.personalDetails?.email ?? "",
+    phone: api.responses.personalDetails?.phone ?? "",
+    birthDate: api.responses.personalDetails?.birthDate ?? "",
+    citizenship: api.responses.personalDetails?.citizenship ?? "",
+    residenceCountry: api.responses.personalDetails?.residenceCountry ?? "",
+    additionalCitizenship: api.responses.personalDetails?.additionalCitizenship,
+    spouseBirthDate: api.responses.spouseDetails?.birthDate,
+    spouseCitizenship: api.responses.spouseDetails?.citizenship,
+  };
+}
+
+/**
+ * Convert local data to API format
+ */
+function localToApiData(data: Partial<QuestionnaireData>): ApiQuestionnaire['responses'] {
+  return {
+    version: 1,
+    preferredCountries: data.preferredCountries,
+    relocationReason: data.relocationReason,
+    familyStatus: data.familyStatus,
+    personalDetails: {
+      fullName: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      birthDate: data.birthDate,
+      citizenship: data.citizenship,
+      residenceCountry: data.residenceCountry,
+      additionalCitizenship: data.additionalCitizenship,
+    },
+    spouseDetails: data.spouseBirthDate || data.spouseCitizenship ? {
+      birthDate: data.spouseBirthDate,
+      citizenship: data.spouseCitizenship,
+    } : undefined,
+  };
+}
+
+/**
+ * Get step number from step name
+ */
+function stepNameToNumber(stepName: string): number {
+  const step = STEP_TO_PATH[stepName];
+  if (step && QUESTIONNAIRE_STEPS[step]) {
+    return QUESTIONNAIRE_STEPS[step].stepNumber;
+  }
+  return 1;
+}
+
+/**
+ * Get step name from step number
+ */
+function stepNumberToName(stepNumber: number): string {
+  const entries = Object.entries(QUESTIONNAIRE_STEPS);
+  const step = entries.find(([_, config]) => config.stepNumber === stepNumber);
+  return step ? step[0] : 'countries';
+}
+
+/**
+ * Make authenticated API request
+ */
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
+  const token = getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+  });
+
+  return response.json();
+}
 
 // Service functions
 export const questionnaireService = {
@@ -107,7 +241,43 @@ export const questionnaireService = {
   },
 
   /**
+   * Load questionnaire from API (or create new one)
+   */
+  async loadFromApi(): Promise<void> {
+    const token = getAccessToken();
+    if (!token) {
+      return;
+    }
+
+    questionnaireState.isSyncing = true;
+    questionnaireState.error = null;
+
+    try {
+      const response = await apiRequest<{ questionnaire: ApiQuestionnaire }>(
+        '/api/v1/questionnaire'
+      );
+
+      if (response.success && response.data?.questionnaire) {
+        const api = response.data.questionnaire;
+        questionnaireState = {
+          ...questionnaireState,
+          id: api.id,
+          currentStep: stepNameToNumber(api.currentStep),
+          data: apiToLocalData(api),
+          isComplete: api.status === 'completed',
+          isSyncing: false,
+        };
+      }
+    } catch (error) {
+      console.error('Failed to load questionnaire:', error);
+      questionnaireState.error = 'Failed to load questionnaire';
+      questionnaireState.isSyncing = false;
+    }
+  },
+
+  /**
    * Update questionnaire data (partial update)
+   * Also syncs to API if authenticated
    */
   updateData(updates: Partial<QuestionnaireData>): void {
     questionnaireState = {
@@ -117,6 +287,43 @@ export const questionnaireService = {
         ...updates,
       },
     };
+  },
+
+  /**
+   * Save current state to API
+   */
+  async saveToApi(): Promise<{ success: boolean; error?: string }> {
+    const token = getAccessToken();
+    if (!token || !questionnaireState.id) {
+      return { success: true }; // No API save needed
+    }
+
+    questionnaireState.isSyncing = true;
+
+    try {
+      const response = await apiRequest<{ questionnaire: ApiQuestionnaire }>(
+        `/api/v1/questionnaire/${questionnaireState.id}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            responses: localToApiData(questionnaireState.data),
+            currentStep: stepNumberToName(questionnaireState.currentStep),
+          }),
+        }
+      );
+
+      questionnaireState.isSyncing = false;
+
+      if (!response.success) {
+        return { success: false, error: response.error || 'Failed to save' };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to save questionnaire:', error);
+      questionnaireState.isSyncing = false;
+      return { success: false, error: 'Network error' };
+    }
   },
 
   /**
@@ -163,29 +370,31 @@ export const questionnaireService = {
   },
 
   /**
-   * Submit questionnaire to API
-   * TODO: Replace with actual API call
+   * Submit questionnaire to API (marks as completed)
    */
   async submitQuestionnaire(): Promise<{ success: boolean; error?: string }> {
     questionnaireState.isSubmitting = true;
     questionnaireState.error = null;
 
+    const token = getAccessToken();
+
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (token && questionnaireState.id) {
+        // Submit to API
+        const response = await apiRequest<{ questionnaire: ApiQuestionnaire }>(
+          `/api/v1/questionnaire/${questionnaireState.id}/complete`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              responses: localToApiData(questionnaireState.data),
+            }),
+          }
+        );
 
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/questionnaire', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(questionnaireState.data),
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error('Failed to submit questionnaire');
-      // }
-
-      console.log("Questionnaire submitted:", questionnaireState.data);
+        if (!response.success) {
+          throw new Error(response.error || 'Failed to submit questionnaire');
+        }
+      }
 
       questionnaireState.isComplete = true;
       questionnaireState.isSubmitting = false;
@@ -206,12 +415,28 @@ export const questionnaireService = {
    */
   reset(): void {
     questionnaireState = {
+      id: null,
       currentStep: 1,
       data: { ...initialData },
       isSubmitting: false,
       isComplete: false,
+      isSyncing: false,
       error: null,
     };
+  },
+
+  /**
+   * Get questionnaire ID
+   */
+  getId(): string | null {
+    return questionnaireState.id;
+  },
+
+  /**
+   * Check if questionnaire is syncing with API
+   */
+  isSyncing(): boolean {
+    return questionnaireState.isSyncing;
   },
 };
 

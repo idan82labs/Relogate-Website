@@ -63,6 +63,8 @@ interface AuthTokens {
   expiresAt: number;
 }
 
+type OnboardingStatus = 'pending' | 'in_progress' | 'completed';
+
 interface User {
   id: string;
   email: string;
@@ -70,6 +72,7 @@ interface User {
   lastName?: string;
   phone?: string;
   emailVerified: boolean;
+  onboardingStatus: OnboardingStatus;
   createdAt: string;
 }
 
@@ -296,4 +299,4 @@ export async function getCurrentUser(): Promise<User | null> {
   }
 }
 
-export type { User, AuthTokens, LoginResponse, RegisterResponse };
+export type { User, AuthTokens, LoginResponse, RegisterResponse, OnboardingStatus };

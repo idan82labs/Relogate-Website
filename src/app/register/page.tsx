@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts";
 
 // Desktop components
 import { RegistrationForm } from "@/components/desktop";
@@ -12,6 +13,7 @@ import { MobileRegistrationForm } from "@/components/mobile";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   // Detect viewport and set mobile state
@@ -25,13 +27,26 @@ export default function RegisterPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isAuthenticated) {
+      if (hasCompletedOnboarding) {
+        router.replace("/");
+      } else {
+        router.replace("/questionnaire");
+      }
+    }
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
+
   const handleRegisterSuccess = () => {
-    // Redirect to homepage (splash already marked as seen)
-    router.push("/");
+    // New users always go to questionnaire first
+    router.push("/questionnaire");
   };
 
-  // Loading state
-  if (isMobile === null) {
+  // Show loading while checking auth state
+  if (isLoading || isMobile === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <motion.div
@@ -68,6 +83,11 @@ export default function RegisterPage() {
         </motion.div>
       </div>
     );
+  }
+
+  // Don't render register form if already authenticated
+  if (isAuthenticated) {
+    return null;
   }
 
   // Mobile Experience
