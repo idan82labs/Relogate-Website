@@ -96,7 +96,9 @@ export const RegistrationForm = ({
         password: formData.password,
         firstName,
         lastName,
+        idNumber: formData.idNumber || undefined,
         phone: formData.phone || undefined,
+        birthDate: formData.birthDate || undefined,
       });
 
       if (result.error) {

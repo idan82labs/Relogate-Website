@@ -70,7 +70,9 @@ interface User {
   email: string;
   firstName?: string;
   lastName?: string;
+  idNumber?: string;
   phone?: string;
+  birthDate?: string;
   emailVerified: boolean;
   onboardingStatus: OnboardingStatus;
   createdAt: string;
@@ -209,7 +211,9 @@ export async function register(userData: {
   password: string;
   firstName: string;
   lastName: string;
+  idNumber?: string;
   phone?: string;
+  birthDate?: string;
 }): Promise<{ user: User; error?: string }> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {

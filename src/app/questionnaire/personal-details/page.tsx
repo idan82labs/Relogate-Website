@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { useQuestionnaire } from "@/hooks/useQuestionnaire";
+import { useAuth } from "@/contexts/AuthContext";
 import { QUESTIONNAIRE_STEPS, TOTAL_STEPS } from "@/services/questionnaire";
 import { TextInput } from "@/components/shared";
 import { QuestionnaireStep } from "@/components/desktop";
@@ -20,6 +21,7 @@ const STEP_CONFIG = QUESTIONNAIRE_STEPS[STEP_NAME];
 export default function PersonalDetailsStepPage() {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const { user } = useAuth();
 
   const {
     data,
@@ -29,6 +31,7 @@ export default function PersonalDetailsStepPage() {
     showSpouseFields,
     submit,
     isSubmitting,
+    isLoaded,
   } = useQuestionnaire();
   const { steps } = siteContent.questionTest;
   const { fields } = steps.personalDetails;
@@ -48,6 +51,41 @@ export default function PersonalDetailsStepPage() {
   useEffect(() => {
     setStep(STEP_CONFIG.stepNumber);
   }, [setStep]);
+
+  // Pre-fill personal details from user registration data
+  useEffect(() => {
+    if (!isLoaded || !user) return;
+
+    const updates: Record<string, string> = {};
+
+    // Pre-fill fullName from firstName + lastName
+    if (!data.fullName && (user.firstName || user.lastName)) {
+      const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+      if (fullName) {
+        updates.fullName = fullName;
+      }
+    }
+
+    // Pre-fill email
+    if (!data.email && user.email) {
+      updates.email = user.email;
+    }
+
+    // Pre-fill phone
+    if (!data.phone && user.phone) {
+      updates.phone = user.phone;
+    }
+
+    // Pre-fill birthDate
+    if (!data.birthDate && user.birthDate) {
+      updates.birthDate = user.birthDate;
+    }
+
+    // Only update if there are changes to make
+    if (Object.keys(updates).length > 0) {
+      updateData(updates);
+    }
+  }, [isLoaded, user, data.fullName, data.email, data.phone, data.birthDate, updateData]);
 
   const handleContinue = async () => {
     const result = await submit();
