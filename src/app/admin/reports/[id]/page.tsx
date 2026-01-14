@@ -231,6 +231,12 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
             {content.reportEditor.backToList}
           </Link>
           <div className="flex gap-3">
+            <Link
+              href={`/admin/reports/${resolvedParams.id}/preview`}
+              className="px-3 py-1.5 text-sm font-medium border border-[#C6C6C6] rounded-lg text-[#1D1D1B] hover:bg-[#F7F7F7] transition-colors"
+            >
+              {content.reportEditor.actions.preview}
+            </Link>
             <Button variant="outline" size="sm" onClick={handleEdit}>
               {content.reports.actions.edit}
             </Button>
