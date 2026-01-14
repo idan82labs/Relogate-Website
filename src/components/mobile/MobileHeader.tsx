@@ -1,92 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
-import { isAuthenticated as hasToken, getAccessToken } from "@/services/auth";
-import { debugLog } from "@/utils/debug";
 
 export const MobileHeader = () => {
-  const { nav, mobile } = siteContent;
   const router = useRouter();
-  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
+  const { nav, mobile } = siteContent;
+  const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Track token status in state to handle hydration properly
-  const [tokenExists, setTokenExists] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-  const renderCount = useRef(0);
-  const mountTime = useRef(Date.now());
-
-  // Log on every render to track state changes
-  renderCount.current += 1;
-  debugLog('MobileHeader', 'RENDER', {
-    renderCount: renderCount.current,
-    timeSinceMount: Date.now() - mountTime.current,
-    tokenExists,
-    isHydrated,
-    isAuthenticated,
-    hasCompletedOnboarding,
-    isLoading,
-  });
-
-  useEffect(() => {
-    const token = hasToken();
-    const accessToken = getAccessToken();
-    setTokenExists(token);
-    setIsHydrated(true);
-
-    debugLog('MobileHeader', 'useEffect - Auth state check', {
-      tokenExists: token,
-      hasAccessToken: !!accessToken,
-      accessTokenPreview: accessToken ? `${accessToken.substring(0, 20)}...` : null,
-      isAuthenticated,
-      hasCompletedOnboarding,
-      isLoading,
-      timeSinceMount: Date.now() - mountTime.current,
-    });
-  }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
-
-  // Determine if navigation should be restricted
-  const shouldRestrictNavigation = tokenExists && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
-
-  // Handle logo click - intercept and redirect if needed
-  const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Read token directly at click time to avoid stale closure
-    const currentToken = hasToken();
-    const currentShouldRestrict = currentToken && (isLoading || (isAuthenticated && !hasCompletedOnboarding));
-
-    debugLog('MobileHeader', 'LOGO CLICKED', {
-      eventType: e.type,
-      eventDefaultPrevented: e.defaultPrevented,
-      shouldRestrictNavigation,
-      currentShouldRestrict,
-      tokenExists,
-      currentToken,
-      isAuthenticated,
-      hasCompletedOnboarding,
-      isLoading,
-      isHydrated,
-      timeSinceMount: Date.now() - mountTime.current,
-    });
-
-    if (currentShouldRestrict) {
-      e.preventDefault();
-      e.stopPropagation();
-      debugLog('MobileHeader', 'NAVIGATION PREVENTED - redirecting to questionnaire', {
-        from: window.location.pathname,
-        to: '/questionnaire/countries',
-      });
-      router.push('/questionnaire/countries');
-    } else {
-      debugLog('MobileHeader', 'NAVIGATION ALLOWED - letting anchor navigate to home', {
-        reason: !currentToken ? 'No token' : 'Onboarding completed or not authenticated',
-      });
-    }
-  }, [shouldRestrictNavigation, tokenExists, isAuthenticated, hasCompletedOnboarding, isLoading, isHydrated, router]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -95,6 +21,16 @@ export const MobileHeader = () => {
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
+
+  const handlePersonalAreaClick = useCallback(() => {
+    closeMenu();
+    if (isAuthenticated) {
+      router.push("/personal-area");
+    } else {
+      sessionStorage.setItem("redirectAfterLogin", "/personal-area");
+      router.push("/login");
+    }
+  }, [isAuthenticated, router, closeMenu]);
 
   // Handle escape key
   useEffect(() => {
@@ -135,26 +71,27 @@ export const MobileHeader = () => {
             <Icon name="menu" size={24} className="text-[#1D1D1B]" />
           </button>
 
-          {/* CTA Button - Placeholder (no navigation) */}
-          <Button variant="primary" size="sm" className="ml-2 text-xs px-3 py-1.5">
+          {/* CTA Button - Personal Area */}
+          <Button
+            variant="primary"
+            size="sm"
+            className="ml-2 text-xs px-3 py-1.5"
+            onClick={handlePersonalAreaClick}
+          >
             {nav.cta}
           </Button>
 
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Logo - RIGHT (visual) - always href="/" but onClick intercepts if needed */}
-          <a
-            href="/"
-            className="flex items-center"
-            onClick={handleLogoClick}
-          >
+          {/* Logo - RIGHT (visual) */}
+          <Link href="/" className="flex items-center">
             <img
               src="/logo-header.svg"
               alt="Relogate"
               style={{ width: '120px', height: '25.5px' }}
             />
-          </a>
+          </Link>
         </div>
       </header>
 
@@ -218,9 +155,14 @@ export const MobileHeader = () => {
                   ))}
                 </ul>
 
-                {/* CTA in menu - Placeholder (no navigation) */}
+                {/* CTA in menu - Personal Area */}
                 <div className="mt-8">
-                  <Button variant="primary" size="md" fullWidth onClick={closeMenu}>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                    onClick={handlePersonalAreaClick}
+                  >
                     {nav.cta}
                   </Button>
                 </div>

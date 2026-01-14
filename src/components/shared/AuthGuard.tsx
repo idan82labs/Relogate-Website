@@ -57,15 +57,7 @@ export function AuthGuard({
     }
 
     // Authenticated but hasn't completed onboarding
-    if (!hasCompletedOnboarding) {
-      // Allow questionnaire routes
-      if (isQuestionnaireRoute) {
-        return;
-      }
-      // Redirect to questionnaire for any other route
-      router.replace('/questionnaire');
-      return;
-    }
+    // Allow access to all routes - no forced questionnaire redirect
 
     // Authenticated and completed onboarding
     // Redirect away from login/register if already authenticated

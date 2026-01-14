@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 // Teal checkmark SVG component matching Figma design
 const TealCheckmark = () => (
@@ -12,7 +14,20 @@ const TealCheckmark = () => (
 );
 
 export const BenefitsSection = () => {
-  const { info } = siteContent;
+  const router = useRouter();
+  const { info, hero } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+
+  const handleCtaClick = () => {
+    if (hasCompletedOnboarding) {
+      router.push("/questionnaire/results");
+    } else if (isAuthenticated) {
+      router.push("/questionnaire");
+    } else {
+      sessionStorage.setItem("redirectAfterLogin", "/questionnaire");
+      router.push("/login");
+    }
+  };
 
   return (
     <section className="py-16 lg:py-24">
@@ -67,8 +82,8 @@ export const BenefitsSection = () => {
               ))}
             </ul>
 
-            <Button variant="primary" size="lg">
-              {info.cta}
+            <Button variant="primary" size="lg" onClick={handleCtaClick}>
+              {hasCompletedOnboarding ? hero.ctaViewResults : info.cta}
             </Button>
           </motion.div>
         </div>

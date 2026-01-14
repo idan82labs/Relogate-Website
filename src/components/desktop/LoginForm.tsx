@@ -7,7 +7,7 @@ import { siteContent } from "@/content/he";
 import { Button, TextInput } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { login } from "@/services/auth";
+import { useAuth } from "@/contexts";
 
 // Globe watermark SVG for Auth pages (matches Figma design)
 const AuthGlobe = () => (
@@ -38,6 +38,7 @@ interface LoginFormProps {
 export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const { personalArea } = siteContent;
   const { login: loginContent } = personalArea;
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,8 +52,8 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     try {
       const result = await login(email, password);
 
-      if (result.error) {
-        setError(result.error);
+      if (!result.success) {
+        setError(result.error || "Login failed");
         return;
       }
 

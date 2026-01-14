@@ -4,10 +4,28 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark } from "@/components/shared";
+import { useAuth } from "@/contexts";
 
 export const Hero = () => {
   const router = useRouter();
   const { hero } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+
+  const handleCtaClick = () => {
+    if (hasCompletedOnboarding) {
+      // User completed questionnaire - go to results
+      router.push("/questionnaire/results");
+    } else if (isAuthenticated) {
+      // User is logged in but hasn't completed - go to questionnaire
+      router.push("/questionnaire");
+    } else {
+      // User not logged in - redirect to login first, then to questionnaire
+      sessionStorage.setItem("redirectAfterLogin", "/questionnaire");
+      router.push("/login");
+    }
+  };
+
+  const ctaText = hasCompletedOnboarding ? hero.ctaViewResults : hero.cta;
 
   return (
     <section className="relative overflow-hidden">
@@ -26,8 +44,8 @@ export const Hero = () => {
               <br />
               {hero.subtitle}
             </h1>
-            <Button variant="primary" size="lg" onClick={() => router.push("/questionnaire")}>
-              {hero.cta}
+            <Button variant="primary" size="lg" onClick={handleCtaClick}>
+              {ctaText}
             </Button>
           </motion.div>
 

@@ -10,3 +10,4 @@ export { MobileQuestionnaireLanding } from "./MobileQuestionnaireLanding";
 export { MobileQuestionnaireStep } from "./MobileQuestionnaireStep";
 export { MobileFooter } from "./MobileFooter";
 export { MobileResultsPage } from "./MobileResultsPage";
+export { MobilePersonalArea } from "./MobilePersonalArea";

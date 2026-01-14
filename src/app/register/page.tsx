@@ -13,7 +13,7 @@ import { MobileRegistrationForm } from "@/components/mobile";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   // Detect viewport and set mobile state
@@ -32,17 +32,19 @@ export default function RegisterPage() {
     if (isLoading) return;
 
     if (isAuthenticated) {
-      if (hasCompletedOnboarding) {
-        router.replace("/");
-      } else {
-        router.replace("/questionnaire/countries");
-      }
+      router.replace("/");
     }
-  }, [isAuthenticated, hasCompletedOnboarding, isLoading, router]);
+  }, [isAuthenticated, isLoading, router]);
 
   const handleRegisterSuccess = () => {
-    // New users go directly to first questionnaire step
-    router.push("/questionnaire/countries");
+    // Check for redirect URL stored in sessionStorage
+    const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+    if (redirectUrl) {
+      sessionStorage.removeItem("redirectAfterLogin");
+      router.push(redirectUrl);
+    } else {
+      router.push("/");
+    }
   };
 
   // Show loading while checking auth state

@@ -16,3 +16,4 @@ export { RegistrationForm } from "./RegistrationForm";
 export { QuestionnaireLanding } from "./QuestionnaireLanding";
 export { QuestionnaireStep } from "./QuestionnaireStep";
 export { ResultsPage } from "./ResultsPage";
+export { PersonalArea } from "./PersonalArea";

@@ -5,9 +5,6 @@ import { logInfo, logDebug, generateSessionId } from '@/lib/server-logger';
 // Cookie name for logging session
 const LOG_SESSION_COOKIE = 'relogate_log_session';
 
-// Routes that require completed onboarding
-const PROTECTED_ROUTES = ['/'];
-
 // Routes that are part of the questionnaire flow
 const QUESTIONNAIRE_ROUTES = [
   '/questionnaire',
@@ -19,7 +16,11 @@ const QUESTIONNAIRE_ROUTES = [
 ];
 
 // Routes that should be accessible without auth
-const PUBLIC_ROUTES = ['/login', '/register'];
+const PUBLIC_ROUTES = ['/', '/login', '/register'];
+
+// Admin routes - handled separately with their own login
+const ADMIN_PUBLIC_ROUTES = ['/admin/login'];
+const ADMIN_PROTECTED_PREFIX = '/admin';
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -73,36 +74,11 @@ export function proxy(request: NextRequest) {
   };
 
   // If user is authenticated but hasn't completed onboarding
+  // Allow access to all routes - no forced questionnaire redirect
   if (isAuthenticated && !hasCompletedOnboarding) {
-    logDebug(sessionId, 'Proxy', 'User authenticated but onboarding incomplete', {
+    logDebug(sessionId, 'Proxy', 'User authenticated but onboarding incomplete - allowing access', {
       pathname,
-      checkingQuestionnaireRoutes: QUESTIONNAIRE_ROUTES,
-      checkingProtectedRoutes: PROTECTED_ROUTES,
     });
-
-    // Allow access to questionnaire routes
-    if (QUESTIONNAIRE_ROUTES.some(route => pathname.startsWith(route))) {
-      logInfo(sessionId, 'Proxy', 'Allowing questionnaire route access', { pathname });
-      return createResponse(NextResponse.next(), 'allow-questionnaire');
-    }
-
-    // Allow access to public routes (login/register) - they will redirect themselves
-    if (PUBLIC_ROUTES.includes(pathname)) {
-      logInfo(sessionId, 'Proxy', 'Allowing public route access', { pathname });
-      return createResponse(NextResponse.next(), 'allow-public');
-    }
-
-    // Redirect from protected routes (like home) to questionnaire
-    if (PROTECTED_ROUTES.includes(pathname)) {
-      logInfo(sessionId, 'Proxy', 'REDIRECTING - incomplete onboarding, blocking protected route', {
-        pathname,
-        redirectTo: '/questionnaire/countries',
-        reason: 'User authenticated but has not completed onboarding',
-      });
-      const url = request.nextUrl.clone();
-      url.pathname = '/questionnaire/countries';
-      return createResponse(NextResponse.redirect(url), 'redirect-to-questionnaire');
-    }
   }
 
   // If user is authenticated and has completed onboarding
@@ -122,8 +98,23 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // If user is NOT authenticated and trying to access any protected page
-  if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+  // Handle admin routes separately - redirect to /admin/login instead of /login
+  const isAdminRoute = pathname.startsWith(ADMIN_PROTECTED_PREFIX);
+  const isAdminPublicRoute = ADMIN_PUBLIC_ROUTES.includes(pathname);
+
+  if (isAdminRoute && !isAdminPublicRoute && !isAuthenticated) {
+    logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing admin route', {
+      pathname,
+      redirectTo: '/admin/login',
+      reason: 'User not authenticated for admin area',
+    });
+    const url = request.nextUrl.clone();
+    url.pathname = '/admin/login';
+    return createResponse(NextResponse.redirect(url), 'redirect-to-admin-login');
+  }
+
+  // If user is NOT authenticated and trying to access any protected page (non-admin)
+  if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname) && !isAdminRoute) {
     logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing protected route', {
       pathname,
       redirectTo: '/login',

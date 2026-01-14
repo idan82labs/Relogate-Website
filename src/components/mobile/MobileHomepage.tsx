@@ -8,6 +8,7 @@ import { MobileHeader } from "./MobileHeader";
 import { siteContent } from "@/content/he";
 import { Button, Card, Accordion } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
+import { useAuth } from "@/contexts";
 
 interface MobileHomepageProps {
   onComplete?: () => void;
@@ -20,7 +21,21 @@ interface MobileHomepageProps {
 export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps) => {
   const router = useRouter();
   const { hero, about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
+  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
   const testimonialsRef = useRef<HTMLDivElement>(null);
+
+  const handleCtaClick = () => {
+    if (hasCompletedOnboarding) {
+      router.push("/questionnaire/results");
+    } else if (isAuthenticated) {
+      router.push("/questionnaire");
+    } else {
+      sessionStorage.setItem("redirectAfterLogin", "/questionnaire");
+      router.push("/login");
+    }
+  };
+
+  const ctaText = hasCompletedOnboarding ? hero.ctaViewResults : hero.cta;
 
   return (
     <motion.div
@@ -55,8 +70,8 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
 
           {/* CTA Button */}
           <div className="flex justify-end mb-6">
-            <Button size="sm" className="text-sm px-5 py-2.5" onClick={() => router.push("/questionnaire")}>
-              {hero.cta}
+            <Button size="sm" className="text-sm px-5 py-2.5" onClick={handleCtaClick}>
+              {ctaText}
             </Button>
           </div>
 
@@ -130,8 +145,8 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
 
             {/* CTA Button */}
             <div className="flex justify-end">
-              <Button size="sm" className="text-sm px-6 py-2.5">
-                {info.cta}
+              <Button size="sm" className="text-sm px-6 py-2.5" onClick={handleCtaClick}>
+                {hasCompletedOnboarding ? hero.ctaViewResults : info.cta}
               </Button>
             </div>
           </div>

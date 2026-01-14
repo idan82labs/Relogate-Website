@@ -30,6 +30,7 @@ export const siteContent = {
     title: "רילוקיישן לחו״ל?",
     subtitle: "כל אחד יכול!",
     cta: "התחל את המסע שלך",
+    ctaViewResults: "צפה בתוצאות",
     banner: "דוח רילוקיישן מותאם אישית תוך 24 שעות!",
   },
 
@@ -607,6 +608,42 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         },
       },
     },
+  },
+
+  // Personal Area Dashboard
+  personalAreaDashboard: {
+    title: "האזור האישי שלי",
+    greeting: "שלום",
+    sections: {
+      profile: {
+        title: "פרטים אישיים",
+        edit: "עריכה",
+      },
+      questionnaire: {
+        title: "שאלון רילוקיישן",
+        notStarted: "לא התחלת עדיין את השאלון",
+        inProgress: "השאלון בתהליך",
+        completed: "השאלון הושלם",
+        startButton: "התחל שאלון",
+        continueButton: "המשך שאלון",
+        viewResultsButton: "צפה בתוצאות",
+      },
+      results: {
+        title: "תוצאות הדוח שלי",
+        noResults: "טרם קיבלת תוצאות",
+        viewReport: "צפה בדוח",
+      },
+    },
+    fields: {
+      fullName: "שם מלא",
+      email: "אימייל",
+      phone: "טלפון",
+      birthDate: "תאריך לידה",
+      citizenship: "אזרחות",
+      memberSince: "חבר מאז",
+    },
+    logout: "התנתקות",
+    notProvided: "לא צוין",
   },
 
   // Admin panel

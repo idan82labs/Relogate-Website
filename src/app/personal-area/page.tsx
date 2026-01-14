@@ -6,12 +6,12 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts";
 
 // Desktop components
-import { LoginForm } from "@/components/desktop";
+import { PersonalArea } from "@/components/desktop";
 
 // Mobile components
-import { MobileLoginForm } from "@/components/mobile";
+import { MobilePersonalArea } from "@/components/mobile";
 
-export default function LoginPage() {
+export default function PersonalAreaPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -27,25 +27,16 @@ export default function LoginPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Redirect if already authenticated
+  // Redirect if not authenticated
   useEffect(() => {
     if (isLoading) return;
 
-    if (isAuthenticated) {
-      router.replace("/");
+    if (!isAuthenticated) {
+      // Store intended destination for redirect after login
+      sessionStorage.setItem("redirectAfterLogin", "/personal-area");
+      router.replace("/login");
     }
   }, [isAuthenticated, isLoading, router]);
-
-  const handleLoginSuccess = () => {
-    // Check for redirect URL stored in sessionStorage
-    const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
-    if (redirectUrl) {
-      sessionStorage.removeItem("redirectAfterLogin");
-      router.push(redirectUrl);
-    } else {
-      router.push("/");
-    }
-  };
 
   // Show loading while checking auth state
   if (isLoading || isMobile === null) {
@@ -87,16 +78,16 @@ export default function LoginPage() {
     );
   }
 
-  // Don't render login form if already authenticated
-  if (isAuthenticated) {
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
     return null;
   }
 
   // Mobile Experience
   if (isMobile) {
-    return <MobileLoginForm onLoginSuccess={handleLoginSuccess} />;
+    return <MobilePersonalArea />;
   }
 
   // Desktop Experience
-  return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+  return <PersonalArea />;
 }

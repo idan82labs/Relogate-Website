@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Desktop components
@@ -25,7 +24,6 @@ import { MobileSplashScreen, MobileHomepage } from "@/components/mobile";
 const SPLASH_SEEN_KEY = "relogate_splash_seen";
 
 export default function Home() {
-  const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [showSplash, setShowSplash] = useState<boolean | null>(null);
 
@@ -45,15 +43,15 @@ export default function Home() {
   }, []);
 
   const handleSplashComplete = () => {
-    // Mark splash as seen and navigate to login
+    // Mark splash as seen and show homepage
     sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
-    router.push("/login");
+    setShowSplash(false);
   };
 
   const handleDesktopSplashComplete = () => {
-    // Mark splash as seen and navigate to login
+    // Mark splash as seen and show homepage
     sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
-    router.push("/login");
+    setShowSplash(false);
   };
 
   // Loading state - wait for both viewport and splash state to be determined

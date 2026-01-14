@@ -7,7 +7,7 @@ import { siteContent } from "@/content/he";
 import { Button, TextInput } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
-import { login } from "@/services/auth";
+import { useAuth } from "@/contexts";
 
 // Globe watermark SVG for Mobile Auth pages (matches Figma design)
 const MobileAuthGlobe = () => (
@@ -40,6 +40,7 @@ export const MobileLoginForm = ({
 }: MobileLoginFormProps) => {
   const { personalArea } = siteContent;
   const { login: loginContent } = personalArea;
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,8 +54,8 @@ export const MobileLoginForm = ({
     try {
       const result = await login(email, password);
 
-      if (result.error) {
-        setError(result.error);
+      if (!result.success) {
+        setError(result.error || "Login failed");
         return;
       }
 
