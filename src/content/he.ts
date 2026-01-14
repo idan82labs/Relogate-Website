@@ -608,6 +608,127 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       },
     },
   },
+
+  // Admin panel
+  admin: {
+    // Login page
+    login: {
+      title: "כניסה לממשק ניהול",
+      subtitle: "כניסה למנהלי מערכת בלבד",
+      emailLabel: "אימייל",
+      emailPlaceholder: "הזן כתובת אימייל",
+      passwordLabel: "סיסמה",
+      passwordPlaceholder: "הזן סיסמה",
+      submitButton: "התחבר",
+      errors: {
+        invalidCredentials: "אימייל או סיסמה שגויים",
+        accessDenied: "אין לך הרשאות גישה לממשק הניהול",
+        networkError: "שגיאת רשת. אנא נסה שוב.",
+      },
+    },
+    // Dashboard
+    dashboard: {
+      title: "ממשק ניהול",
+      welcome: "שלום",
+      logout: "התנתק",
+      nav: {
+        users: "משתמשים",
+        questionnaires: "שאלונים",
+        settings: "הגדרות",
+      },
+    },
+    // Users page
+    users: {
+      title: "ניהול משתמשים",
+      searchPlaceholder: "חיפוש משתמש...",
+      addUser: "הוסף משתמש",
+      table: {
+        name: "שם",
+        email: "אימייל",
+        role: "תפקיד",
+        status: "סטטוס",
+        onboarding: "שאלון",
+        createdAt: "תאריך הרשמה",
+        actions: "פעולות",
+      },
+      roles: {
+        user: "משתמש",
+        admin: "מנהל",
+      },
+      status: {
+        active: "פעיל",
+        inactive: "לא פעיל",
+      },
+      onboardingStatus: {
+        pending: "ממתין",
+        in_progress: "בתהליך",
+        completed: "הושלם",
+      },
+      actions: {
+        view: "צפייה",
+        edit: "עריכה",
+        delete: "מחיקה",
+        deactivate: "השבתה",
+        activate: "הפעלה",
+      },
+      confirmDelete: "האם אתה בטוח שברצונך למחוק משתמש זה?",
+      confirmDeactivate: "האם אתה בטוח שברצונך להשבית משתמש זה?",
+      empty: "לא נמצאו משתמשים",
+      pagination: {
+        prev: "הקודם",
+        next: "הבא",
+        of: "מתוך",
+      },
+    },
+    // User detail page
+    userDetail: {
+      title: "פרטי משתמש",
+      backToList: "חזרה לרשימה",
+      personalInfo: "פרטים אישיים",
+      questionnaires: "שאלונים",
+      noQuestionnaires: "אין שאלונים",
+      fields: {
+        firstName: "שם פרטי",
+        lastName: "שם משפחה",
+        email: "אימייל",
+        phone: "טלפון",
+        idNumber: "תעודת זהות",
+        birthDate: "תאריך לידה",
+        citizenship: "אזרחות",
+        role: "תפקיד",
+        status: "סטטוס",
+        createdAt: "תאריך הרשמה",
+        updatedAt: "עודכן לאחרונה",
+      },
+    },
+    // Add/Edit user form
+    userForm: {
+      addTitle: "הוספת משתמש",
+      editTitle: "עריכת משתמש",
+      fields: {
+        email: "אימייל",
+        password: "סיסמה",
+        firstName: "שם פרטי",
+        lastName: "שם משפחה",
+        phone: "טלפון",
+        idNumber: "תעודת זהות",
+        birthDate: "תאריך לידה",
+        role: "תפקיד",
+        isActive: "פעיל",
+      },
+      submit: "שמור",
+      cancel: "ביטול",
+      errors: {
+        emailRequired: "נא להזין כתובת אימייל",
+        emailInvalid: "כתובת אימייל לא תקינה",
+        passwordRequired: "נא להזין סיסמה",
+        passwordTooShort: "הסיסמה חייבת להכיל לפחות 8 תווים",
+        firstNameRequired: "נא להזין שם פרטי",
+        lastNameRequired: "נא להזין שם משפחה",
+        emailExists: "כתובת האימייל כבר קיימת במערכת",
+      },
+    },
+  },
 };
 
 // Type exports for TypeScript

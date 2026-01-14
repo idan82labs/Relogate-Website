@@ -13,3 +13,4 @@ export { MatchScoreCircle } from "./MatchScoreCircle";
 export { CountryCard } from "./CountryCard";
 export { CategoryTag } from "./CategoryTag";
 export { AuthGuard } from "./AuthGuard";
+export { AdminGuard } from "./AdminGuard";

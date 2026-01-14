@@ -64,6 +64,7 @@ interface AuthTokens {
 }
 
 type OnboardingStatus = 'pending' | 'in_progress' | 'completed';
+type UserRole = 'user' | 'admin';
 
 interface User {
   id: string;
@@ -75,6 +76,7 @@ interface User {
   birthDate?: string;
   emailVerified: boolean;
   onboardingStatus: OnboardingStatus;
+  role: UserRole;
   createdAt: string;
 }
 
@@ -340,4 +342,4 @@ export async function getCurrentUser(): Promise<User | null> {
   }
 }
 
-export type { User, AuthTokens, LoginResponse, RegisterResponse, OnboardingStatus };
+export type { User, AuthTokens, LoginResponse, RegisterResponse, OnboardingStatus, UserRole };
