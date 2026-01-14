@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { siteContent } from "@/content/he";
-import { Button } from "@/components/shared";
+import { Button, NotificationBell } from "@/components/shared";
 import { useAuth } from "@/contexts";
 
 export const Header = () => {
@@ -42,10 +42,13 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* CTA Button - Personal Area */}
-        <Button variant="primary" size="md" onClick={handlePersonalAreaClick}>
-          {nav.cta}
-        </Button>
+        {/* Right side - Notifications and CTA */}
+        <div className="flex items-center gap-4">
+          <NotificationBell />
+          <Button variant="primary" size="md" onClick={handlePersonalAreaClick}>
+            {nav.cta}
+          </Button>
+        </div>
       </div>
     </header>
   );
