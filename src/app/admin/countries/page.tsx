@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, AdminGuard } from '@/components/shared';
 import { siteContent } from '@/content/he';
@@ -42,7 +43,7 @@ function AdminNav({ activeTab }: { activeTab: string }) {
     <nav className="bg-white border-b border-[#C6C6C6]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex gap-8">
-          <a
+          <Link
             href="/admin/users"
             className={`py-4 border-b-2 transition-colors ${
               activeTab === 'users'
@@ -51,8 +52,8 @@ function AdminNav({ activeTab }: { activeTab: string }) {
             }`}
           >
             {content.dashboard.nav.users}
-          </a>
-          <a
+          </Link>
+          <Link
             href="/admin/countries"
             className={`py-4 border-b-2 transition-colors ${
               activeTab === 'countries'
@@ -61,8 +62,8 @@ function AdminNav({ activeTab }: { activeTab: string }) {
             }`}
           >
             מדינות
-          </a>
-          <a
+          </Link>
+          <Link
             href="/admin/reports"
             className={`py-4 border-b-2 transition-colors ${
               activeTab === 'reports'
@@ -71,7 +72,7 @@ function AdminNav({ activeTab }: { activeTab: string }) {
             }`}
           >
             דוחות
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
