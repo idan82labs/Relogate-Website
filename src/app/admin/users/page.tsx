@@ -9,7 +9,9 @@ import { getCurrentUser, logout } from '@/services/auth';
 import {
   listUsers,
   deleteUser,
+  getUserById,
   type AdminUser,
+  type AdminUserDetail,
   type ListUsersParams,
 } from '@/services/admin';
 
@@ -104,12 +106,16 @@ function RoleBadge({ role }: { role: 'user' | 'admin' }) {
 
 function UsersTable({
   users,
+  currentUserId,
   onView,
-  onDelete,
+  onDeactivate,
+  onDeletePermanent,
 }: {
   users: AdminUser[];
+  currentUserId: string | null;
   onView: (user: AdminUser) => void;
-  onDelete: (user: AdminUser) => void;
+  onDeactivate: (user: AdminUser) => void;
+  onDeletePermanent: (user: AdminUser) => void;
 }) {
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('he-IL');
@@ -187,14 +193,24 @@ function UsersTable({
                   >
                     {content.users.actions.view}
                   </button>
-                  <button
-                    onClick={() => onDelete(user)}
-                    className="text-red-600 hover:text-red-800 font-medium"
-                  >
-                    {user.isActive
-                      ? content.users.actions.deactivate
-                      : content.users.actions.delete}
-                  </button>
+                  {user.id !== currentUserId && (
+                    <>
+                      {user.isActive && (
+                        <button
+                          onClick={() => onDeactivate(user)}
+                          className="text-yellow-600 hover:text-yellow-800 font-medium"
+                        >
+                          {content.users.actions.deactivate}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => onDeletePermanent(user)}
+                        className="text-red-600 hover:text-red-800 font-medium"
+                      >
+                        {content.users.actions.deletePermanent}
+                      </button>
+                    </>
+                  )}
                 </div>
               </td>
             </motion.tr>
@@ -243,11 +259,58 @@ function Pagination({
   );
 }
 
+function QuestionnaireStatusBadge({ status }: { status: 'in_progress' | 'completed' | 'archived' }) {
+  const colors = {
+    in_progress: 'bg-blue-100 text-blue-800',
+    completed: 'bg-green-100 text-green-800',
+    archived: 'bg-gray-100 text-gray-800',
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}
+    >
+      {content.userDetail.questionnaireStatus[status]}
+    </span>
+  );
+}
+
+function QuestionnaireResponsesDisplay({ responses }: { responses: Record<string, unknown> }) {
+  const formatValue = (value: unknown): string => {
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    if (typeof value === 'object' && value !== null) {
+      return JSON.stringify(value, null, 2);
+    }
+    return String(value);
+  };
+
+  const entries = Object.entries(responses);
+
+  if (entries.length === 0) {
+    return <p className="text-[#706F6F] text-sm">-</p>;
+  }
+
+  return (
+    <div className="space-y-2 bg-[#F7F7F7] rounded-lg p-3">
+      {entries.map(([key, value]) => (
+        <div key={key} className="text-sm">
+          <span className="font-medium text-[#1D1D1B]">{key}: </span>
+          <span className="text-[#706F6F]">{formatValue(value)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function UserDetailModal({
   user,
+  isLoading,
   onClose,
 }: {
-  user: AdminUser;
+  user: AdminUserDetail | null;
+  isLoading: boolean;
   onClose: () => void;
 }) {
   const formatDate = (dateStr: string | null) => {
@@ -267,7 +330,7 @@ function UserDetailModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-xl max-w-lg w-full max-h-[80vh] overflow-y-auto"
+        className="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-[#C6C6C6]">
@@ -286,56 +349,109 @@ function UserDetailModal({
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.firstName}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.firstName}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.lastName}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.lastName}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.email}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.email}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.phone}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.phone || '-'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.idNumber}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.idNumber || '-'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.birthDate}</label>
-              <p className="font-medium text-[#1D1D1B]">{formatDate(user.birthDate)}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.citizenship}</label>
-              <p className="font-medium text-[#1D1D1B]">{user.citizenship || '-'}</p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.role}</label>
-              <p className="font-medium"><RoleBadge role={user.role} /></p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.status}</label>
-              <p className="font-medium"><UserStatusBadge isActive={user.isActive} /></p>
-            </div>
-            <div>
-              <label className="text-sm text-[#706F6F]">{content.userDetail.fields.createdAt}</label>
-              <p className="font-medium text-[#1D1D1B]">{formatDate(user.createdAt)}</p>
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#215388]" />
           </div>
-        </div>
+        ) : user ? (
+          <>
+            <div className="p-6 space-y-6">
+              {/* Personal Info Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#1D1D1B] mb-4">
+                  {content.userDetail.personalInfo}
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.firstName}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.firstName}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.lastName}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.lastName}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.email}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.email}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.phone}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.phone || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.idNumber}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.idNumber || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.birthDate}</label>
+                    <p className="font-medium text-[#1D1D1B]">{formatDate(user.birthDate)}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.citizenship}</label>
+                    <p className="font-medium text-[#1D1D1B]">{user.citizenship || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.role}</label>
+                    <p className="font-medium"><RoleBadge role={user.role} /></p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.status}</label>
+                    <p className="font-medium"><UserStatusBadge isActive={user.isActive} /></p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-[#706F6F]">{content.userDetail.fields.createdAt}</label>
+                    <p className="font-medium text-[#1D1D1B]">{formatDate(user.createdAt)}</p>
+                  </div>
+                </div>
+              </div>
 
-        <div className="p-6 border-t border-[#C6C6C6]">
-          <Button variant="outline" onClick={onClose} className="w-full">
-            {content.userDetail.backToList}
-          </Button>
-        </div>
+              {/* Questionnaires Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#1D1D1B] mb-4">
+                  {content.userDetail.questionnaires}
+                </h3>
+                {user.questionnaires && user.questionnaires.length > 0 ? (
+                  <div className="space-y-4">
+                    {user.questionnaires.map((q) => (
+                      <div key={q.id} className="border border-[#C6C6C6] rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <QuestionnaireStatusBadge status={q.status} />
+                          <span className="text-sm text-[#706F6F]">
+                            {content.userDetail.questionnaireFields.currentStep}: {q.currentStep}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                          <div>
+                            <span className="text-[#706F6F]">{content.userDetail.questionnaireFields.createdAt}: </span>
+                            <span className="text-[#1D1D1B]">{formatDate(q.createdAt)}</span>
+                          </div>
+                          <div>
+                            <span className="text-[#706F6F]">{content.userDetail.questionnaireFields.completedAt}: </span>
+                            <span className="text-[#1D1D1B]">{formatDate(q.completedAt)}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-[#1D1D1B] block mb-2">
+                            {content.userDetail.questionnaireFields.responses}:
+                          </label>
+                          <QuestionnaireResponsesDisplay responses={q.responses} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-[#706F6F]">{content.userDetail.noQuestionnaires}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-[#C6C6C6]">
+              <Button variant="outline" onClick={onClose} className="w-full">
+                {content.userDetail.backToList}
+              </Button>
+            </div>
+          </>
+        ) : null}
       </motion.div>
     </motion.div>
   );
@@ -343,13 +459,21 @@ function UserDetailModal({
 
 function ConfirmDialog({
   message,
+  actionLabel,
+  variant = 'danger',
   onConfirm,
   onCancel,
 }: {
   message: string;
+  actionLabel: string;
+  variant?: 'danger' | 'warning';
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const buttonClass = variant === 'danger'
+    ? 'bg-red-600 hover:bg-red-700 text-white'
+    : 'bg-yellow-600 hover:bg-yellow-700 text-white';
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -370,9 +494,12 @@ function ConfirmDialog({
           <Button variant="outline" onClick={onCancel} className="flex-1">
             {content.userForm.cancel}
           </Button>
-          <Button variant="primary" onClick={onConfirm} className="flex-1">
-            {content.users.actions.delete}
-          </Button>
+          <button
+            onClick={onConfirm}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${buttonClass}`}
+          >
+            {actionLabel}
+          </button>
         </div>
       </motion.div>
     </motion.div>
@@ -382,14 +509,17 @@ function ConfirmDialog({
 function AdminUsersContent() {
   const router = useRouter();
   const [userName, setUserName] = useState('');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
-  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
+  const [selectedUserDetail, setSelectedUserDetail] = useState<AdminUserDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [userToDeactivate, setUserToDeactivate] = useState<AdminUser | null>(null);
+  const [userToDeletePermanent, setUserToDeletePermanent] = useState<AdminUser | null>(null);
 
   const fetchUsers = useCallback(async (params: ListUsersParams = {}) => {
     setIsLoading(true);
@@ -419,6 +549,7 @@ function AdminUsersContent() {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         setUserName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim());
+        setCurrentUserId(currentUser.id || null);
       }
       fetchUsers();
     }
@@ -440,10 +571,26 @@ function AdminUsersContent() {
     fetchUsers({ page: newPage });
   };
 
-  const handleDeleteUser = async () => {
-    if (!userToDelete) return;
+  const handleViewUser = async (user: AdminUser) => {
+    setIsLoadingDetail(true);
+    setSelectedUserDetail(null);
 
-    const { error: deleteError } = await deleteUser(userToDelete.id, !userToDelete.isActive);
+    const { user: userDetail, error: fetchError } = await getUserById(user.id);
+
+    if (fetchError || !userDetail) {
+      setError(fetchError || 'Failed to load user details');
+      setIsLoadingDetail(false);
+      return;
+    }
+
+    setSelectedUserDetail(userDetail);
+    setIsLoadingDetail(false);
+  };
+
+  const handleDeactivateUser = async () => {
+    if (!userToDeactivate) return;
+
+    const { error: deleteError } = await deleteUser(userToDeactivate.id, false);
 
     if (deleteError) {
       setError(deleteError);
@@ -451,7 +598,21 @@ function AdminUsersContent() {
       fetchUsers();
     }
 
-    setUserToDelete(null);
+    setUserToDeactivate(null);
+  };
+
+  const handleDeletePermanent = async () => {
+    if (!userToDeletePermanent) return;
+
+    const { error: deleteError } = await deleteUser(userToDeletePermanent.id, true);
+
+    if (deleteError) {
+      setError(deleteError);
+    } else {
+      fetchUsers();
+    }
+
+    setUserToDeletePermanent(null);
   };
 
   return (
@@ -497,8 +658,10 @@ function AdminUsersContent() {
             <>
               <UsersTable
                 users={users}
-                onView={(user) => setSelectedUser(user)}
-                onDelete={(user) => setUserToDelete(user)}
+                currentUserId={currentUserId}
+                onView={handleViewUser}
+                onDeactivate={(user) => setUserToDeactivate(user)}
+                onDeletePermanent={(user) => setUserToDeletePermanent(user)}
               />
               <Pagination
                 page={page}
@@ -511,21 +674,32 @@ function AdminUsersContent() {
       </main>
 
       <AnimatePresence>
-        {selectedUser && (
+        {(selectedUserDetail || isLoadingDetail) && (
           <UserDetailModal
-            user={selectedUser}
-            onClose={() => setSelectedUser(null)}
+            user={selectedUserDetail}
+            isLoading={isLoadingDetail}
+            onClose={() => {
+              setSelectedUserDetail(null);
+              setIsLoadingDetail(false);
+            }}
           />
         )}
-        {userToDelete && (
+        {userToDeactivate && (
           <ConfirmDialog
-            message={
-              userToDelete.isActive
-                ? content.users.confirmDeactivate
-                : content.users.confirmDelete
-            }
-            onConfirm={handleDeleteUser}
-            onCancel={() => setUserToDelete(null)}
+            message={content.users.confirmDeactivate}
+            actionLabel={content.users.actions.deactivate}
+            variant="warning"
+            onConfirm={handleDeactivateUser}
+            onCancel={() => setUserToDeactivate(null)}
+          />
+        )}
+        {userToDeletePermanent && (
+          <ConfirmDialog
+            message={content.users.confirmDelete}
+            actionLabel={content.users.actions.deletePermanent}
+            variant="danger"
+            onConfirm={handleDeletePermanent}
+            onCancel={() => setUserToDeletePermanent(null)}
           />
         )}
       </AnimatePresence>

@@ -668,11 +668,13 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         view: "צפייה",
         edit: "עריכה",
         delete: "מחיקה",
+        deletePermanent: "מחיקה לצמיתות",
         deactivate: "השבתה",
         activate: "הפעלה",
       },
-      confirmDelete: "האם אתה בטוח שברצונך למחוק משתמש זה?",
+      confirmDelete: "האם אתה בטוח שברצונך למחוק משתמש זה לצמיתות? פעולה זו אינה ניתנת לביטול.",
       confirmDeactivate: "האם אתה בטוח שברצונך להשבית משתמש זה?",
+      cannotDeleteSelf: "לא ניתן למחוק את החשבון שלך",
       empty: "לא נמצאו משתמשים",
       pagination: {
         prev: "הקודם",
@@ -687,6 +689,18 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       personalInfo: "פרטים אישיים",
       questionnaires: "שאלונים",
       noQuestionnaires: "אין שאלונים",
+      questionnaireStatus: {
+        in_progress: "בתהליך",
+        completed: "הושלם",
+        archived: "בארכיון",
+      },
+      questionnaireFields: {
+        status: "סטטוס",
+        currentStep: "שלב נוכחי",
+        createdAt: "נוצר ב",
+        completedAt: "הושלם ב",
+        responses: "תשובות",
+      },
       fields: {
         firstName: "שם פרטי",
         lastName: "שם משפחה",
