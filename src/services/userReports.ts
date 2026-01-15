@@ -7,51 +7,93 @@ import { getAccessToken, refreshAccessToken } from './auth';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Types
-export type ReportStatus = 'pending' | 'draft' | 'published';
+export type ReportStatus = 'draft' | 'published';
 
 export interface UserReportProfileSummary {
-  userName?: string;
+  userName: string;
   citizenship?: string;
+  age?: string;
+  profession?: string;
   familyStatus?: string;
+  netIncome?: string;
+  passiveIncome?: string;
   relocationGoals?: string;
 }
 
-export interface UserCountryResponseContent {
+/**
+ * Destination info - self-contained, personalized per user
+ */
+export interface UserDestinationInfo {
+  name: string;
+  subtitle: string | null;
+  image: string | null;
+  badge: string | null;
+}
+
+/**
+ * Match info for a destination
+ */
+export interface UserMatchInfo {
+  score: number;
+  reasons: string[];
+  visaType: string | null;
+}
+
+/**
+ * Narrative content - personalized story for the destination
+ */
+export interface UserDestinationNarrative {
   introduction?: string;
-  visaOptions?: string;
-  costOfLiving?: string;
-  healthcare?: string;
-  education?: string;
-  employment?: string;
-  safety?: string;
-  community?: string;
-  transportation?: string;
-  additionalNotes?: string;
+  pathway?: string;
+  fit?: string;
+  benefits?: string;
+  highlights?: string[];
 }
 
-export interface UserCountryResponse {
+/**
+ * Flexible content section
+ */
+export interface UserDestinationSection {
   id: string;
-  countryId: string;
-  countryCode: string;
-  countryName: string;
-  countryFlagImage: string | null;
-  content: UserCountryResponseContent;
-  createdAt: string;
+  key: string;
+  title: string;
+  icon?: string;
+  content: string;
+  position: number;
 }
 
+/**
+ * User-facing destination response (public view)
+ * Self-contained with all personalized content
+ */
+export interface UserDestinationResponse {
+  id: string;
+  displayOrder: number;
+  destination: UserDestinationInfo;
+  match: UserMatchInfo;
+  narrative: UserDestinationNarrative;
+  sections: UserDestinationSection[];
+}
+
+/**
+ * User-facing report (public view)
+ */
 export interface UserReport {
   id: string;
   greeting: string | null;
   profileSummary: UserReportProfileSummary;
+  destinations: UserDestinationResponse[];
   publishedAt: string | null;
-  countryResponses: UserCountryResponse[];
 }
 
+/**
+ * User report status
+ */
 export interface UserReportStatus {
   hasReport: boolean;
-  status: ReportStatus | null;
-  hasPublishedResponses: boolean;
-  publishedResponseCount: number;
+  hasPublishedReport: boolean;
+  publishedDestinationCount: number;
+  reportId?: string;
 }
 
 interface ApiResponse<T> {
@@ -158,13 +200,13 @@ export async function getUserReport(): Promise<{
 }
 
 /**
- * Get a specific country response from user's report
+ * Get a specific destination response from user's report
  */
-export async function getCountryResponse(
-  countryId: string
-): Promise<{ response: UserCountryResponse | null; error?: string }> {
-  const apiResponse = await authenticatedFetch<{ response: UserCountryResponse }>(
-    `/api/v1/reports/countries/${countryId}`
+export async function getDestinationResponse(
+  destinationId: string
+): Promise<{ response: UserDestinationResponse | null; error?: string }> {
+  const apiResponse = await authenticatedFetch<{ response: UserDestinationResponse }>(
+    `/api/v1/reports/destinations/${destinationId}`
   );
 
   if (!apiResponse.success || !apiResponse.data) {
@@ -173,3 +215,9 @@ export async function getCountryResponse(
 
   return { response: apiResponse.data.response };
 }
+
+// Legacy type aliases for backwards compatibility (deprecated)
+/** @deprecated Use UserDestinationResponse instead */
+export type UserCountryResponse = UserDestinationResponse;
+/** @deprecated Use getDestinationResponse instead */
+export const getCountryResponse = getDestinationResponse;

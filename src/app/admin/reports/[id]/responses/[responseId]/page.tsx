@@ -1,73 +1,39 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Button, AdminGuard } from '@/components/shared';
-import { siteContent } from '@/content/he';
-import { getCurrentUser, logout } from '@/services/auth';
+import { useState, useEffect, use } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Button, AdminLayout } from "@/components/shared";
+import { siteContent } from "@/content/he";
+import { renderMarkdown } from "@/lib/markdown";
 import {
   getReportById,
-  deleteCountryResponse,
-  updateCountryResponse,
-  type ReportCountryResponse,
-  type CountryResponseContent,
+  deleteDestinationResponse,
+  publishDestinationResponse,
+  type DestinationResponseListItem,
   type ReportStatus,
-} from '@/services/reports';
+} from "@/services/reports";
 
 const content = siteContent.admin;
 
-function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
-  return (
-    <header className="bg-white border-b border-[#C6C6C6] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-[#215388]">Relogate</h1>
-          <span className="text-[#706F6F]">|</span>
-          <span className="text-[#1D1D1B] font-medium">{content.dashboard.title}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#706F6F]">
-            {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
-          </span>
-          <Button variant="outline" size="sm" onClick={onLogout}>
-            {content.dashboard.logout}
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    draft: 'bg-blue-100 text-blue-800',
-    published: 'bg-green-100 text-green-800',
+    draft: "bg-blue-100 text-blue-800",
+    published: "bg-green-100 text-green-800",
   };
 
   const labels: Record<ReportStatus, string> = {
-    pending: 'ממתין',
     draft: content.reports.status.draft,
     published: content.reports.status.published,
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}
+    >
       {labels[status]}
     </span>
-  );
-}
-
-function ContentSection({ label, value }: { label: string; value: string | undefined }) {
-  if (!value) return null;
-
-  return (
-    <div className="border-b border-[#C6C6C6] pb-4">
-      <h4 className="text-sm font-medium text-[#706F6F] mb-2">{label}</h4>
-      <p className="text-[#1D1D1B] whitespace-pre-wrap">{value}</p>
-    </div>
   );
 }
 
@@ -76,7 +42,7 @@ function ConfirmDialog({
   title,
   message,
   confirmText,
-  confirmVariant = 'danger',
+  confirmVariant = "danger",
   onConfirm,
   onCancel,
 }: {
@@ -84,15 +50,16 @@ function ConfirmDialog({
   title: string;
   message: string;
   confirmText: string;
-  confirmVariant?: 'danger' | 'primary';
+  confirmVariant?: "danger" | "primary";
   onConfirm: () => void;
   onCancel: () => void;
 }) {
   if (!isOpen) return null;
 
-  const buttonClass = confirmVariant === 'danger'
-    ? 'bg-red-600 hover:bg-red-700 text-white'
-    : 'bg-[#215388] hover:bg-[#1a4270] text-white';
+  const buttonClass =
+    confirmVariant === "danger"
+      ? "bg-red-600 hover:bg-red-700 text-white"
+      : "bg-[#215388] hover:bg-[#1a4270] text-white";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -127,49 +94,51 @@ function ConfirmDialog({
   );
 }
 
-const contentLabels: Record<keyof CountryResponseContent, string> = {
-  introduction: 'הקדמה',
-  visaOptions: 'אפשרויות ויזה',
-  costOfLiving: 'יוקר מחייה',
-  healthcare: 'מערכת בריאות',
-  education: 'חינוך',
-  employment: 'תעסוקה',
-  safety: 'ביטחון אישי',
-  community: 'קהילה ישראלית/יהודית',
-  transportation: 'תחבורה',
-  additionalNotes: 'הערות נוספות',
-};
+function NarrativeSection({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) {
+  return (
+    <div className="border-b border-[#C6C6C6] pb-4">
+      <h4 className="text-sm font-medium text-[#706F6F] mb-2">{title}</h4>
+      <div className="text-[#1D1D1B]">{renderMarkdown(content)}</div>
+    </div>
+  );
+}
 
-function ViewResponseContent({ params }: { params: Promise<{ id: string; responseId: string }> }) {
+function ViewResponseContent({
+  params,
+}: {
+  params: Promise<{ id: string; responseId: string }>;
+}) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [response, setResponse] = useState<ReportCountryResponse | null>(null);
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState<DestinationResponseListItem | null>(
+    null
+  );
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
 
   useEffect(() => {
     async function init() {
-      const user = getCurrentUser();
-      if (user) {
-        const name = user.user_metadata?.firstName || user.email?.split('@')[0] || 'Admin';
-        setUserName(name);
-      }
-
-      // Fetch report and find the specific response
-      const { report, error: fetchError } = await getReportById(resolvedParams.id);
+      const { report, error: fetchError } = await getReportById(
+        resolvedParams.id
+      );
       if (fetchError) {
         setError(fetchError);
       } else if (report) {
-        const foundResponse = report.countryResponses?.find(
+        const foundResponse = report.destinations?.find(
           (r) => r.id === resolvedParams.responseId
         );
         if (foundResponse) {
           setResponse(foundResponse);
         } else {
-          setError('תגובה לא נמצאה');
+          setError("יעד לא נמצא");
         }
       }
       setLoading(false);
@@ -177,56 +146,77 @@ function ViewResponseContent({ params }: { params: Promise<{ id: string; respons
     init();
   }, [resolvedParams.id, resolvedParams.responseId]);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
-  };
-
   const handleEdit = () => {
-    router.push(`/admin/reports/${resolvedParams.id}/responses/${resolvedParams.responseId}/edit`);
+    router.push(
+      `/admin/reports/${resolvedParams.id}/responses/${resolvedParams.responseId}/edit`
+    );
   };
 
   const handleDelete = async () => {
-    const { success, error: deleteError } = await deleteCountryResponse(
-      resolvedParams.id,
+    const { success, error: deleteError } = await deleteDestinationResponse(
       resolvedParams.responseId
     );
     if (success) {
       router.push(`/admin/reports/${resolvedParams.id}/edit`);
     } else {
-      setError(deleteError || 'Failed to delete response');
+      setError(deleteError || "Failed to delete response");
     }
     setShowDeleteConfirm(false);
   };
 
   const handlePublish = async () => {
-    const { response: updatedResponse, error: updateError } = await updateCountryResponse(
-      resolvedParams.id,
-      resolvedParams.responseId,
-      { status: 'published' }
-    );
+    const { response: updatedResponse, error: updateError } =
+      await publishDestinationResponse(resolvedParams.responseId, true);
     if (updatedResponse) {
       setResponse(updatedResponse);
     } else {
-      setError(updateError || 'Failed to publish response');
+      setError(updateError || "Failed to publish response");
     }
     setShowPublishConfirm(false);
   };
 
-  const responseContent = response?.content as CountryResponseContent | undefined;
+  const handleUnpublish = async () => {
+    const { response: updatedResponse, error: updateError } =
+      await publishDestinationResponse(resolvedParams.responseId, false);
+    if (updatedResponse) {
+      setResponse(updatedResponse);
+    } else {
+      setError(updateError || "Failed to unpublish response");
+    }
+  };
+
+  const hasNarrativeContent =
+    response?.narrative?.introduction ||
+    response?.narrative?.pathway ||
+    response?.narrative?.fit ||
+    response?.narrative?.benefits ||
+    (response?.narrative?.highlights &&
+      response.narrative.highlights.length > 0);
+
+  const sortedSections = response?.sections
+    ? [...response.sections].sort((a, b) => a.position - b.position)
+    : [];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F7F7F7]">
-      <AdminHeader userName={userName} onLogout={handleLogout} />
-
+    <>
       <main className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <Link
             href={`/admin/reports/${resolvedParams.id}`}
             className="text-[#215388] hover:text-[#1a4270] font-medium flex items-center gap-2"
           >
-            <svg className="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5 rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             חזרה לדוח
           </Link>
@@ -234,13 +224,17 @@ function ViewResponseContent({ params }: { params: Promise<{ id: string; respons
             <Button variant="outline" size="sm" onClick={handleEdit}>
               {content.reports.actions.edit}
             </Button>
-            {response?.status === 'draft' && (
+            {response?.status === "draft" ? (
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() => setShowPublishConfirm(true)}
               >
                 {content.reports.actions.publish}
+              </Button>
+            ) : (
+              <Button variant="outline" size="sm" onClick={handleUnpublish}>
+                בטל פרסום
               </Button>
             )}
             <Button
@@ -270,69 +264,207 @@ function ViewResponseContent({ params }: { params: Promise<{ id: string; respons
           </div>
         ) : response ? (
           <div className="space-y-6">
-            {/* Country Header */}
+            {/* Destination Header */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-center gap-4">
-                {response.countryFlagImage && (
+                {response.destination.image && (
                   <img
-                    src={response.countryFlagImage}
-                    alt={response.countryName}
+                    src={response.destination.image}
+                    alt={response.destination.name}
                     className="w-20 h-14 object-cover rounded shadow"
                   />
                 )}
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-2xl font-bold text-[#1D1D1B]">{response.countryName}</h1>
-                    <span className="text-lg text-[#706F6F]">({response.countryCode})</span>
+                    <h1 className="text-2xl font-bold text-[#1D1D1B]">
+                      {response.destination.name}
+                    </h1>
+                    {response.destination.subtitle && (
+                      <span className="text-lg text-[#706F6F]">
+                        ({response.destination.subtitle})
+                      </span>
+                    )}
                     <ReportStatusBadge status={response.status} />
                   </div>
-                  <p className="text-sm text-[#B2B2B2]">
-                    נוצר: {new Date(response.createdAt).toLocaleDateString('he-IL')}
-                    {' | '}
-                    עודכן: {new Date(response.updatedAt).toLocaleDateString('he-IL')}
-                  </p>
+                  {response.destination.badge && (
+                    <span className="inline-flex items-center gap-1.5 bg-[#F9F6F1] rounded-full px-3 py-1 text-xs text-[#1D1D1B]">
+                      <span>✨</span>
+                      <span>{response.destination.badge}</span>
+                    </span>
+                  )}
                 </div>
               </div>
             </motion.div>
 
-            {/* Content */}
+            {/* Match Info */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="bg-white rounded-lg shadow p-6"
             >
-              <h2 className="text-lg font-semibold text-[#1D1D1B] mb-6">תוכן מותאם אישית</h2>
-              {responseContent && Object.keys(responseContent).length > 0 ? (
-                <div className="space-y-6">
-                  {(Object.keys(contentLabels) as Array<keyof CountryResponseContent>).map((key) => (
-                    <ContentSection
-                      key={key}
-                      label={contentLabels[key]}
-                      value={responseContent[key]}
-                    />
-                  ))}
+              <h2 className="text-lg font-semibold text-[#1D1D1B] mb-4">
+                נתוני התאמה
+              </h2>
+              <div className="flex flex-wrap gap-6">
+                <div>
+                  <p className="text-sm text-[#706F6F] mb-1">ציון התאמה</p>
+                  <p className="text-2xl font-bold text-[#239083]">
+                    {response.match.score}%
+                  </p>
                 </div>
-              ) : (
-                <p className="text-[#706F6F] text-center py-8">אין תוכן מותאם אישית</p>
+                {response.match.visaType && (
+                  <div>
+                    <p className="text-sm text-[#706F6F] mb-1">סוג ויזה</p>
+                    <p className="font-medium text-[#1D1D1B]">
+                      {response.match.visaType}
+                    </p>
+                  </div>
+                )}
+              </div>
+              {response.match.reasons.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm text-[#706F6F] mb-2">סיבות להתאמה</p>
+                  <div className="flex flex-wrap gap-2">
+                    {response.match.reasons.map((reason, index) => (
+                      <span
+                        key={index}
+                        className="bg-[#215388]/10 text-[#215388] rounded-full px-3 py-1 text-sm"
+                      >
+                        {reason}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               )}
             </motion.div>
+
+            {/* Narrative Content */}
+            {hasNarrativeContent && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-lg shadow p-6"
+              >
+                <h2 className="text-lg font-semibold text-[#1D1D1B] mb-6">
+                  תוכן נרטיבי
+                </h2>
+                <div className="space-y-6">
+                  {response.narrative?.introduction && (
+                    <NarrativeSection
+                      title="הקדמה"
+                      content={response.narrative.introduction}
+                    />
+                  )}
+                  {response.narrative?.pathway && (
+                    <NarrativeSection
+                      title="המסלול"
+                      content={response.narrative.pathway}
+                    />
+                  )}
+                  {response.narrative?.fit && (
+                    <NarrativeSection
+                      title="איך אתם מתאימים"
+                      content={response.narrative.fit}
+                    />
+                  )}
+                  {response.narrative?.benefits && (
+                    <NarrativeSection
+                      title="יתרונות"
+                      content={response.narrative.benefits}
+                    />
+                  )}
+                  {response.narrative?.highlights &&
+                    response.narrative.highlights.length > 0 && (
+                      <div className="border-b border-[#C6C6C6] pb-4 last:border-0">
+                        <h4 className="text-sm font-medium text-[#706F6F] mb-2">
+                          נקודות מרכזיות
+                        </h4>
+                        <ul className="space-y-1">
+                          {response.narrative.highlights.map(
+                            (highlight, index) => (
+                              <li
+                                key={index}
+                                className="flex items-start gap-2 text-[#1D1D1B]"
+                              >
+                                <span className="text-[#239083]">✓</span>
+                                <span>{highlight}</span>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Sections */}
+            {sortedSections.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white rounded-lg shadow p-6"
+              >
+                <h2 className="text-lg font-semibold text-[#1D1D1B] mb-6">
+                  מידע מפורט ({sortedSections.length} סקשנים)
+                </h2>
+                <div className="space-y-6">
+                  {sortedSections.map((section) => (
+                    <div
+                      key={section.id}
+                      className="border-b border-[#C6C6C6] pb-4 last:border-0"
+                    >
+                      <h4 className="text-sm font-medium text-[#706F6F] mb-2 flex items-center gap-2">
+                        {section.icon && <span>{section.icon}</span>}
+                        {section.title}
+                      </h4>
+                      <div className="text-[#1D1D1B]">
+                        {renderMarkdown(section.content)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Empty state */}
+            {!hasNarrativeContent && sortedSections.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-lg shadow p-12 text-center"
+              >
+                <p className="text-[#706F6F]">אין תוכן מותאם אישית</p>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleEdit}
+                  className="mt-4"
+                >
+                  הוסף תוכן
+                </Button>
+              </motion.div>
+            )}
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-[#706F6F]">תגובה לא נמצאה</p>
+            <p className="text-[#706F6F]">יעד לא נמצא</p>
           </div>
         )}
       </main>
 
       <ConfirmDialog
         isOpen={showDeleteConfirm}
-        title="מחיקת מדינה מהדוח"
-        message="האם אתה בטוח שברצונך למחוק את המדינה הזו מהדוח?"
+        title="מחיקת יעד מהדוח"
+        message="האם אתה בטוח שברצונך למחוק את היעד הזה מהדוח?"
         confirmText="מחק"
         confirmVariant="danger"
         onConfirm={handleDelete}
@@ -348,7 +480,7 @@ function ViewResponseContent({ params }: { params: Promise<{ id: string; respons
         onConfirm={handlePublish}
         onCancel={() => setShowPublishConfirm(false)}
       />
-    </div>
+    </>
   );
 }
 
@@ -358,8 +490,8 @@ export default function ViewResponsePage({
   params: Promise<{ id: string; responseId: string }>;
 }) {
   return (
-    <AdminGuard>
+    <AdminLayout>
       <ViewResponseContent params={params} />
-    </AdminGuard>
+    </AdminLayout>
   );
 }

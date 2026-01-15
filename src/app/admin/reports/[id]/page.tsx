@@ -4,51 +4,26 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Button, AdminGuard } from '@/components/shared';
+import { Button, AdminLayout } from '@/components/shared';
 import { siteContent } from '@/content/he';
-import { getCurrentUser, logout } from '@/services/auth';
 import {
   getReportById,
   deleteReport,
-  updateReport,
+  publishReport,
   type Report,
   type ReportStatus,
-  type ReportCountryResponse,
+  type DestinationResponseListItem,
 } from '@/services/reports';
 
 const content = siteContent.admin;
 
-function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
-  return (
-    <header className="bg-white border-b border-[#C6C6C6] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-[#215388]">Relogate</h1>
-          <span className="text-[#706F6F]">|</span>
-          <span className="text-[#1D1D1B] font-medium">{content.dashboard.title}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#706F6F]">
-            {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
-          </span>
-          <Button variant="outline" size="sm" onClick={onLogout}>
-            {content.dashboard.logout}
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
     draft: 'bg-blue-100 text-blue-800',
     published: 'bg-green-100 text-green-800',
   };
 
   const labels: Record<ReportStatus, string> = {
-    pending: 'ממתין',
     draft: content.reports.status.draft,
     published: content.reports.status.published,
   };
@@ -60,11 +35,11 @@ function ReportStatusBadge({ status }: { status: ReportStatus }) {
   );
 }
 
-function CountryResponseCard({
+function DestinationResponseCard({
   response,
   onView,
 }: {
-  response: ReportCountryResponse;
+  response: DestinationResponseListItem;
   onView: () => void;
 }) {
   return (
@@ -75,16 +50,18 @@ function CountryResponseCard({
       onClick={onView}
     >
       <div className="flex items-center gap-3 mb-3">
-        {response.countryFlagImage && (
+        {response.destination.image && (
           <img
-            src={response.countryFlagImage}
-            alt={response.countryName}
+            src={response.destination.image}
+            alt={response.destination.name}
             className="w-8 h-6 object-cover rounded"
           />
         )}
         <div>
-          <h4 className="font-medium text-[#1D1D1B]">{response.countryName}</h4>
-          <span className="text-xs text-[#706F6F]">{response.countryCode}</span>
+          <h4 className="font-medium text-[#1D1D1B]">{response.destination.name}</h4>
+          {response.destination.subtitle && (
+            <span className="text-xs text-[#706F6F]">{response.destination.subtitle}</span>
+          )}
         </div>
       </div>
       <div className="flex items-center justify-between">
@@ -154,7 +131,6 @@ function ConfirmDialog({
 function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -163,12 +139,6 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     async function init() {
-      const user = getCurrentUser();
-      if (user) {
-        const name = user.user_metadata?.firstName || user.email?.split('@')[0] || 'Admin';
-        setUserName(name);
-      }
-
       const { report: fetchedReport, error: fetchError } = await getReportById(resolvedParams.id);
       if (fetchError) {
         setError(fetchError);
@@ -179,11 +149,6 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
     }
     init();
   }, [resolvedParams.id]);
-
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
-  };
 
   const handleEdit = () => {
     router.push(`/admin/reports/${resolvedParams.id}/edit`);
@@ -200,9 +165,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
   };
 
   const handlePublish = async () => {
-    const { report: updatedReport, error: publishError } = await updateReport(resolvedParams.id, {
-      status: 'published',
-    });
+    const { report: updatedReport, error: publishError } = await publishReport(resolvedParams.id, true);
     if (updatedReport) {
       setReport(updatedReport);
     } else {
@@ -211,14 +174,12 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
     setShowPublishConfirm(false);
   };
 
-  const handleViewCountryResponse = (responseId: string) => {
+  const handleViewDestinationResponse = (responseId: string) => {
     router.push(`/admin/reports/${resolvedParams.id}/responses/${responseId}`);
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F7F7F7]">
-      <AdminHeader userName={userName} onLogout={handleLogout} />
-
+    <>
       <main className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <Link
@@ -379,13 +340,13 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                   + {content.reportEditor.countries.addCountry}
                 </Link>
               </div>
-              {report.countryResponses && report.countryResponses.length > 0 ? (
+              {report.destinations && report.destinations.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {report.countryResponses.map((response) => (
-                    <CountryResponseCard
+                  {report.destinations.map((response) => (
+                    <DestinationResponseCard
                       key={response.id}
                       response={response}
-                      onView={() => handleViewCountryResponse(response.id)}
+                      onView={() => handleViewDestinationResponse(response.id)}
                     />
                   ))}
                 </div>
@@ -396,24 +357,6 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
               )}
             </motion.div>
 
-            {/* Questionnaire Data */}
-            {report.questionnaire && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white rounded-lg shadow p-6"
-              >
-                <h2 className="text-lg font-semibold text-[#1D1D1B] mb-4">
-                  נתוני השאלון
-                </h2>
-                <div className="bg-[#F7F7F7] rounded-lg p-4">
-                  <pre className="text-sm text-[#1D1D1B] whitespace-pre-wrap overflow-auto">
-                    {JSON.stringify(report.questionnaire.responses, null, 2)}
-                  </pre>
-                </div>
-              </motion.div>
-            )}
           </div>
         ) : (
           <div className="text-center py-12">
@@ -441,14 +384,14 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
         onConfirm={handlePublish}
         onCancel={() => setShowPublishConfirm(false)}
       />
-    </div>
+    </>
   );
 }
 
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   return (
-    <AdminGuard>
+    <AdminLayout>
       <ReportDetailContent params={params} />
-    </AdminGuard>
+    </AdminLayout>
   );
 }

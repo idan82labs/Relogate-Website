@@ -89,10 +89,10 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
 
     // Navigate based on notification type
     setIsOpen(false);
-    if (notification.type === 'report_ready' && notification.data.reportId) {
+    if (notification.type === 'report_ready') {
       router.push('/personal-area/report');
-    } else if (notification.type === 'country_response_ready' && notification.data.responseId) {
-      router.push(`/personal-area/report?country=${notification.data.responseId}`);
+    } else if (notification.type === 'country_response_ready' && notification.relatedId) {
+      router.push(`/personal-area/report?destination=${notification.relatedId}`);
     } else {
       router.push('/personal-area');
     }

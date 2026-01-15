@@ -1,186 +1,119 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Button, AdminGuard } from '@/components/shared';
-import { siteContent } from '@/content/he';
-import { getCurrentUser, logout } from '@/services/auth';
+import { useState, useEffect, use, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import {
-  getReportById,
-  updateCountryResponse,
-  type ReportCountryResponse,
-  type CountryResponseContent,
+  Button,
+  AdminLayout,
+  ResponseEditor,
+  ResponsePreview,
+} from "@/components/shared";
+import { siteContent } from "@/content/he";
+import {
+  getDestinationResponseById,
+  updateDestinationResponse,
+  publishDestinationResponse,
+  type DestinationResponseFull,
+  type DestinationInfo,
+  type MatchInfo,
+  type DestinationNarrative,
+  type DestinationSection,
   type ReportStatus,
-} from '@/services/reports';
+} from "@/services/reports";
 
 const content = siteContent.admin;
 
-function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
-  return (
-    <header className="bg-white border-b border-[#C6C6C6] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-[#215388]">Relogate</h1>
-          <span className="text-[#706F6F]">|</span>
-          <span className="text-[#1D1D1B] font-medium">{content.dashboard.title}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#706F6F]">
-            {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
-          </span>
-          <Button variant="outline" size="sm" onClick={onLogout}>
-            {content.dashboard.logout}
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    draft: 'bg-blue-100 text-blue-800',
-    published: 'bg-green-100 text-green-800',
+    draft: "bg-blue-100 text-blue-800",
+    published: "bg-green-100 text-green-800",
   };
 
   const labels: Record<ReportStatus, string> = {
-    pending: 'ממתין',
     draft: content.reports.status.draft,
     published: content.reports.status.published,
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}
+    >
       {labels[status]}
     </span>
   );
 }
 
-const contentFields: { key: keyof CountryResponseContent; label: string; placeholder: string }[] = [
-  {
-    key: 'introduction',
-    label: 'הקדמה',
-    placeholder: 'תיאור קצר של המדינה והתאמתה למשתמש...',
-  },
-  {
-    key: 'visaOptions',
-    label: 'אפשרויות ויזה',
-    placeholder: 'מסלולי הויזה המומלצים עבור המשתמש...',
-  },
-  {
-    key: 'costOfLiving',
-    label: 'יוקר מחייה',
-    placeholder: 'מידע על עלויות מחייה מותאם למשתמש...',
-  },
-  {
-    key: 'healthcare',
-    label: 'מערכת בריאות',
-    placeholder: 'מידע על מערכת הבריאות...',
-  },
-  {
-    key: 'education',
-    label: 'חינוך',
-    placeholder: 'מידע על מערכת החינוך...',
-  },
-  {
-    key: 'employment',
-    label: 'תעסוקה',
-    placeholder: 'מידע על שוק העבודה והזדמנויות תעסוקה...',
-  },
-  {
-    key: 'safety',
-    label: 'ביטחון אישי',
-    placeholder: 'מידע על ביטחון ובטיחות...',
-  },
-  {
-    key: 'community',
-    label: 'קהילה ישראלית/יהודית',
-    placeholder: 'מידע על הקהילה היהודית והישראלית...',
-  },
-  {
-    key: 'transportation',
-    label: 'תחבורה',
-    placeholder: 'מידע על תחבורה ציבורית ותשתיות...',
-  },
-  {
-    key: 'additionalNotes',
-    label: 'הערות נוספות',
-    placeholder: 'הערות נוספות עבור המשתמש...',
-  },
-];
-
-function EditResponseContent({ params }: { params: Promise<{ id: string; responseId: string }> }) {
+function EditResponseContent({
+  params,
+}: {
+  params: Promise<{ id: string; responseId: string }>;
+}) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [response, setResponse] = useState<ReportCountryResponse | null>(null);
-  const [formContent, setFormContent] = useState<CountryResponseContent>({});
-  const [status, setStatus] = useState<ReportStatus>('draft');
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState<DestinationResponseFull | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+
+  // Form state - new structure
+  const [destination, setDestination] = useState<DestinationInfo>({
+    name: "",
+    subtitle: null,
+    image: null,
+    badge: null,
+  });
+  const [match, setMatch] = useState<MatchInfo>({
+    score: 0,
+    reasons: [],
+    visaType: null,
+  });
+  const [narrative, setNarrative] = useState<DestinationNarrative>({});
+  const [sections, setSections] = useState<DestinationSection[]>([]);
+  const [status, setStatus] = useState<ReportStatus>("draft");
 
   useEffect(() => {
     async function init() {
-      const user = getCurrentUser();
-      if (user) {
-        const name = user.user_metadata?.firstName || user.email?.split('@')[0] || 'Admin';
-        setUserName(name);
-      }
+      const { response: fetchedResponse, error: fetchError } =
+        await getDestinationResponseById(resolvedParams.responseId);
 
-      // Fetch report and find the specific response
-      const { report, error: fetchError } = await getReportById(resolvedParams.id);
       if (fetchError) {
         setError(fetchError);
-      } else if (report) {
-        const foundResponse = report.countryResponses?.find(
-          (r) => r.id === resolvedParams.responseId
-        );
-        if (foundResponse) {
-          setResponse(foundResponse);
-          setFormContent(foundResponse.content as CountryResponseContent || {});
-          setStatus(foundResponse.status);
-        } else {
-          setError('תגובה לא נמצאה');
-        }
+      } else if (fetchedResponse) {
+        setResponse(fetchedResponse);
+        setDestination(fetchedResponse.destination);
+        setMatch(fetchedResponse.match);
+        setNarrative(fetchedResponse.narrative);
+        setSections(fetchedResponse.sections);
+        setStatus(fetchedResponse.status);
       }
       setLoading(false);
     }
     init();
-  }, [resolvedParams.id, resolvedParams.responseId]);
+  }, [resolvedParams.responseId]);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
-  };
-
-  const handleContentChange = (field: keyof CountryResponseContent, value: string) => {
-    setFormContent((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setSaving(true);
-    setError('');
+    setError("");
 
-    // Filter out empty content fields
-    const filteredContent: CountryResponseContent = {};
-    Object.entries(formContent).forEach(([key, value]) => {
-      if (value && value.trim()) {
-        filteredContent[key as keyof CountryResponseContent] = value;
-      }
-    });
-
-    const { response: updatedResponse, error: updateError } = await updateCountryResponse(
-      resolvedParams.id,
-      resolvedParams.responseId,
-      {
-        content: filteredContent,
-        status,
-      }
-    );
+    const { response: updatedResponse, error: updateError } =
+      await updateDestinationResponse(resolvedParams.responseId, {
+        destination: {
+          name: destination.name,
+          subtitle: destination.subtitle,
+          image: destination.image,
+          badge: destination.badge,
+        },
+        match: {
+          score: match.score,
+          reasons: match.reasons.filter((r) => r.trim()),
+          visaType: match.visaType,
+        },
+        narrative,
+        sections: sections.map(({ id, ...rest }) => rest),
+      });
 
     if (updateError) {
       setError(updateError);
@@ -188,55 +121,71 @@ function EditResponseContent({ params }: { params: Promise<{ id: string; respons
       setResponse(updatedResponse);
     }
     setSaving(false);
-  };
+  }, [
+    resolvedParams.responseId,
+    destination,
+    match,
+    narrative,
+    sections,
+  ]);
 
-  const handlePublish = async () => {
+  const handlePublish = useCallback(async () => {
+    // Save first
+    await handleSave();
+
     setSaving(true);
-    setError('');
+    const { response: publishedResponse, error: publishError } =
+      await publishDestinationResponse(resolvedParams.responseId, true);
 
-    // Filter out empty content fields
-    const filteredContent: CountryResponseContent = {};
-    Object.entries(formContent).forEach(([key, value]) => {
-      if (value && value.trim()) {
-        filteredContent[key as keyof CountryResponseContent] = value;
-      }
-    });
-
-    const { response: updatedResponse, error: updateError } = await updateCountryResponse(
-      resolvedParams.id,
-      resolvedParams.responseId,
-      {
-        content: filteredContent,
-        status: 'published',
-      }
-    );
-
-    if (updateError) {
-      setError(updateError);
-    } else if (updatedResponse) {
-      setResponse(updatedResponse);
-      setStatus('published');
+    if (publishError) {
+      setError(publishError);
+    } else if (publishedResponse) {
+      setResponse(publishedResponse);
+      setStatus("published");
     }
     setSaving(false);
-  };
+  }, [handleSave, resolvedParams.responseId]);
+
+  const handleUnpublish = useCallback(async () => {
+    setSaving(true);
+    const { response: unpublishedResponse, error: unpublishError } =
+      await publishDestinationResponse(resolvedParams.responseId, false);
+
+    if (unpublishError) {
+      setError(unpublishError);
+    } else if (unpublishedResponse) {
+      setResponse(unpublishedResponse);
+      setStatus("draft");
+    }
+    setSaving(false);
+  }, [resolvedParams.responseId]);
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F7F7F7]">
-      <AdminHeader userName={userName} onLogout={handleLogout} />
-
-      <main className="max-w-4xl mx-auto px-6 py-8">
+    <>
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
             href={`/admin/reports/${resolvedParams.id}/edit`}
             className="text-[#215388] hover:text-[#1a4270] font-medium flex items-center gap-2"
           >
-            <svg className="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5 rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
-            {content.countryResponseEditor?.backToReport || 'חזרה לדוח'}
+            {content.countryResponseEditor?.backToReport || "חזרה לדוח"}
           </Link>
           <h1 className="text-2xl font-bold text-[#1D1D1B]">
-            {content.countryResponseEditor?.title || 'עריכת המלצת מדינה'}
+            {content.countryResponseEditor?.title || "עריכת המלצת יעד"}
           </h1>
         </div>
 
@@ -256,96 +205,127 @@ function EditResponseContent({ params }: { params: Promise<{ id: string; respons
           </div>
         ) : response ? (
           <div className="space-y-6">
-            {/* Country Header */}
+            {/* Destination Header Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-center gap-4">
-                {response.countryFlagImage && (
+                {destination.image && (
                   <img
-                    src={response.countryFlagImage}
-                    alt={response.countryName}
+                    src={destination.image}
+                    alt={destination.name}
                     className="w-16 h-12 object-cover rounded shadow"
                   />
                 )}
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold text-[#1D1D1B]">{response.countryName}</h2>
-                  <p className="text-[#706F6F]">{response.countryCode}</p>
+                  <h2 className="text-xl font-bold text-[#1D1D1B]">
+                    {destination.name || "יעד חדש"}
+                  </h2>
+                  {destination.subtitle && (
+                    <p className="text-[#706F6F]">{destination.subtitle}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <ReportStatusBadge status={status} />
-                  {status === 'draft' && (
-                    <select
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value as ReportStatus)}
-                      className="px-3 py-1 border border-[#C6C6C6] rounded-lg text-sm"
-                    >
-                      <option value="draft">טיוטה</option>
-                      <option value="published">פורסם</option>
-                    </select>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowPreview(!showPreview)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      showPreview
+                        ? "bg-[#215388] text-white"
+                        : "bg-gray-100 text-[#1D1D1B] hover:bg-gray-200"
+                    }`}
+                  >
+                    {showPreview ? "עריכה" : "תצוגה מקדימה"}
+                  </button>
                 </div>
               </div>
             </motion.div>
 
-            {/* Content Fields */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-lg shadow p-6"
-            >
-              <h3 className="text-lg font-semibold text-[#1D1D1B] mb-6">תוכן מותאם אישית</h3>
-              <div className="space-y-6">
-                {contentFields.map(({ key, label, placeholder }) => (
-                  <div key={key}>
-                    <label className="block text-sm font-medium text-[#1D1D1B] mb-2">
-                      {label}
-                    </label>
-                    <textarea
-                      value={formContent[key] || ''}
-                      onChange={(e) => handleContentChange(key, e.target.value)}
-                      placeholder={placeholder}
-                      rows={4}
-                      className="w-full px-4 py-2 border border-[#C6C6C6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#215388] resize-y"
-                    />
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+            {/* Editor / Preview Toggle */}
+            {showPreview ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                key="preview"
+              >
+                <ResponsePreview
+                  destination={destination}
+                  match={match}
+                  narrative={narrative}
+                  sections={sections}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                key="editor"
+              >
+                <ResponseEditor
+                  destination={destination}
+                  match={match}
+                  narrative={narrative}
+                  sections={sections}
+                  onDestinationChange={setDestination}
+                  onMatchChange={setMatch}
+                  onNarrativeChange={setNarrative}
+                  onSectionsChange={setSections}
+                  disabled={saving}
+                />
+              </motion.div>
+            )}
 
             {/* Actions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="flex justify-end gap-3"
+              className="flex justify-end gap-3 sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-lg"
             >
               <Button
                 variant="outline"
-                onClick={() => router.push(`/admin/reports/${resolvedParams.id}/edit`)}
+                onClick={() =>
+                  router.push(`/admin/reports/${resolvedParams.id}/edit`)
+                }
               >
                 ביטול
               </Button>
-              <Button variant="outline" onClick={handleSave} disabled={saving}>
-                {saving ? 'שומר...' : 'שמור'}
+              <Button
+                variant="outline"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? "שומר..." : "שמור טיוטה"}
               </Button>
-              {status === 'draft' && (
-                <Button variant="primary" onClick={handlePublish} disabled={saving}>
-                  {saving ? 'מפרסם...' : 'פרסם'}
+              {status === "draft" ? (
+                <Button
+                  variant="primary"
+                  onClick={handlePublish}
+                  disabled={saving}
+                >
+                  {saving ? "מפרסם..." : "פרסם"}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleUnpublish}
+                  disabled={saving}
+                >
+                  {saving ? "מבטל פרסום..." : "בטל פרסום"}
                 </Button>
               )}
             </motion.div>
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-[#706F6F]">תגובה לא נמצאה</p>
+            <p className="text-[#706F6F]">יעד לא נמצא</p>
           </div>
         )}
       </main>
-    </div>
+    </>
   );
 }
 
@@ -355,8 +335,8 @@ export default function EditResponsePage({
   params: Promise<{ id: string; responseId: string }>;
 }) {
   return (
-    <AdminGuard>
+    <AdminLayout>
       <EditResponseContent params={params} />
-    </AdminGuard>
+    </AdminLayout>
   );
 }

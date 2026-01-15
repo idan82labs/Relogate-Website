@@ -15,18 +15,13 @@ export type NotificationType =
 
 export interface Notification {
   id: string;
-  userId: string;
   type: NotificationType;
   title: string;
-  message: string;
-  data: {
-    reportId?: string;
-    responseId?: string;
-    countryName?: string;
-    questionnaireId?: string;
-  };
+  message: string | null;
+  relatedId: string | null;
   isRead: boolean;
   createdAt: string;
+  readAt: string | null;
 }
 
 export interface NotificationListResponse {

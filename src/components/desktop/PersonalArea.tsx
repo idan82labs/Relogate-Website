@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
@@ -7,6 +8,7 @@ import { Button, Card } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { useAuth } from "@/contexts";
+import { getReportStatus, type UserReportStatus } from "@/services/userReports";
 
 /**
  * PersonalArea - Desktop personal area dashboard
@@ -16,6 +18,19 @@ export const PersonalArea = () => {
   const router = useRouter();
   const { user, hasCompletedOnboarding, onboardingStatus, logout } = useAuth();
   const { personalAreaDashboard } = siteContent;
+  const [reportStatus, setReportStatus] = useState<UserReportStatus | null>(null);
+
+  // Fetch report status on mount
+  useEffect(() => {
+    async function fetchReportStatus() {
+      if (!hasCompletedOnboarding) return;
+      const { data } = await getReportStatus();
+      if (data) {
+        setReportStatus(data);
+      }
+    }
+    fetchReportStatus();
+  }, [hasCompletedOnboarding]);
 
   const handleLogout = async () => {
     await logout();
@@ -164,21 +179,55 @@ export const PersonalArea = () => {
               </div>
             </Card>
 
-            {/* Results Card (only show if completed) */}
-            {hasCompletedOnboarding && (
+            {/* Personalized Report Card (only show if questionnaire completed and has report) */}
+            {hasCompletedOnboarding && reportStatus?.hasReport && (
               <Card padding="lg" className="bg-white lg:col-span-2">
                 <h2 className="text-xl font-medium text-[#1D1D1B] text-right mb-6">
-                  {personalAreaDashboard.sections.results.title}
+                  {personalAreaDashboard.sections.personalizedReport.title}
                 </h2>
 
                 <div className="text-center py-6">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => router.push("/questionnaire/results")}
-                  >
-                    {personalAreaDashboard.sections.results.viewReport}
-                  </Button>
+                  {reportStatus.hasPublishedReport && reportStatus.publishedDestinationCount > 0 ? (
+                    <>
+                      <div className="w-16 h-16 mx-auto mb-4 bg-[#239083]/10 rounded-full flex items-center justify-center">
+                        <svg className="w-8 h-8 text-[#239083]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-medium text-[#239083] mb-2">
+                        {personalAreaDashboard.sections.personalizedReport.ready}
+                      </p>
+                      <p className="text-[#706F6F] mb-2">
+                        {personalAreaDashboard.sections.personalizedReport.readyDescription}
+                      </p>
+                      {reportStatus.publishedDestinationCount > 0 && (
+                        <p className="text-sm text-[#215388] font-medium mb-6">
+                          {reportStatus.publishedDestinationCount} {personalAreaDashboard.sections.personalizedReport.countriesCount}
+                        </p>
+                      )}
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        onClick={() => router.push("/personal-area/report")}
+                      >
+                        {personalAreaDashboard.sections.personalizedReport.viewButton}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-16 h-16 mx-auto mb-4 bg-[#215388]/10 rounded-full flex items-center justify-center">
+                        <svg className="w-8 h-8 text-[#215388] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-medium text-[#215388] mb-2">
+                        {personalAreaDashboard.sections.personalizedReport.notReady}
+                      </p>
+                      <p className="text-[#706F6F]">
+                        {personalAreaDashboard.sections.personalizedReport.notReadyDescription}
+                      </p>
+                    </>
+                  )}
                 </div>
               </Card>
             )}

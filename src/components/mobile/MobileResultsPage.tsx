@@ -6,6 +6,15 @@ import { siteContent } from "@/content/he";
 import { MobileHeader } from "./MobileHeader";
 import { MobileFooter } from "./MobileFooter";
 import { CategoryTag, MatchScoreCircle } from "@/components/shared";
+import { renderMarkdown } from "@/lib/markdown";
+
+interface CountrySection {
+  key: string;
+  title: string;
+  icon?: string;
+  content: string;
+  position: number;
+}
 
 interface Country {
   id: string;
@@ -17,6 +26,7 @@ interface Country {
   matchReasons: string[];
   description: string;
   visaInfo: string;
+  sections?: CountrySection[];
 }
 
 interface MobileResultsPageProps {
@@ -266,34 +276,67 @@ export const MobileResultsPage = ({
                   ))}
                 </div>
 
-                {/* Visa Info (shown when visa category selected) */}
-                {selectedCategory === "visa" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-[10px] p-4 shadow-sm border border-[#C6C6C6]"
-                  >
-                    <h3 className="text-[18px] font-medium text-[#239083] mb-4 text-right">
-                      {reportResults.countryDetail.visaPathTitle}
-                    </h3>
-                    <div className="text-[16px] text-[#1D1D1B] text-right leading-relaxed whitespace-pre-line">
-                      {selectedCountry.visaInfo}
-                    </div>
-                  </motion.div>
-                )}
+                {/* Section Content */}
+                {(() => {
+                  // Find the section that matches the selected category
+                  const section = selectedCountry.sections?.find(
+                    (s) => s.key === selectedCategory
+                  );
 
-                {/* Other categories placeholder */}
-                {selectedCategory !== "visa" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-[10px] p-4 shadow-sm border border-[#C6C6C6] text-center"
-                  >
-                    <p className="text-[16px] text-[#706F6F]">
-                      מידע נוסף יתווסף בקרוב
-                    </p>
-                  </motion.div>
-                )}
+                  // For visa, also check visaInfo as fallback
+                  if (selectedCategory === "visa") {
+                    const content = section?.content || selectedCountry.visaInfo;
+                    if (content) {
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-white rounded-[10px] p-4 shadow-sm border border-[#C6C6C6]"
+                        >
+                          <h3 className="text-[18px] font-medium text-[#239083] mb-4 text-right flex items-center gap-2 justify-end">
+                            {section?.icon && <span>{section.icon}</span>}
+                            {section?.title || reportResults.countryDetail.visaPathTitle}
+                          </h3>
+                          <div className="text-[16px] text-[#1D1D1B] text-right leading-relaxed">
+                            {renderMarkdown(content)}
+                          </div>
+                        </motion.div>
+                      );
+                    }
+                  }
+
+                  // For other categories, show section content if available
+                  if (section) {
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-[10px] p-4 shadow-sm border border-[#C6C6C6]"
+                      >
+                        <h3 className="text-[18px] font-medium text-[#239083] mb-4 text-right flex items-center gap-2 justify-end">
+                          {section.icon && <span>{section.icon}</span>}
+                          {section.title}
+                        </h3>
+                        <div className="text-[16px] text-[#1D1D1B] text-right leading-relaxed">
+                          {renderMarkdown(section.content)}
+                        </div>
+                      </motion.div>
+                    );
+                  }
+
+                  // Fallback: no content available
+                  return (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white rounded-[10px] p-4 shadow-sm border border-[#C6C6C6] text-center"
+                    >
+                      <p className="text-[16px] text-[#706F6F]">
+                        מידע נוסף יתווסף בקרוב
+                      </p>
+                    </motion.div>
+                  );
+                })()}
               </div>
             </motion.section>
           )}

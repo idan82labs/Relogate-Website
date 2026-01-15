@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, AdminGuard } from '@/components/shared';
+import { Button, AdminLayout } from '@/components/shared';
 import { siteContent } from '@/content/he';
-import { getCurrentUser, logout } from '@/services/auth';
+import { getCurrentUser } from '@/services/auth';
 import {
   listUsers,
   deleteUser,
@@ -16,49 +15,6 @@ import {
 } from '@/services/admin';
 
 const content = siteContent.admin;
-
-function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
-  return (
-    <header className="bg-white border-b border-[#C6C6C6] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-[#215388]">Relogate</h1>
-          <span className="text-[#706F6F]">|</span>
-          <span className="text-[#1D1D1B] font-medium">{content.dashboard.title}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#706F6F]">
-            {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
-          </span>
-          <Button variant="outline" size="sm" onClick={onLogout}>
-            {content.dashboard.logout}
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function AdminNav({ activeTab }: { activeTab: string }) {
-  return (
-    <nav className="bg-white border-b border-[#C6C6C6]">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex gap-8">
-          <a
-            href="/admin/users"
-            className={`py-4 border-b-2 transition-colors ${
-              activeTab === 'users'
-                ? 'border-[#215388] text-[#215388] font-medium'
-                : 'border-transparent text-[#706F6F] hover:text-[#1D1D1B]'
-            }`}
-          >
-            {content.dashboard.nav.users}
-          </a>
-        </div>
-      </div>
-    </nav>
-  );
-}
 
 function UserStatusBadge({ isActive }: { isActive: boolean }) {
   return (
@@ -507,8 +463,6 @@ function ConfirmDialog({
 }
 
 function AdminUsersContent() {
-  const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -548,18 +502,12 @@ function AdminUsersContent() {
     async function init() {
       const currentUser = await getCurrentUser();
       if (currentUser) {
-        setUserName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim());
         setCurrentUserId(currentUser.id || null);
       }
       fetchUsers();
     }
     init();
   }, [fetchUsers]);
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/admin/login');
-  };
 
   const handleSearch = () => {
     setPage(1);
@@ -616,10 +564,7 @@ function AdminUsersContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7]" dir="rtl">
-      <AdminHeader userName={userName} onLogout={handleLogout} />
-      <AdminNav activeTab="users" />
-
+    <>
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <h1 className="text-2xl font-bold text-[#1D1D1B]">{content.users.title}</h1>
@@ -703,14 +648,14 @@ function AdminUsersContent() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 
 export default function AdminUsersPage() {
   return (
-    <AdminGuard>
+    <AdminLayout activeTab="users">
       <AdminUsersContent />
-    </AdminGuard>
+    </AdminLayout>
   );
 }

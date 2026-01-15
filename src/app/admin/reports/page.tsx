@@ -2,97 +2,30 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, AdminGuard } from '@/components/shared';
+import { Button, AdminLayout } from '@/components/shared';
 import { siteContent } from '@/content/he';
-import { getCurrentUser, logout } from '@/services/auth';
 import {
   listReports,
   getPendingQuestionnaires,
   createReport,
   deleteReport,
-  updateReport,
+  publishReport,
   type ReportListItem,
   type ListReportsParams,
   type ReportStatus,
-  type ReportUser,
+  type PendingQuestionnaire,
 } from '@/services/reports';
 
 const content = siteContent.admin;
 
-function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
-  return (
-    <header className="bg-white border-b border-[#C6C6C6] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-[#215388]">Relogate</h1>
-          <span className="text-[#706F6F]">|</span>
-          <span className="text-[#1D1D1B] font-medium">{content.dashboard.title}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#706F6F]">
-            {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
-          </span>
-          <Button variant="outline" size="sm" onClick={onLogout}>
-            {content.dashboard.logout}
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function AdminNav({ activeTab }: { activeTab: string }) {
-  return (
-    <nav className="bg-white border-b border-[#C6C6C6]">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex gap-8">
-          <Link
-            href="/admin/users"
-            className={`py-4 border-b-2 transition-colors ${
-              activeTab === 'users'
-                ? 'border-[#215388] text-[#215388] font-medium'
-                : 'border-transparent text-[#706F6F] hover:text-[#1D1D1B]'
-            }`}
-          >
-            {content.dashboard.nav.users}
-          </Link>
-          <Link
-            href="/admin/countries"
-            className={`py-4 border-b-2 transition-colors ${
-              activeTab === 'countries'
-                ? 'border-[#215388] text-[#215388] font-medium'
-                : 'border-transparent text-[#706F6F] hover:text-[#1D1D1B]'
-            }`}
-          >
-            מדינות
-          </Link>
-          <Link
-            href="/admin/reports"
-            className={`py-4 border-b-2 transition-colors ${
-              activeTab === 'reports'
-                ? 'border-[#215388] text-[#215388] font-medium'
-                : 'border-transparent text-[#706F6F] hover:text-[#1D1D1B]'
-            }`}
-          >
-            דוחות
-          </Link>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
     draft: 'bg-blue-100 text-blue-800',
     published: 'bg-green-100 text-green-800',
   };
 
   const labels: Record<ReportStatus, string> = {
-    pending: 'ממתין',
     draft: content.reports.status.draft,
     published: content.reports.status.published,
   };
@@ -102,15 +35,6 @@ function ReportStatusBadge({ status }: { status: ReportStatus }) {
       {labels[status]}
     </span>
   );
-}
-
-interface PendingQuestionnaire {
-  id: string;
-  userId: string;
-  status: string;
-  completedAt: string | null;
-  responses: Record<string, unknown>;
-  user: ReportUser;
 }
 
 function PendingQuestionnairesCard({
@@ -150,7 +74,7 @@ function PendingQuestionnairesCard({
                 {q.user.firstName} {q.user.lastName}
               </p>
               <p className="text-sm text-[#706F6F]">
-                הושלם: {q.completedAt ? new Date(q.completedAt).toLocaleDateString('he-IL') : '-'}
+                הושלם: {q.submittedAt ? new Date(q.submittedAt).toLocaleDateString('he-IL') : '-'}
               </p>
             </div>
             <Button
@@ -223,7 +147,7 @@ function ReportsTable({
                 <ReportStatusBadge status={report.status} />
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#706F6F]">
-                {report.countryResponseCount || 0}
+                {report.destinationCount || 0}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#706F6F]">
                 {new Date(report.createdAt).toLocaleDateString('he-IL')}
@@ -365,7 +289,6 @@ type TabFilter = 'all' | 'draft' | 'published';
 
 function ReportsContent() {
   const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [reports, setReports] = useState<ReportListItem[]>([]);
   const [pendingQuestionnaires, setPendingQuestionnaires] = useState<PendingQuestionnaire[]>([]);
   const [loading, setLoading] = useState(true);
@@ -395,7 +318,9 @@ function ReportsContent() {
   const loadPendingQuestionnaires = useCallback(async () => {
     const { data, error: fetchError } = await getPendingQuestionnaires();
     if (data) {
-      setPendingQuestionnaires(data.questionnaires);
+      // Filter out questionnaires that already have reports
+      const pending = data.questionnaires.filter(q => !q.reportExists);
+      setPendingQuestionnaires(pending);
     } else if (fetchError) {
       console.error('Failed to fetch pending questionnaires:', fetchError);
     }
@@ -403,11 +328,6 @@ function ReportsContent() {
 
   useEffect(() => {
     async function init() {
-      const user = getCurrentUser();
-      if (user) {
-        const name = user.user_metadata?.firstName || user.email?.split('@')[0] || 'Admin';
-        setUserName(name);
-      }
       await Promise.all([
         loadReports({ page: 1, limit: 20 }),
         loadPendingQuestionnaires(),
@@ -415,11 +335,6 @@ function ReportsContent() {
     }
     init();
   }, [loadReports, loadPendingQuestionnaires]);
-
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
-  };
 
   const handleTabChange = (tab: TabFilter) => {
     setActiveTab(tab);
@@ -455,7 +370,7 @@ function ReportsContent() {
 
   const handlePublish = async () => {
     if (!publishTarget) return;
-    const { report, error: publishError } = await updateReport(publishTarget.id, { status: 'published' });
+    const { report, error: publishError } = await publishReport(publishTarget.id, true);
     if (report) {
       setPublishTarget(null);
       loadReports({ page, limit: 20, status: activeTab === 'all' ? undefined : activeTab as ReportStatus });
@@ -466,7 +381,6 @@ function ReportsContent() {
 
   const handleCreateReport = async (questionnaire: PendingQuestionnaire) => {
     const { report, error: createError } = await createReport({
-      userId: questionnaire.userId,
       questionnaireId: questionnaire.id,
     });
     if (report) {
@@ -477,10 +391,7 @@ function ReportsContent() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F7F7F7]">
-      <AdminHeader userName={userName} onLogout={handleLogout} />
-      <AdminNav activeTab="reports" />
-
+    <>
       <main className="max-w-7xl mx-auto px-6 py-8">
         <h2 className="text-2xl font-bold text-[#1D1D1B] mb-6">{content.reports.title}</h2>
 
@@ -592,14 +503,14 @@ function ReportsContent() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 
 export default function ReportsPage() {
   return (
-    <AdminGuard>
+    <AdminLayout>
       <ReportsContent />
-    </AdminGuard>
+    </AdminLayout>
   );
 }
