@@ -33,11 +33,21 @@ export interface AdminQuestionnaire {
   id: string;
   userId: string;
   status: 'in_progress' | 'completed' | 'archived';
-  currentStep: number;
+  currentStep: string;
+  schemaVersion: number;
   responses: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;
+}
+
+export interface AdminQuestionnaireDetail extends AdminQuestionnaire {
+  user?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export interface AdminUserDetail extends AdminUser {
@@ -260,4 +270,21 @@ export async function deleteUser(
   }
 
   return { success: true };
+}
+
+/**
+ * Get a questionnaire by ID with user info
+ */
+export async function getQuestionnaireById(
+  questionnaireId: string
+): Promise<{ questionnaire: AdminQuestionnaireDetail | null; error?: string }> {
+  const response = await authenticatedFetch<{ questionnaire: AdminQuestionnaireDetail }>(
+    `/api/v1/admin/questionnaires/${questionnaireId}`
+  );
+
+  if (!response.success || !response.data) {
+    return { questionnaire: null, error: response.error };
+  }
+
+  return { questionnaire: response.data.questionnaire };
 }

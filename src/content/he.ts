@@ -761,6 +761,33 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         createdAt: "תאריך הרשמה",
         updatedAt: "עודכן לאחרונה",
       },
+      viewQuestionnaire: "צפה בשאלון",
+    },
+    // Questionnaire view page
+    questionnaireView: {
+      title: "צפייה בשאלון",
+      noQuestionnaire: "המשתמש טרם מילא שאלון רילוקיישן.",
+      rawJson: "נתונים גולמיים (JSON)",
+      sections: {
+        personalDetails: "פרטים אישיים",
+        familyStatus: "מצב משפחתי",
+        migrationGoals: "מטרות רילוקיישן",
+        citizenship: "אזרחות",
+        employment: "תעסוקה והשכלה",
+        income: "הכנסות",
+        languages: "שפות",
+        studiesInvestments: "לימודים והשקעות",
+        preferences: "העדפות",
+        bureaucracy: "ביורוקרטיה",
+      },
+      completion: {
+        complete: "מלא",
+        partial: "חלקי",
+        empty: "ריק",
+      },
+      version: {
+        needsUpdate: "צריך עדכון",
+      },
     },
     // Add/Edit user form
     userForm: {
