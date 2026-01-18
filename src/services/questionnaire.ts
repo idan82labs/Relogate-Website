@@ -1,8 +1,12 @@
 /**
- * Questionnaire Service
+ * Questionnaire Service (V1 - Legacy)
  *
  * Handles questionnaire data management with backend API integration.
  * Falls back to local storage for non-authenticated users.
+ *
+ * NOTE: This is the legacy V1 questionnaire service (4-step flow).
+ * For the new 10-step questionnaire, use questionnaire-v2.ts or import
+ * from the barrel export: import { questionnaireServiceV2 } from "@/services"
  */
 
 import { getAccessToken } from './auth';
@@ -442,3 +446,19 @@ export const questionnaireService = {
 
 // Export types for components
 export type { QuestionnaireData as QuestionnaireFormData };
+
+// ============================================================================
+// V2 Re-exports (for convenience)
+// ============================================================================
+
+/**
+ * Re-export V2 service for gradual migration
+ * Consumers can use: import { questionnaireServiceV2 } from "@/services/questionnaire"
+ */
+export {
+  questionnaireServiceV2,
+  loadOrCreateQuestionnaire,
+  needsFieldCompletion,
+  getStepsNeedingCompletion,
+} from "./questionnaire-v2";
+export type { QuestionnaireV2State } from "./questionnaire-v2";
