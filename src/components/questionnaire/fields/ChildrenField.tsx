@@ -9,9 +9,9 @@ interface ChildrenFieldProps extends Omit<BaseFieldProps, "name"> {
   /** Field name */
   name: string;
   /** Array of children data */
-  children: ChildData[];
+  value: ChildData[];
   /** Change handler */
-  onChange: (children: ChildData[]) => void;
+  onChange: (value: ChildData[]) => void;
   /** Maximum number of children allowed (default: 8) */
   maxChildren?: number;
 }
@@ -23,7 +23,7 @@ interface ChildrenFieldProps extends Omit<BaseFieldProps, "name"> {
 export function ChildrenField({
   name,
   label,
-  children,
+  value,
   onChange,
   maxChildren = 8,
   error,
@@ -37,39 +37,39 @@ export function ChildrenField({
   const errorId = `${fieldId}-error`;
   const hintId = hint ? `${fieldId}-hint` : undefined;
 
-  const canAddMore = children.length < maxChildren;
+  const canAddMore = value.length < maxChildren;
 
   const generateId = () => `child-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
   const handleAddChild = useCallback(() => {
     if (!disabled && canAddMore) {
       onChange([
-        ...children,
+        ...value,
         { id: generateId(), name: "", age: "" },
       ]);
     }
-  }, [disabled, canAddMore, children, onChange]);
+  }, [disabled, canAddMore, value, onChange]);
 
   const handleRemoveChild = useCallback(
     (id: string) => {
       if (!disabled) {
-        onChange(children.filter((child) => child.id !== id));
+        onChange(value.filter((child) => child.id !== id));
       }
     },
-    [disabled, children, onChange]
+    [disabled, value, onChange]
   );
 
   const handleChildChange = useCallback(
-    (id: string, field: "name" | "age", value: string | number) => {
+    (id: string, field: "name" | "age", newValue: string | number) => {
       if (!disabled) {
         onChange(
-          children.map((child) =>
-            child.id === id ? { ...child, [field]: value } : child
+          value.map((child) =>
+            child.id === id ? { ...child, [field]: newValue } : child
           )
         );
       }
     },
-    [disabled, children, onChange]
+    [disabled, value, onChange]
   );
 
   return (
@@ -91,7 +91,7 @@ export function ChildrenField({
         className="space-y-3"
       >
         <AnimatePresence initial={false}>
-          {children.map((child, index) => (
+          {value.map((child, index) => (
             <motion.div
               key={child.id}
               initial={{ opacity: 0, height: 0 }}

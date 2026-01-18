@@ -157,7 +157,7 @@ export function FamilyStatusStep({
               <ChildrenField
                 name="children"
                 label={content.fields.children.label}
-                children={childrenData}
+                value={childrenData}
                 onChange={handleChildrenChange}
                 maxChildren={content.fields.children.maxChildren}
                 error={errors.children}
