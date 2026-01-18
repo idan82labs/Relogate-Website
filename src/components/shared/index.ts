@@ -21,3 +21,4 @@ export { MarkdownEditor } from "./MarkdownEditor";
 export { SectionEditor, SectionListEditor } from "./SectionEditor";
 export { ResponseEditor } from "./ResponseEditor";
 export { ResponsePreview } from "./ResponsePreview";
+export { DomErrorBoundary } from "./DomErrorBoundary";

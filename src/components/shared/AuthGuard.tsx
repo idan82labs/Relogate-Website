@@ -22,11 +22,8 @@ const DEFAULT_PUBLIC_ROUTES = [
 
 const DEFAULT_QUESTIONNAIRE_ROUTES = [
   '/questionnaire',
-  '/questionnaire/countries',
-  '/questionnaire/relocation-reason',
-  '/questionnaire/family-status',
-  '/questionnaire/personal-details',
-  '/questionnaire/results',
+  '/questionnaire/v2',
+  '/questionnaire/update',
 ];
 
 export function AuthGuard({

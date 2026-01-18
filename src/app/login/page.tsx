@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts";
+import { DomErrorBoundary } from "@/components/shared";
 
 // Desktop components
 import { LoginForm } from "@/components/desktop";
@@ -94,9 +95,17 @@ export default function LoginPage() {
 
   // Mobile Experience
   if (isMobile) {
-    return <MobileLoginForm onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <DomErrorBoundary>
+        <MobileLoginForm onLoginSuccess={handleLoginSuccess} />
+      </DomErrorBoundary>
+    );
   }
 
   // Desktop Experience
-  return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+  return (
+    <DomErrorBoundary>
+      <LoginForm onLoginSuccess={handleLoginSuccess} />
+    </DomErrorBoundary>
+  );
 }

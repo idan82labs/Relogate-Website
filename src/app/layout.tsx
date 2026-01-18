@@ -38,8 +38,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
-      <body className={`${notoSansHebrew.variable} font-sans antialiased`}>
+    <html lang="he" dir="rtl" suppressHydrationWarning>
+      <body
+        className={`${notoSansHebrew.variable} font-sans antialiased`}
+        suppressHydrationWarning
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

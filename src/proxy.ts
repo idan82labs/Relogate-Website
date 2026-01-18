@@ -5,14 +5,11 @@ import { logInfo, logDebug, generateSessionId } from '@/lib/server-logger';
 // Cookie name for logging session
 const LOG_SESSION_COOKIE = 'relogate_log_session';
 
-// Routes that are part of the questionnaire flow
+// Routes that are part of the questionnaire flow (V2)
 const QUESTIONNAIRE_ROUTES = [
   '/questionnaire',
-  '/questionnaire/countries',
-  '/questionnaire/relocation-reason',
-  '/questionnaire/family-status',
-  '/questionnaire/personal-details',
-  '/questionnaire/results',
+  '/questionnaire/v2',
+  '/questionnaire/update',
 ];
 
 // Routes that should be accessible without auth

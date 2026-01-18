@@ -1,13 +1,12 @@
 "use client";
 
 import { forwardRef, useState, useCallback } from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion } from "framer-motion";
 
 type InputType = "text" | "email" | "password" | "tel" | "date";
 type InputSize = "sm" | "md" | "lg";
 
-interface TextInputProps
-  extends Omit<HTMLMotionProps<"input">, "ref" | "onChange" | "type" | "size"> {
+interface TextInputProps {
   label: string;
   type?: InputType;
   size?: InputSize;
@@ -16,6 +15,9 @@ interface TextInputProps
   placeholder?: string;
   error?: string;
   disabled?: boolean;
+  autoComplete?: string;
+  className?: string;
+  id?: string;
 }
 
 const sizeStyles: Record<InputSize, string> = {
@@ -30,6 +32,20 @@ const labelSizeStyles: Record<InputSize, string> = {
   lg: "text-lg mb-2",
 };
 
+// Default autoComplete values based on input type
+const getDefaultAutoComplete = (type: InputType): string => {
+  switch (type) {
+    case "email":
+      return "email";
+    case "password":
+      return "current-password";
+    case "tel":
+      return "tel";
+    default:
+      return "off";
+  }
+};
+
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   (
     {
@@ -41,9 +57,9 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       placeholder,
       error,
       disabled = false,
+      autoComplete,
       className = "",
       id,
-      ...props
     },
     ref
   ) => {
@@ -52,6 +68,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
     const inputId = id || `input-${label.replace(/\s+/g, "-").toLowerCase()}`;
     const inputType = type === "password" && showPassword ? "text" : type;
+    const resolvedAutoComplete = autoComplete ?? getDefaultAutoComplete(type);
 
     const togglePasswordVisibility = useCallback(() => {
       setShowPassword((prev) => !prev);
@@ -79,7 +96,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
         {/* Input Container */}
         <div className="relative">
-          <motion.input
+          <input
             ref={ref}
             id={inputId}
             type={inputType}
@@ -87,10 +104,9 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             onChange={handleChange}
             placeholder={placeholder}
             disabled={disabled}
+            autoComplete={resolvedAutoComplete}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            whileFocus={{ scale: 1.005 }}
-            transition={{ duration: 0.15 }}
             className={`
               w-full
               bg-white
@@ -103,7 +119,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
               }
               text-[#1D1D1B]
               placeholder:text-[#B2B2B2]
-              transition-colors duration-200
+              transition-all duration-200
               focus-visible:outline-none
               disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#F7F7F7]
               ${type === "password" ? "pr-12" : ""}
@@ -111,7 +127,6 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
               ${className}
             `}
             dir="rtl"
-            {...props}
           />
 
           {/* Password Toggle Button */}

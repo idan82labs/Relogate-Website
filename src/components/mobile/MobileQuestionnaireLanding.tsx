@@ -17,7 +17,7 @@ export const MobileQuestionnaireLanding = () => {
   const { howItWorks } = questionTest;
 
   const handleStartQuestionnaire = () => {
-    router.push("/questionnaire/countries");
+    router.push("/questionnaire/v2");
   };
 
   return (

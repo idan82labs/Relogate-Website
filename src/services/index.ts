@@ -46,23 +46,9 @@ export {
 } from "./api";
 
 // ============================================================================
-// Questionnaire Services
+// Questionnaire Services (V2)
 // ============================================================================
 
-// V1 (Legacy) Service
-export {
-  questionnaireService,
-  QUESTIONNAIRE_STEPS,
-  TOTAL_STEPS,
-} from "./questionnaire";
-export type {
-  QuestionnaireData,
-  QuestionnaireState,
-  StepName,
-  QuestionnaireFormData,
-} from "./questionnaire";
-
-// V2 Service
 export {
   questionnaireServiceV2,
   loadOrCreateQuestionnaire,

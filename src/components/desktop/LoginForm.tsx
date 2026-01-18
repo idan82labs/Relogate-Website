@@ -100,7 +100,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
               {/* Error Message */}
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm text-center">
-                  {error}
+                  <span>{error}</span>
                 </div>
               )}
 
@@ -133,7 +133,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                   className="text-sm text-[#215388] hover:underline transition-colors"
                   disabled={isLoading}
                 >
-                  {loginContent.forgotPassword}
+                  <span>{loginContent.forgotPassword}</span>
                 </button>
               </div>
 
@@ -145,17 +145,17 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? "..." : loginContent.loginButton}
+                <span>{isLoading ? "..." : loginContent.loginButton}</span>
               </Button>
 
               {/* Register Link */}
               <p className="text-center text-[#706F6F]">
-                {loginContent.noAccount}{" "}
+                <span>{loginContent.noAccount} </span>
                 <Link
                   href="/register"
                   className="text-[#215388] hover:underline font-medium transition-colors"
                 >
-                  {loginContent.register}
+                  <span>{loginContent.register}</span>
                 </Link>
               </p>
             </form>
