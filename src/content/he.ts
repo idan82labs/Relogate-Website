@@ -1487,10 +1487,29 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       title: "התראות",
       markAllRead: "סמן הכל כנקרא",
       empty: "אין התראות חדשות",
+      viewAll: "צפה בכל ההתראות",
       types: {
+        // Report-related
         country_response_ready: "המלצת מדינה מוכנה",
         report_ready: "הדוח מוכן",
+        // Questionnaire - existing
         questionnaire_completed: "שאלון הושלם",
+        // Questionnaire v2 - user-facing
+        questionnaire_updated: "השאלון עודכן",
+        questionnaire_resubmit_required: "נדרש מילוי שאלון מחדש",
+        questionnaire_reminder: "תזכורת למילוי שאלון",
+        // Questionnaire v2 - admin-facing
+        new_questionnaire_submitted: "שאלון חדש התקבל",
+        questionnaire_update_completed: "משתמש השלים שאלון מעודכן",
+        // System
+        system: "הודעת מערכת",
+      },
+      messages: {
+        questionnaire_updated: "השאלון שלנו עודכן. מומלץ לבדוק את התשובות שלך.",
+        questionnaire_resubmit_required: "חלו שינויים משמעותיים בשאלון. אנא מלא אותו מחדש.",
+        questionnaire_reminder: "לא שכחת? השאלון שלך ממתין להשלמה.",
+        new_questionnaire_submitted: "משתמש חדש הגיש שאלון לבדיקה.",
+        questionnaire_update_completed: "משתמש השלים את השאלון המעודכן.",
       },
     },
   },

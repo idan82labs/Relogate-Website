@@ -87,14 +87,41 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
       );
     }
 
-    // Navigate based on notification type
     setIsOpen(false);
-    if (notification.type === 'report_ready') {
-      router.push('/personal-area/report');
-    } else if (notification.type === 'country_response_ready' && notification.relatedId) {
-      router.push(`/personal-area/report?destination=${notification.relatedId}`);
-    } else {
-      router.push('/personal-area');
+
+    // Navigate based on notification type
+    switch (notification.type) {
+      // Report-related
+      case 'report_ready':
+        router.push('/personal-area/report');
+        break;
+      case 'country_response_ready':
+        if (notification.relatedId) {
+          router.push(`/personal-area/report?destination=${notification.relatedId}`);
+        } else {
+          router.push('/personal-area/report');
+        }
+        break;
+      // Questionnaire-related (user-facing)
+      case 'questionnaire_updated':
+      case 'questionnaire_resubmit_required':
+      case 'questionnaire_reminder':
+        router.push('/questionnaire');
+        break;
+      // Questionnaire-related (admin-facing)
+      case 'new_questionnaire_submitted':
+      case 'questionnaire_update_completed':
+        if (notification.relatedId) {
+          router.push(`/admin/users/${notification.relatedId}/questionnaire`);
+        } else {
+          router.push('/admin/users');
+        }
+        break;
+      // Default
+      case 'questionnaire_completed':
+      case 'system':
+      default:
+        router.push('/personal-area');
     }
   };
 

@@ -8,9 +8,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Types
 export type NotificationType =
+  // Report-related
   | 'report_ready'
   | 'country_response_ready'
+  // Questionnaire - existing
   | 'questionnaire_completed'
+  // Questionnaire v2 - user-facing
+  | 'questionnaire_updated'           // Schema updated, user should review
+  | 'questionnaire_resubmit_required' // User must resubmit due to major changes
+  | 'questionnaire_reminder'          // Reminder to complete questionnaire
+  // Questionnaire v2 - admin-facing
+  | 'new_questionnaire_submitted'     // Admin: new questionnaire from user
+  | 'questionnaire_update_completed'  // Admin: user completed updated questionnaire
+  // System
   | 'system';
 
 export interface Notification {
