@@ -610,6 +610,575 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     },
   },
 
+  // QuestionnaireV2 - Expanded 9-step questionnaire content
+  questionnaireV2: {
+    // General
+    title: "שאלון רילוקיישן",
+    subtitle: "מלאו את השאלון כדי לקבל דוח מותאם אישית",
+
+    // Progress sections
+    progress: {
+      personalInfo: "פרטים אישיים",
+      goals: "מטרות",
+      eligibility: "זכאות",
+      preferences: "העדפות",
+    },
+
+    // Navigation
+    navigation: {
+      back: "חזור",
+      continue: "המשך",
+      submit: "שלח",
+      saveAndContinue: "שמור והמשך",
+      step: "שלב",
+      of: "מתוך",
+    },
+
+    // Steps configuration
+    steps: {
+      // Step 1: Personal Details
+      personalDetails: {
+        id: "personal-details",
+        title: "פרטים אישיים",
+        subtitle: "ספרו לנו קצת על עצמכם",
+        fields: {
+          fullName: {
+            label: "שם מלא",
+            placeholder: "הזן שם מלא",
+            required: true,
+          },
+          birthDate: {
+            label: "תאריך לידה",
+            placeholder: "בחר תאריך",
+            required: true,
+          },
+          phone: {
+            label: "טלפון",
+            placeholder: "הזן מספר טלפון",
+            required: true,
+          },
+          email: {
+            label: "כתובת אימייל",
+            placeholder: "הזן כתובת אימייל",
+            required: true,
+          },
+          gender: {
+            label: "מגדר",
+            placeholder: "בחר/י",
+            options: [
+              { value: "male", label: "זכר" },
+              { value: "female", label: "נקבה" },
+              { value: "prefer_not_to_say", label: "אינני רוצה להגדיר" },
+            ],
+          },
+        },
+      },
+
+      // Step 2: Family Status
+      familyStatus: {
+        id: "family-status",
+        title: "מצב משפחתי",
+        subtitle: "ספרו לנו על המשפחה שלכם",
+        fields: {
+          familyStatus: {
+            label: "מצב משפחתי",
+            placeholder: "בחר/י",
+            required: true,
+            options: [
+              { value: "single", label: "רווק/ה" },
+              { value: "single_with_children", label: "רווק/ה עם ילדים" },
+              { value: "married_no_children", label: "נשוי/אה ללא ילדים" },
+              { value: "married_with_children", label: "נשוי/אה עם ילדים" },
+              { value: "divorced_no_children", label: "גרוש/ה ללא ילדים" },
+              { value: "divorced_with_children", label: "גרוש/ה עם ילדים" },
+              { value: "widowed_no_children", label: "אלמן/ה ללא ילדים" },
+              { value: "widowed_with_children", label: "אלמן/ה עם ילדים" },
+            ],
+          },
+          processPartner: {
+            label: "מי שותפ/ה לתהליך?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "alone", label: "אני עושה את התהליך לבד" },
+              { value: "partner", label: "בן/בת זוג" },
+              { value: "wife", label: "אישתי" },
+              { value: "husband", label: "בעלי" },
+              { value: "wife_and_children", label: "אישתי והילדים" },
+              { value: "husband_and_children", label: "בעלי והילדים" },
+              { value: "ex_spouse_and_children", label: "גרוש/ה שלי והילדים" },
+            ],
+          },
+          partnerName: {
+            label: "שם בן/בת הזוג",
+            placeholder: "הזן שם בן/בת הזוג",
+          },
+          children: {
+            label: "פרטי הילדים",
+            addChild: "הוסף ילד/ה",
+            removeChild: "הסר",
+            maxChildren: 8,
+            childFields: {
+              name: {
+                label: "שם הילד/ה",
+                placeholder: "הזן שם",
+              },
+              age: {
+                label: "גיל",
+                placeholder: "הזן גיל",
+              },
+            },
+          },
+        },
+      },
+
+      // Step 3: Relocation Goals
+      relocationGoals: {
+        id: "relocation-goals",
+        title: "מטרות המעבר",
+        subtitle: "מהן הסיבות המרכזיות שלכם לבחינת רילוקיישן?",
+        hint: "ניתן לבחור יותר מאפשרות אחת",
+        fields: {
+          relocationReasons: {
+            label: "סיבות מרכזיות לבחינת רילוקיישן",
+            options: [
+              {
+                value: "economic_quality_of_life",
+                label: "חשוב לי לגור במקום שיאפשר לי לחיות חיים נוחים יותר מבחינה כלכלית",
+              },
+              {
+                value: "personal_security",
+                label: "חשוב לי לגור במקום שיאפשר לי ביטחון אישי גבוה יותר",
+              },
+              {
+                value: "better_education",
+                label: "חשוב לי לגור במקום עם מערכת חינוך טובה יותר עבור הילדים שלי",
+              },
+              {
+                value: "better_future_for_family",
+                label: "חשוב לי לבנות עתיד טוב יותר עבור המשפחה שלי",
+              },
+              {
+                value: "professional_development",
+                label: "חשוב לי להתפתח מקצועית",
+              },
+              {
+                value: "real_estate_opportunity",
+                label: "הזדמנות נדל״ן",
+              },
+              {
+                value: "academic_opportunity",
+                label: "הזדמנות אקדמית",
+              },
+              {
+                value: "adventure",
+                label: "הרפתקה",
+              },
+              {
+                value: "life_change",
+                label: "מחפש/ת לעשות שינוי בחיים",
+              },
+              {
+                value: "just_exploring",
+                label: "סתם משתעשע/ת עם הרעיון",
+              },
+            ],
+          },
+        },
+      },
+
+      // Step 4: Citizenship
+      citizenship: {
+        id: "citizenship",
+        title: "אזרחות",
+        subtitle: "ספרו לנו על האזרחויות שלכם",
+        fields: {
+          citizenships: {
+            label: "איזו אזרחות יש לך?",
+            hint: "ניתן לבחור עד 3 אזרחויות",
+            placeholder: "בחר אזרחות",
+            maxSelections: 3,
+          },
+          partnerCitizenships: {
+            label: "איזו אזרחות יש לבן/בת הזוג שלך?",
+            hint: "ניתן לבחור עד 3 אזרחויות",
+            placeholder: "בחר אזרחות",
+            maxSelections: 3,
+          },
+        },
+      },
+
+      // Step 5: Employment & Education
+      employmentEducation: {
+        id: "employment-education",
+        title: "השכלה ותעסוקה",
+        subtitle: "ספרו לנו על התעסוקה וההשכלה שלכם",
+        fields: {
+          employmentStatus: {
+            label: "סטטוס תעסוקתי",
+            placeholder: "בחר/י",
+            required: true,
+            options: [
+              { value: "employed", label: "שכיר/ה" },
+              { value: "self_employed", label: "עצמאי/ת" },
+              { value: "business_owner", label: "בעלים של חברה" },
+              { value: "not_working", label: "לא עובד/ת" },
+              { value: "retired", label: "פנסיונר/ית" },
+            ],
+          },
+          occupation: {
+            label: "תחום העיסוק שלך",
+            placeholder: "הזן תחום עיסוק",
+          },
+          education: {
+            label: "מהי ההשכלה הגבוהה ביותר שיש ברשותך?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "high_school", label: "תיכונית" },
+              { value: "vocational", label: "מקצועית" },
+              { value: "bachelor", label: "תואר ראשון" },
+              { value: "master", label: "תואר שני" },
+              { value: "doctorate", label: "דוקטורט" },
+              { value: "other", label: "אחר" },
+            ],
+          },
+          remoteWorkCapable: {
+            label: "האם סגנון העבודה שלך מאפשר לך לעבוד מכל מקום בעולם?",
+            hint: "באמצעות מחשב וחיבור לאינטרנט, כולל ביצוע משימות, תקשורת עם לקוחות/מעסיקים וקבלת שכר ללא צורך בהגעה למשרד קבוע",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+        },
+      },
+
+      // Step 6: Income
+      income: {
+        id: "income",
+        title: "הכנסה",
+        subtitle: "ספרו לנו על ההכנסות שלכם",
+        fields: {
+          householdIncome: {
+            label: "מהי ההכנסה החודשית של המשפחה שלכם? (נטו בש״ח)",
+            placeholder: "בחר/י",
+            required: true,
+            options: [
+              { value: "up_to_10k", label: "עד 10,000 ש״ח" },
+              { value: "10k_15k", label: "10,000 - 15,000 ש״ח" },
+              { value: "15k_20k", label: "15,000 - 20,000 ש״ח" },
+              { value: "20k_25k", label: "20,000 - 25,000 ש״ח" },
+              { value: "25k_30k", label: "25,000 - 30,000 ש״ח" },
+              { value: "30k_35k", label: "30,000 - 35,000 ש״ח" },
+              { value: "35k_40k", label: "35,000 - 40,000 ש״ח" },
+              { value: "40k_45k", label: "40,000 - 45,000 ש״ח" },
+              { value: "45k_50k", label: "45,000 - 50,000 ש״ח" },
+              { value: "50k_55k", label: "50,000 - 55,000 ש״ח" },
+              { value: "55k_60k", label: "55,000 - 60,000 ש״ח" },
+              { value: "60k_plus", label: "60,000+ ש״ח" },
+            ],
+          },
+          hasPassiveIncome: {
+            label: "האם יש לכם הכנסה פסיבית?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          passiveIncomeAmount: {
+            label: "מה גובה ההכנסה הפסיבית שיש לכם? (נטו בש״ח)",
+            placeholder: "בחר/י",
+            options: [
+              { value: "up_to_5k", label: "עד 5,000 ש״ח" },
+              { value: "5k_10k", label: "5,000 - 10,000 ש״ח" },
+              { value: "10k_15k", label: "10,000 - 15,000 ש״ח" },
+              { value: "15k_20k", label: "15,000 - 20,000 ש״ח" },
+              { value: "20k_25k", label: "20,000 - 25,000 ש״ח" },
+              { value: "25k_30k", label: "25,000 - 30,000 ש״ח" },
+              { value: "30k_35k", label: "30,000 - 35,000 ש״ח" },
+              { value: "35k_40k", label: "35,000 - 40,000 ש״ח" },
+              { value: "40k_plus", label: "מעל 40,000 ש״ח" },
+            ],
+          },
+        },
+      },
+
+      // Step 7: Partner Details (conditional)
+      partnerDetails: {
+        id: "partner-details",
+        title: "פרטי בן/בת הזוג",
+        subtitle: "ספרו לנו על בן/בת הזוג שלכם",
+        conditional: true,
+        fields: {
+          partnerEmploymentStatus: {
+            label: "סטטוס תעסוקתי של בן/בת הזוג",
+            placeholder: "בחר/י",
+            options: [
+              { value: "employed", label: "שכיר/ה" },
+              { value: "self_employed", label: "עצמאי/ת" },
+              { value: "business_owner", label: "בעלים של חברה" },
+              { value: "not_working", label: "לא עובד/ת" },
+              { value: "retired", label: "פנסיונר/ית" },
+            ],
+          },
+          partnerOccupation: {
+            label: "תחום העיסוק של בן/בת הזוג",
+            placeholder: "הזן תחום עיסוק",
+          },
+          partnerEducation: {
+            label: "מהי ההשכלה הגבוהה ביותר שיש לבן/בת הזוג?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "high_school", label: "תיכונית" },
+              { value: "vocational", label: "מקצועית" },
+              { value: "bachelor", label: "תואר ראשון" },
+              { value: "master", label: "תואר שני" },
+              { value: "doctorate", label: "דוקטורט" },
+              { value: "other", label: "אחר" },
+            ],
+          },
+          partnerRemoteWorkCapable: {
+            label: "האם סגנון העבודה של בן/בת הזוג מאפשר לו/ה לעבוד מכל מקום בעולם?",
+            hint: "באמצעות מחשב וחיבור לאינטרנט, כולל ביצוע משימות, תקשורת עם לקוחות/מעסיקים וקבלת שכר ללא צורך בהגעה למשרד קבוע",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+        },
+      },
+
+      // Step 8: Studies, Investments & Languages
+      studiesInvestmentsLanguages: {
+        id: "studies-investments-languages",
+        title: "לימודים, השקעות ושפות",
+        subtitle: "ספרו לנו על פתיחות ללימודים, השקעות ושפות שאתם שולטים בהן",
+        fields: {
+          openToStudyingAbroad: {
+            label: "האם לטובת התהליך אתה פתוח לאופציית לימודים בחו״ל?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          partnerOpenToStudyingAbroad: {
+            label: "האם לטובת התהליך בן/בת הזוג שלך פתוח/ה לאופציית לימודים בחו״ל?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          willingToInvestInProperty: {
+            label: "האם אתם מוכנים להשקיע בנכס לטובת אשרת שהייה?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          has250kEuroForInvestment: {
+            label: "האם עומדים לרשותכם 250,000 יורו זמינים לטובת השקעה בנכס?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          speakingLanguages: {
+            label: "באיזה שפות אתה שולט ברמת דיבור?",
+            placeholder: "בחר שפות",
+            maxLanguages: 5,
+          },
+          writingLanguages: {
+            label: "באיזה שפות אתה שולט ברמת כתיבה?",
+            placeholder: "בחר שפות",
+            maxLanguages: 5,
+          },
+          partnerSpeakingLanguages: {
+            label: "באיזה שפות בן/בת הזוג שלך שולט/ת ברמת דיבור?",
+            placeholder: "בחר שפות",
+            maxLanguages: 5,
+          },
+          partnerWritingLanguages: {
+            label: "באיזה שפות בן/בת הזוג שלך שולט/ת ברמת כתיבה?",
+            placeholder: "בחר שפות",
+            maxLanguages: 5,
+          },
+        },
+      },
+
+      // Step 9: Preferences & Additional Info
+      preferences: {
+        id: "preferences",
+        title: "העדפות ומידע נוסף",
+        subtitle: "ספרו לנו על ההעדפות שלכם לגבי היעד",
+        fields: {
+          distanceFromIsrael: {
+            label: "עד כמה חשוב לך לגור קרוב לישראל?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "up_to_3_hours", label: "חשוב לי לגור עד 3 שעות טיסה" },
+              { value: "up_to_6_hours", label: "חשוב לי לגור עד 6 שעות טיסה" },
+              { value: "up_to_12_hours", label: "חשוב לי לגור עד 12 שעות טיסה" },
+              { value: "not_important", label: "לא חשוב לי בכלל המרחק מישראל" },
+            ],
+          },
+          timeZoneDifference: {
+            label: "עד כמה חשוב לך הפרש שעות קטן מישראל?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "up_to_1_hour", label: "חשוב לי לגור עד שעה אחת הפרש" },
+              { value: "up_to_2_hours", label: "חשוב לי לגור עד שעתיים הפרש" },
+              { value: "up_to_6_hours", label: "חשוב לי לגור עד 6 שעות הפרש" },
+              { value: "up_to_8_hours", label: "חשוב לי לגור עד 8 שעות הפרש" },
+              { value: "up_to_10_hours", label: "חשוב לי לגור עד 10 שעות הפרש" },
+              { value: "not_important", label: "לא חשוב לי מה ההפרש זמנים" },
+            ],
+          },
+          weatherPreference: {
+            label: "מהי העדפת מזג האוויר שלך?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "four_seasons", label: "ארבע עונות: חורף, אביב, קיץ, סתיו" },
+              { value: "warm_and_sunny", label: "חם וקיצי רוב השנה" },
+              { value: "cold_most_of_year", label: "חורפי רוב השנה" },
+              { value: "no_preference", label: "אין לי העדפות" },
+            ],
+          },
+          jewishCommunityImportance: {
+            label: "האם חשוב לך להיות חלק מקהילה יהודית דתית?",
+            options: [
+              { value: "important", label: "כן, חשוב לי להיות חלק מקהילה יהודית דתית" },
+              { value: "not_important", label: "לא, לא חשוב לי להיות חלק מקהילה יהודית דתית" },
+            ],
+          },
+          israeliCommunityImportance: {
+            label: "האם חשוב לך להיות חלק מקהילה ישראלית?",
+            options: [
+              { value: "important", label: "כן, חשוב לי להיות חלק מקהילה ישראלית" },
+              { value: "not_important", label: "לא, לא חשוב לי להיות חלק מקהילה ישראלית" },
+            ],
+          },
+          livingType: {
+            label: "אופי מגורים",
+            placeholder: "בחר/י",
+            options: [
+              { value: "big_city", label: "חשוב לי לגור בעיר גדולה" },
+              { value: "small_town", label: "חשוב לי לגור בעיירה שקטה" },
+              { value: "rural_area", label: "חשוב לי לגור באזור כפרי" },
+              { value: "near_the_sea", label: "חשוב לי לגור ליד הים" },
+              { value: "no_preference", label: "אין העדפה" },
+            ],
+          },
+          hasAdditionalConsiderations: {
+            label: "האם ישנם שיקולים נוספים שתרצו שניקח בחשבון?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+          additionalConsiderationsText: {
+            label: "אנא פרט את השיקולים הנוספים",
+            placeholder: "ספרו לנו על שיקולים נוספים שחשובים לכם...",
+          },
+          previousVisaAttempt: {
+            label: "האם ניסית בעבר להגיש ויזה וסורבת?",
+            placeholder: "בחר/י",
+            options: [
+              { value: "never_tried", label: "לא ניסיתי מעולם לבקש ויזת הגירה" },
+              { value: "tried_and_approved", label: "ניסיתי וקיבלתי ויזת הגירה" },
+              { value: "tried_and_rejected", label: "ניסיתי וסורבתי" },
+            ],
+          },
+          hasCriminalRecord: {
+            label: "האם יש לך עבר פלילי?",
+            options: [
+              { value: true, label: "כן" },
+              { value: false, label: "לא" },
+            ],
+          },
+        },
+      },
+    },
+
+    // Language options (shared across multiple fields)
+    languageOptions: [
+      { value: "hebrew", label: "עברית" },
+      { value: "english", label: "אנגלית" },
+      { value: "arabic", label: "ערבית" },
+      { value: "russian", label: "רוסית" },
+      { value: "french", label: "צרפתית" },
+      { value: "spanish", label: "ספרדית" },
+      { value: "german", label: "גרמנית" },
+      { value: "portuguese", label: "פורטוגזית" },
+      { value: "italian", label: "איטלקית" },
+      { value: "chinese", label: "סינית" },
+      { value: "japanese", label: "יפנית" },
+      { value: "korean", label: "קוריאנית" },
+      { value: "hindi", label: "הינדי" },
+      { value: "turkish", label: "טורקית" },
+      { value: "polish", label: "פולנית" },
+      { value: "dutch", label: "הולנדית" },
+      { value: "greek", label: "יוונית" },
+      { value: "romanian", label: "רומנית" },
+      { value: "ukrainian", label: "אוקראינית" },
+      { value: "other", label: "אחר" },
+    ],
+
+    // Country options for citizenship selection
+    countryOptions: [
+      { value: "israel", label: "ישראל" },
+      { value: "usa", label: "ארצות הברית" },
+      { value: "uk", label: "בריטניה" },
+      { value: "france", label: "צרפת" },
+      { value: "germany", label: "גרמניה" },
+      { value: "canada", label: "קנדה" },
+      { value: "australia", label: "אוסטרליה" },
+      { value: "russia", label: "רוסיה" },
+      { value: "ukraine", label: "אוקראינה" },
+      { value: "poland", label: "פולין" },
+      { value: "romania", label: "רומניה" },
+      { value: "hungary", label: "הונגריה" },
+      { value: "spain", label: "ספרד" },
+      { value: "italy", label: "איטליה" },
+      { value: "portugal", label: "פורטוגל" },
+      { value: "netherlands", label: "הולנד" },
+      { value: "belgium", label: "בלגיה" },
+      { value: "switzerland", label: "שוויץ" },
+      { value: "austria", label: "אוסטריה" },
+      { value: "greece", label: "יוון" },
+      { value: "turkey", label: "טורקיה" },
+      { value: "morocco", label: "מרוקו" },
+      { value: "argentina", label: "ארגנטינה" },
+      { value: "brazil", label: "ברזיל" },
+      { value: "south_africa", label: "דרום אפריקה" },
+      { value: "other", label: "אחר" },
+    ],
+
+    // Validation error messages
+    errors: {
+      required: "שדה חובה",
+      fullNameRequired: "נא להזין שם מלא",
+      emailRequired: "נא להזין כתובת אימייל",
+      emailInvalid: "כתובת אימייל לא תקינה",
+      phoneRequired: "נא להזין מספר טלפון",
+      phoneInvalid: "מספר טלפון לא תקין",
+      birthDateRequired: "נא לבחור תאריך לידה",
+      birthDateInvalid: "תאריך לידה לא תקין",
+      familyStatusRequired: "נא לבחור מצב משפחתי",
+      citizenshipRequired: "נא לבחור לפחות אזרחות אחת",
+      employmentStatusRequired: "נא לבחור סטטוס תעסוקתי",
+      incomeRequired: "נא לבחור טווח הכנסה",
+      languageRequired: "נא לבחור לפחות שפה אחת",
+      childNameRequired: "נא להזין שם הילד/ה",
+      childAgeRequired: "נא להזין גיל הילד/ה",
+      childAgeInvalid: "גיל לא תקין",
+    },
+
+    // Success messages
+    success: {
+      saved: "הנתונים נשמרו בהצלחה",
+      submitted: "השאלון הוגש בהצלחה",
+    },
+  },
+
   // Personal Area Dashboard
   personalAreaDashboard: {
     title: "האזור האישי שלי",
