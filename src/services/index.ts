@@ -173,3 +173,16 @@ export type {
   NotificationListResponse,
   UnreadCountResponse,
 } from "./notifications";
+
+// ============================================================================
+// Blog Service
+// ============================================================================
+
+export {
+  listPosts,
+  getPostBySlug,
+  getAllSlugs,
+  getRelatedPosts,
+  getTotalPages,
+  blogService,
+} from "./blog";

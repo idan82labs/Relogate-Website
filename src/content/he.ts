@@ -1225,6 +1225,65 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
   },
 
   // Admin panel
+  // Blog/Press section
+  blog: {
+    // Page titles
+    pageTitle: "מאגר הידע",
+    pressPageTitle: "כתבו עלינו בתקשורת",
+
+    // Hero banners
+    heroBanner: {
+      blog: "ברוכים הבאים למאגר\nהידע שלנו לרילוקיישן",
+      press: "כתבו עלינו בתקשורת",
+    },
+
+    // Article card
+    readMore: "קרא עוד",
+    publishedBy: "פורסם ב",
+    by: "על ידי",
+
+    // Pagination
+    pagination: {
+      of: "מתוך",
+      previous: "הקודם",
+      next: "הבא",
+    },
+
+    // Article page
+    backToList: "חזרה לרשימה",
+    backToBlog: "חזרה למאגר הידע",
+    backToPress: "חזרה לכתבות",
+    relatedArticles: "כתבות נוספות",
+    readingTime: "דקות קריאה",
+    shareArticle: "שתף מאמר",
+
+    // Categories
+    categories: {
+      guides: "מדריכים",
+      lifestyle: "סגנון חיים",
+      visas: "ויזות",
+      stories: "סיפורים",
+      news: "חדשות",
+      interviews: "ראיונות",
+      features: "כתבות",
+    },
+
+    // Meta
+    meta: {
+      blogTitle: "מאגר הידע | Relogate",
+      blogDescription: "מאמרים, מדריכים וטיפים לרילוקיישן מוצלח",
+      pressTitle: "כתבו עלינו | Relogate",
+      pressDescription: "כתבות ופרסומים על Relogate בתקשורת",
+    },
+
+    // Empty states
+    noPosts: "אין מאמרים עדיין",
+    noRelatedPosts: "אין מאמרים קשורים",
+
+    // Loading
+    loading: "טוען...",
+  },
+
   admin: {
     // Login page
     login: {

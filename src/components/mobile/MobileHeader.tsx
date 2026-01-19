@@ -3,14 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Icon } from "@/components/shared";
 import { useAuth } from "@/contexts";
 
+// Page-based navigation items (not anchor links)
+const pageNavItems = [
+  { label: "מאגר הידע", href: "/blog" },
+  { label: "כתבו עלינו", href: "/press" },
+];
+
 export const MobileHeader = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { nav, mobile } = siteContent;
   const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -140,7 +147,8 @@ export const MobileHeader = () => {
               {/* Navigation */}
               <nav className="p-6">
                 <ul className="space-y-4">
-                  {nav.items.map((item, index) => (
+                  {/* Homepage anchor links */}
+                  {nav.items.slice(0, 4).map((item, index) => (
                     <motion.li
                       key={item.href}
                       initial={{ opacity: 0, x: 20 }}
@@ -154,6 +162,28 @@ export const MobileHeader = () => {
                       >
                         {item.label}
                       </a>
+                    </motion.li>
+                  ))}
+
+                  {/* Page navigation links */}
+                  {pageNavItems.map((item, index) => (
+                    <motion.li
+                      key={item.href}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (4 + index) * 0.05 }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={closeMenu}
+                        className={`block py-2 text-lg transition-colors ${
+                          pathname.startsWith(item.href)
+                            ? "text-[#215388] font-medium"
+                            : "text-[#1D1D1B] hover:text-[#215388]"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
                     </motion.li>
                   ))}
                 </ul>
