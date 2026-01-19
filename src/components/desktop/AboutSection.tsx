@@ -1,27 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark } from "@/components/shared";
-import { useAuth } from "@/contexts";
 
 export const AboutSection = () => {
-  const router = useRouter();
-  const { about, hero } = siteContent;
-  const { isAuthenticated, hasCompletedOnboarding } = useAuth();
-
-  const handleCtaClick = () => {
-    if (hasCompletedOnboarding) {
-      router.push("/questionnaire/results");
-    } else if (isAuthenticated) {
-      router.push("/questionnaire");
-    } else {
-      sessionStorage.setItem("redirectAfterLogin", "/questionnaire");
-      router.push("/login");
-    }
-  };
+  const { about } = siteContent;
 
   return (
     <section id="about" className="py-16 lg:py-24 relative overflow-hidden">
@@ -64,9 +50,11 @@ export const AboutSection = () => {
             <div className="text-lg text-[#1D1D1B] mb-8 whitespace-pre-line leading-relaxed">
               {about.description}
             </div>
-            <Button variant="primary" size="lg" onClick={handleCtaClick}>
-              {hasCompletedOnboarding ? hero.ctaViewResults : about.cta}
-            </Button>
+            <Link href="/blog">
+              <Button variant="primary" size="lg">
+                {about.blogCta}
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>

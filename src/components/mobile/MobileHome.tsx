@@ -1,14 +1,53 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { siteContent } from "@/content/he";
 import { Button, Card, Stars, Accordion, Icon } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 import { MobileHowItWorks } from "./MobileHowItWorks";
+import { listPosts } from "@/services/blog";
+import type { BlogPostListItem } from "@/types/blog";
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const formatter = new Intl.DateTimeFormat("he-IL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return `פורסם ב${formatter.format(date)}`;
+}
 
 export const MobileHome = () => {
   const { hero, about, greenBanner, info, testimonials, articles, faq, contact } =
     siteContent;
+
+  const [posts, setPosts] = useState<BlogPostListItem[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const { data } = await listPosts({ contentType: "press", limit: 8 });
+      if (data?.posts) {
+        setPosts(data.posts);
+      }
+      setIsLoading(false);
+    }
+    fetchPosts();
+  }, []);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? posts.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === posts.length - 1 ? 0 : prev + 1));
+  };
+
+  const currentPost = posts[currentIndex];
 
   return (
     <div className="min-h-screen bg-white">
@@ -36,9 +75,11 @@ export const MobileHome = () => {
         <p className="text-sm text-[#1D1D1B] mb-6 whitespace-pre-line leading-relaxed">
           {about.description}
         </p>
-        <Button variant="primary" size="md">
-          {about.cta}
-        </Button>
+        <Link href="/blog">
+          <Button variant="primary" size="md">
+            {about.blogCta}
+          </Button>
+        </Link>
       </section>
 
       {/* Green Banner Section */}
@@ -111,34 +152,78 @@ export const MobileHome = () => {
           <h2 className="text-2xl font-medium text-[#1D1D1B]">
             {articles.title}
           </h2>
-          <div className="flex gap-1">
-            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center" aria-label="הקודם">
-              <Icon name="chevronRight" size={16} className="text-[#1D1D1B]" />
-            </button>
-            <button className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center" aria-label="הבא">
-              <Icon name="chevronLeft" size={16} className="text-[#1D1D1B]" />
-            </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/press"
+              className="text-[#215388] hover:underline text-xs font-medium"
+            >
+              לכל הכתבות
+            </Link>
+            <div className="flex gap-1">
+              <button
+                onClick={goToPrevious}
+                disabled={posts.length === 0}
+                className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center disabled:opacity-50"
+                aria-label="הקודם"
+              >
+                <Icon name="chevronRight" size={16} className="text-[#1D1D1B]" />
+              </button>
+              <button
+                onClick={goToNext}
+                disabled={posts.length === 0}
+                className="w-8 h-8 rounded-full border border-[#C6C6C6] flex items-center justify-center disabled:opacity-50"
+                aria-label="הבא"
+              >
+                <Icon name="chevronLeft" size={16} className="text-[#1D1D1B]" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Single article card for mobile */}
-        <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image from CMS */}
-          <img
-            src={articles.items[0].image}
-            alt={articles.items[0].title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1B]/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-white text-base font-normal leading-snug">
-              {articles.items[0].title}
-            </h3>
-            <p className="text-white/70 text-xs mt-2">
-              {articles.items[0].date}
-            </p>
+        {/* Article card */}
+        {isLoading ? (
+          <div className="relative aspect-[4/5] rounded-[20px] bg-[#F7F7F7] animate-pulse" />
+        ) : currentPost ? (
+          <Link href={`/press/${currentPost.slug}`}>
+            <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image from CMS */}
+              <img
+                src={currentPost.featuredImageUrl || "/images/blog/placeholder.jpg"}
+                alt={currentPost.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1B]/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h3 className="text-white text-base font-normal leading-snug">
+                  {currentPost.title}
+                </h3>
+                <p className="text-white/70 text-xs mt-2">
+                  {formatDate(currentPost.publishedAt)}
+                </p>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden bg-[#F7F7F7] flex items-center justify-center">
+            <p className="text-[#706F6F] text-sm">אין כתבות להצגה</p>
           </div>
-        </div>
+        )}
+
+        {/* Pagination dots */}
+        {posts.length > 1 && (
+          <div className="flex justify-center gap-2 mt-4">
+            {posts.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? "bg-[#215388]" : "bg-[#C6C6C6]"
+                }`}
+                aria-label={`עבור לכתבה ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* FAQ */}
@@ -172,4 +257,3 @@ export const MobileHome = () => {
     </div>
   );
 };
-

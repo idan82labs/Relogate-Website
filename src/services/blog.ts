@@ -21,7 +21,7 @@ import type {
 } from '@/types/blog';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true' || true; // Default to mock until backend ready
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true'; // Set NEXT_PUBLIC_USE_MOCK=true to use mock data
 
 // ============================================================================
 // Mock Data
