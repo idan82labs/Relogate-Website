@@ -82,6 +82,7 @@ function DestinationResponseCard({
     >
       <div className="flex items-center gap-3 mb-3">
         {response.destination.image && (
+          /* eslint-disable-next-line @next/next/no-img-element -- Dynamic image from API */
           <img
             src={response.destination.image}
             alt={response.destination.name}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
 
@@ -15,10 +16,11 @@ export const MobileFooter = () => {
       <div className="flex flex-col items-center text-center">
         {/* Logo */}
         <Link href="/" className="flex items-center mb-4">
-          <img
+          <Image
             src="/logo-white.svg"
             alt="Relogate"
-            style={{ width: "140px", height: "29px" }}
+            width={140}
+            height={29}
           />
         </Link>
 

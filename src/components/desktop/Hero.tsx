@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark } from "@/components/shared";
@@ -61,11 +62,12 @@ export const Hero = () => {
               {/* Column 3 - Right (appears first in RTL) */}
               <div className="flex flex-col gap-3 flex-1">
                 {/* Couple - tall */}
-                <div className="rounded-[10px] overflow-hidden aspect-[198/265]">
-                  <img 
-                    src="/hero-1.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[198/265]">
+                  <Image
+                    src="/hero-1.jpg"
                     alt="Happy couple"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
               </div>
@@ -73,27 +75,30 @@ export const Hero = () => {
               {/* Column 2 - Middle */}
               <div className="flex flex-col gap-3 flex-1">
                 {/* Amsterdam bikes - short */}
-                <div className="rounded-[10px] overflow-hidden aspect-[200/162]">
-                  <img 
-                    src="/hero-2.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[200/162]">
+                  <Image
+                    src="/hero-2.jpg"
                     alt="Amsterdam"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {/* Mother and son - tall */}
-                <div className="rounded-[10px] overflow-hidden aspect-[200/267]">
-                  <img 
-                    src="/hero-4.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[200/267]">
+                  <Image
+                    src="/hero-4.jpg"
                     alt="Mother and son"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {/* London bus - short */}
-                <div className="rounded-[10px] overflow-hidden aspect-[216/157]">
-                  <img 
-                    src="/hero-6.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[216/157]">
+                  <Image
+                    src="/hero-6.jpg"
                     alt="London"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
               </div>
@@ -101,27 +106,30 @@ export const Hero = () => {
               {/* Column 1 - Left (appears last in RTL) */}
               <div className="flex flex-col gap-3 flex-1">
                 {/* Manhattan subway - tall */}
-                <div className="rounded-[10px] overflow-hidden aspect-[197/265]">
-                  <img 
-                    src="/hero-3.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[197/265]">
+                  <Image
+                    src="/hero-3.jpg"
                     alt="Manhattan & Brooklyn"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {/* Family with kids - short */}
-                <div className="rounded-[10px] overflow-hidden aspect-[199/158]">
-                  <img 
-                    src="/hero-5.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[199/158]">
+                  <Image
+                    src="/hero-5.jpg"
                     alt="Happy family"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {/* Elderly with dog - tall */}
-                <div className="rounded-[10px] overflow-hidden aspect-[197/265]">
-                  <img 
-                    src="/hero-7.jpg" 
+                <div className="relative rounded-[10px] overflow-hidden aspect-[197/265]">
+                  <Image
+                    src="/hero-7.jpg"
                     alt="Senior with pet"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
               </div>

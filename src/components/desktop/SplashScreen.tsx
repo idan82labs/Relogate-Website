@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 
@@ -49,10 +50,12 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
               
               {/* 3D Globe as "o" */}
               <div className="relative w-[85px] lg:w-[128px] h-[85px] lg:h-[128px] mx-[-8px] lg:mx-[-12px]">
-                <img 
-                  src="/globe-3d-full.svg" 
-                  alt="Globe" 
-                  className="w-full h-full object-contain drop-shadow-lg"
+                <Image
+                  src="/globe-3d-full.svg"
+                  alt="Globe"
+                  fill
+                  className="object-contain drop-shadow-lg"
+                  priority
                 />
               </div>
 

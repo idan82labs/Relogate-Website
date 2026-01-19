@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, Card, Stars, Accordion, Icon } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
@@ -124,6 +123,7 @@ export const MobileHome = () => {
 
         {/* Single article card for mobile */}
         <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image from CMS */}
           <img
             src={articles.items[0].image}
             alt={articles.items[0].title}

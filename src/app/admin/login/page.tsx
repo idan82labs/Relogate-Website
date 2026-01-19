@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button, TextInput } from '@/components/shared';
 import { siteContent } from '@/content/he';
-import { login, getCurrentUser, type User } from '@/services/auth';
+import { login, getCurrentUser } from '@/services/auth';
 
 const content = siteContent.admin.login;
 

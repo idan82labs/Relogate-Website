@@ -7,6 +7,7 @@
  * Back button, Continue/Submit button with loading states.
  */
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
@@ -88,7 +89,7 @@ export function QuestionnaireNavigation({
           transition={{ delay: 0.2 }}
           disabled={isLoading}
         >
-          <img
+          <Image
             src="/icons/arrow-right.svg"
             alt=""
             width={isMobile ? 9 : 13}
@@ -116,7 +117,7 @@ export function QuestionnaireNavigation({
             transition={{ delay: 0.2 }}
             disabled={isLoading}
           >
-            <img
+            <Image
               src="/icons/arrow-right.svg"
               alt=""
               width={9}
@@ -151,7 +152,7 @@ export function QuestionnaireNavigation({
               }`}
             >
               {buttonText}
-              <img
+              <Image
                 src="/icons/arrow-right.svg"
                 alt=""
                 width={isMobile ? 9 : 13}

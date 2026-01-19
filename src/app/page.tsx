@@ -24,38 +24,40 @@ import { MobileSplashScreen, MobileHomepage } from "@/components/mobile";
 const SPLASH_SEEN_KEY = "relogate_splash_seen";
 
 export default function Home() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-  const [showSplash, setShowSplash] = useState<boolean | null>(null);
+  // Combined client state to avoid multiple setState calls in useEffect
+  const [clientState, setClientState] = useState<{
+    isMobile: boolean;
+    showSplash: boolean;
+  } | null>(null);
 
-  // Detect viewport and check splash state
+  // Initialize client-only state after hydration
+  // This pattern is required for SSR apps - sessionStorage is only available on client
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+    const splashSeen = sessionStorage.getItem(SPLASH_SEEN_KEY) === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Required for SSR hydration with client-only sessionStorage
+    setClientState({
+      isMobile: window.innerWidth < 1024,
+      showSplash: !splashSeen,
+    });
+
+    const handleResize = () => {
+      setClientState((prev) =>
+        prev ? { ...prev, isMobile: window.innerWidth < 1024 } : null
+      );
     };
 
-    // Check if splash was already seen this session
-    const splashSeen = sessionStorage.getItem(SPLASH_SEEN_KEY) === "true";
-    setShowSplash(!splashSeen);
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleSplashComplete = () => {
     // Mark splash as seen and show homepage
     sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
-    setShowSplash(false);
+    setClientState((prev) => (prev ? { ...prev, showSplash: false } : null));
   };
 
-  const handleDesktopSplashComplete = () => {
-    // Mark splash as seen and show homepage
-    sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
-    setShowSplash(false);
-  };
-
-  // Loading state - wait for both viewport and splash state to be determined
-  if (isMobile === null || showSplash === null) {
+  // Loading state - wait for client state to be initialized
+  if (clientState === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="animate-pulse">
@@ -90,6 +92,8 @@ export default function Home() {
     );
   }
 
+  const { isMobile, showSplash } = clientState;
+
   // Mobile Experience
   if (isMobile) {
     return (
@@ -106,9 +110,7 @@ export default function Home() {
   return (
     <>
       <AnimatePresence>
-        {showSplash && (
-          <SplashScreen onComplete={handleDesktopSplashComplete} />
-        )}
+        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       </AnimatePresence>
       <motion.main
         initial={{ opacity: 0 }}

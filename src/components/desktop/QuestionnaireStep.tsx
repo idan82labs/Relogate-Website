@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, GlobeWatermark, QuestionProgress } from "@/components/shared";
+import { Button, QuestionProgress } from "@/components/shared";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
@@ -32,7 +33,7 @@ export const QuestionnaireStep = ({
   onContinue,
   onBack,
   canContinue = true,
-  isLastStep = false,
+  isLastStep: _isLastStep = false,
   isSubmitting = false,
   children,
 }: QuestionnaireStepProps) => {
@@ -62,10 +63,12 @@ export const QuestionnaireStep = ({
       <main className="flex-1 relative flex flex-col">
         {/* Globe Watermark - centered in main area, more visible */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <img
+          <Image
             src="/globe-watermark.svg"
             alt=""
-            className="w-[500px] h-[500px] object-contain opacity-20"
+            width={500}
+            height={500}
+            className="object-contain opacity-20"
             aria-hidden="true"
           />
         </div>
@@ -83,7 +86,7 @@ export const QuestionnaireStep = ({
               transition={{ delay: 0.2 }}
             >
               {/* Arrow before text in DOM = appears on RIGHT in RTL, rotated 45deg for bottom-right */}
-              <img
+              <Image
                 src="/icons/arrow-right.svg"
                 alt=""
                 width={13}
@@ -165,7 +168,7 @@ export const QuestionnaireStep = ({
                   <span className="flex items-center justify-center gap-2 text-[21px] font-semibold">
                     {navigation.saveAndContinue}
                     {/* Arrow after text in DOM = appears on LEFT in RTL, rotated 135deg for bottom-left */}
-                    <img
+                    <Image
                       src="/icons/arrow-right.svg"
                       alt=""
                       width={13}

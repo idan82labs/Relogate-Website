@@ -54,7 +54,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         <section className="relative px-4 pt-6">
           {/* Globe Watermark */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none">
-            <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
+            <Image src="/globe-watermark.svg" alt="" fill aria-hidden="true" />
           </div>
 
           {/* Hero Text */}
@@ -118,7 +118,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
           {/* Globe Watermark for this section */}
           <div className="relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none -z-10">
-              <img src="/globe-watermark.svg" alt="" className="w-full h-full" aria-hidden="true" />
+              <Image src="/globe-watermark.svg" alt="" fill aria-hidden="true" />
             </div>
 
             <p className="text-lg text-[#1D1D1B] text-right mb-6 leading-relaxed">
@@ -129,7 +129,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
             <div className="space-y-3 mb-6">
               {info.checklist.map((item, index) => (
                 <div key={index} className="flex items-start gap-3 flex-row-reverse">
-                  <img
+                  <Image
                     src="/icons/checkmark.svg"
                     alt=""
                     width={12}
@@ -213,7 +213,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
               >
                 {/* Stars */}
                 <div className="flex justify-end mb-2">
-                  <img
+                  <Image
                     src="/icons/stars-rating.svg"
                     alt={`${item.rating} stars`}
                     width={80}
@@ -252,10 +252,10 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
           <div className="flex items-center justify-between mb-4">
             <div className="flex gap-2">
               <button className="p-1" aria-label="Previous article">
-                <img src="/icons/arrow-left.svg" alt="" width={9} height={11} />
+                <Image src="/icons/arrow-left.svg" alt="" width={9} height={11} />
               </button>
               <button className="p-1" aria-label="Next article">
-                <img src="/icons/arrow-right.svg" alt="" width={9} height={11} />
+                <Image src="/icons/arrow-right.svg" alt="" width={9} height={11} />
               </button>
             </div>
             <h2 className="text-[26px] font-medium text-[#1D1D1B]">
@@ -303,7 +303,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
 
           {/* Social Icons */}
           <div className="flex justify-center gap-2 mb-4">
-            <img
+            <Image
               src="/icons/social-whatsapp-email.svg"
               alt="Contact via WhatsApp or Email"
               width={60}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { siteContent } from "@/content/he";
 import { Button, NotificationBell } from "@/components/shared";
@@ -26,7 +27,7 @@ export const Header = () => {
       <div className="container h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img src="/logo-header.svg" alt="Relogate" style={{ width: '167px', height: '35.5px' }} />
+          <Image src="/logo-header.svg" alt="Relogate" width={167} height={36} priority />
         </Link>
 
         {/* Navigation */}

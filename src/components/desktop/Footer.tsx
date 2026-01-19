@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { siteContent } from "@/content/he";
 import { Icon } from "@/components/shared";
 
@@ -13,7 +14,7 @@ export const Footer = () => {
         <div className="flex flex-col items-center text-center">
           {/* Logo */}
           <Link href="/" className="flex items-center mb-6">
-            <img src="/logo-white.svg" alt="Relogate" style={{ width: '245px', height: '51px' }} />
+            <Image src="/logo-white.svg" alt="Relogate" width={245} height={51} />
           </Link>
 
           {/* Contact Info */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
@@ -41,11 +42,12 @@ export const BenefitsSection = () => {
             transition={{ duration: 0.6 }}
             className="order-2 lg:order-1"
           >
-            <div className="rounded-[20px] aspect-[4/3] overflow-hidden">
-              <img 
-                src="/banner-bg.jpg" 
+            <div className="relative rounded-[20px] aspect-[4/3] overflow-hidden">
+              <Image
+                src="/banner-bg.jpg"
                 alt="Woman working on laptop"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           </motion.div>

@@ -68,6 +68,7 @@ export const ArticlesCarousel = () => {
             >
               {/* Image */}
               <div className="relative aspect-[4/5] rounded-[20px] overflow-hidden mb-4 group">
+                {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
                 <img
                   src={article.image}
                   alt={article.title}

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 
@@ -39,10 +40,13 @@ export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
           Logo positioned at x:26px from edge, so ~7% padding each side
           Using width-based sizing to match Figma proportions
         */}
-        <img
+        <Image
           src="/logo.svg"
           alt="Relogate"
+          width={322}
+          height={69}
           className="w-full h-auto"
+          priority
         />
       </motion.div>
 

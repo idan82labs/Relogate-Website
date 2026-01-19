@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface GlobeWatermarkProps {
   position?: "left" | "right" | "center";
   size?: number;
@@ -24,11 +26,13 @@ export const GlobeWatermark = ({
       className={`absolute top-1/2 -translate-y-1/2 pointer-events-none z-0 ${positionClasses[position]} ${className}`}
       style={{ width: size, height: size, opacity }}
     >
-      <img
+      <Image
         src="/globe-watermark.svg"
         alt=""
-        className="w-full h-full object-contain"
+        fill
+        className="object-contain"
         aria-hidden="true"
+        priority={false}
       />
     </div>
   );

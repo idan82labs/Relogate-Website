@@ -326,7 +326,7 @@ export function ResponseEditor({
 
       setImportSuccess(true);
       setTimeout(() => setImportSuccess(false), 3000);
-    } catch (err) {
+    } catch {
       setImportError("שגיאה בקריאת הקובץ - וודא שזהו קובץ JSON תקין");
     }
 
@@ -343,7 +343,7 @@ export function ResponseEditor({
       destination,
       match,
       narrative,
-      sections: sections.map(({ id, ...rest }) => rest), // Remove IDs for export
+      sections: sections.map(({ id: _id, ...rest }) => rest), // Remove IDs for export
     };
 
     const json = JSON.stringify(exportData, null, 2);

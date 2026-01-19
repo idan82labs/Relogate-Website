@@ -40,7 +40,8 @@ export function AuthGuard({
     if (isLoading) return;
 
     const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
-    const isQuestionnaireRoute = questionnaireRoutes.some(route => pathname === route || pathname.startsWith(route));
+    // Note: questionnaireRoutes check available if needed for future route-based logic
+    const _isQuestionnaireRoute = questionnaireRoutes.some(route => pathname === route || pathname.startsWith(route));
 
     // Not authenticated
     if (!isAuthenticated) {

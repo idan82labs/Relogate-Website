@@ -112,7 +112,7 @@ function EditResponseContent({
           visaType: match.visaType,
         },
         narrative,
-        sections: sections.map(({ id, ...rest }) => rest),
+        sections: sections.map(({ id: _id, ...rest }) => rest),
       });
 
     if (updateError) {
@@ -213,6 +213,7 @@ function EditResponseContent({
             >
               <div className="flex items-center gap-4">
                 {destination.image && (
+                  /* eslint-disable-next-line @next/next/no-img-element -- Dynamic image from API */
                   <img
                     src={destination.image}
                     alt={destination.name}

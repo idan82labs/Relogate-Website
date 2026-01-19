@@ -8,7 +8,6 @@
 import type {
   QuestionnaireDataV1,
   MigrationResult,
-  MigrationInfo,
 } from "@/types/questionnaire-api";
 import type {
   QuestionnaireDataV2,

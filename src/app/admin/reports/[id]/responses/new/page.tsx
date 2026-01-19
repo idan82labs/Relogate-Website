@@ -66,7 +66,7 @@ function NewResponseContent({ params }: { params: Promise<{ id: string }> }) {
         visaType: match.visaType || null,
       },
       narrative,
-      sections: sections.map(({ id, ...rest }) => rest),
+      sections: sections.map(({ id: _id, ...rest }) => rest),
     });
 
     if (createError) {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
@@ -86,10 +87,12 @@ export const MobileHeader = () => {
 
           {/* Logo - RIGHT (visual) */}
           <Link href="/" className="flex items-center">
-            <img
+            <Image
               src="/logo-header.svg"
               alt="Relogate"
-              style={{ width: '120px', height: '25.5px' }}
+              width={120}
+              height={26}
+              priority
             />
           </Link>
         </div>

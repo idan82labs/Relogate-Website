@@ -7,6 +7,7 @@
  * Handles desktop and mobile layouts with proper header, footer, and content areas.
  */
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Header } from "@/components/desktop/Header";
 import { Footer } from "@/components/desktop/Footer";
@@ -72,10 +73,12 @@ function DesktopLayout({
       <main className="flex-1 relative flex flex-col">
         {/* Globe Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <img
+          <Image
             src="/globe-watermark.svg"
             alt=""
-            className="w-[500px] h-[500px] object-contain opacity-20"
+            width={500}
+            height={500}
+            className="object-contain opacity-20"
             aria-hidden="true"
           />
         </div>
@@ -94,7 +97,7 @@ function DesktopLayout({
                 transition={{ delay: 0.2 }}
                 disabled={isSubmitting || isSyncing}
               >
-                <img
+                <Image
                   src="/icons/arrow-right.svg"
                   alt=""
                   width={13}
@@ -187,10 +190,12 @@ function MobileLayout({
       <main className="flex-1 px-4 pt-4 pb-6 relative flex flex-col">
         {/* Globe Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <img
+          <Image
             src="/globe-watermark.svg"
             alt=""
-            className="w-[280px] h-[280px] object-contain opacity-20"
+            width={280}
+            height={280}
+            className="object-contain opacity-20"
             aria-hidden="true"
           />
         </div>
@@ -209,7 +214,7 @@ function MobileLayout({
                 transition={{ delay: 0.2 }}
                 disabled={isSubmitting || isSyncing}
               >
-                <img
+                <Image
                   src="/icons/arrow-right.svg"
                   alt=""
                   width={9}

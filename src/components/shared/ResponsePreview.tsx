@@ -41,6 +41,7 @@ export function ResponsePreview({
       <div className="bg-gradient-to-r from-[#239083] to-[#215388] p-6 text-white">
         <div className="flex items-center gap-4">
           {destination.image && (
+            // eslint-disable-next-line @next/next/no-img-element -- Dynamic image URL from API
             <img
               src={destination.image}
               alt={destination.name}

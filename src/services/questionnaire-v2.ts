@@ -5,7 +5,7 @@
  * Supports migration from V1 format and identifies new fields for completion.
  */
 
-import { api, ApiError, getHebrewErrorMessage } from "./api";
+import { api, getHebrewErrorMessage } from "./api";
 import {
   migrateV1ToV2,
   isV1Data,
@@ -19,7 +19,6 @@ import type {
   ApiQuestionnaire,
   ApiQuestionnaireResponse,
   MigrationInfo,
-  isV1Response,
 } from "@/types/questionnaire-api";
 import type {
   QuestionnaireDataV2,

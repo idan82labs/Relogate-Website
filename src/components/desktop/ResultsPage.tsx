@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Header } from "./Header";
@@ -66,10 +67,11 @@ export const ResultsPage = ({
       <main className="flex-1">
         {/* Hero Banner */}
         <section className="relative h-[500px] overflow-hidden">
-          <img
+          <Image
             src="/hero-bg.jpg"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-[rgba(33,83,136,0.7)]" />
           <div className="relative z-10 h-full flex items-center justify-center">
@@ -87,10 +89,12 @@ export const ResultsPage = ({
         <section className="container py-12 relative">
           {/* Globe watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <img
+            <Image
               src="/globe-watermark.svg"
               alt=""
-              className="w-[400px] h-[400px] object-contain opacity-10"
+              width={400}
+              height={400}
+              className="object-contain opacity-10"
               aria-hidden="true"
             />
           </div>
@@ -315,7 +319,8 @@ export const ResultsPage = ({
                     className="bg-white rounded-[20px] overflow-hidden shadow-sm cursor-pointer"
                     whileHover={{ scale: 1.02 }}
                   >
-                    <div className="h-[200px] overflow-hidden">
+                    <div className="relative h-[200px] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
                       <img
                         src={article.image}
                         alt={article.title}

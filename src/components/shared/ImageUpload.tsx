@@ -205,6 +205,7 @@ export function ImageUpload({
               exit={{ opacity: 0 }}
               className="relative w-full h-full group"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element -- User uploaded image, domain unknown */}
               <img
                 src={value}
                 alt="Preview"

@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, QuestionProgress, GlobeWatermark } from "@/components/shared";
+import { Button, QuestionProgress } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { MobileHeader } from "./MobileHeader";
 
@@ -32,7 +33,7 @@ export const MobileQuestionnaireStep = ({
   onContinue,
   onBack,
   canContinue = true,
-  isLastStep = false,
+  isLastStep: _isLastStep = false,
   isSubmitting = false,
   children,
 }: MobileQuestionnaireStepProps) => {
@@ -62,10 +63,12 @@ export const MobileQuestionnaireStep = ({
       <main className="flex-1 px-4 pt-4 pb-6 relative flex flex-col">
         {/* Globe Watermark - centered in main area, more visible */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <img
+          <Image
             src="/globe-watermark.svg"
             alt=""
-            className="w-[280px] h-[280px] object-contain opacity-20"
+            width={280}
+            height={280}
+            className="object-contain opacity-20"
             aria-hidden="true"
           />
         </div>
@@ -83,7 +86,7 @@ export const MobileQuestionnaireStep = ({
               transition={{ delay: 0.2 }}
             >
               {/* Arrow before text in DOM = appears on RIGHT in RTL, rotated 45deg for bottom-right */}
-              <img
+              <Image
                 src="/icons/arrow-right.svg"
                 alt=""
                 width={9}
@@ -163,7 +166,7 @@ export const MobileQuestionnaireStep = ({
               <span className="flex items-center justify-center gap-2 text-[16px] font-semibold">
                 {navigation.saveAndContinue}
                 {/* Arrow after text in DOM = appears on LEFT in RTL, rotated 135deg for bottom-left */}
-                <img
+                <Image
                   src="/icons/arrow-right.svg"
                   alt=""
                   width={9}

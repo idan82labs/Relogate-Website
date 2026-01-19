@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { writeLog, generateSessionId, getSessionIdFromCookie } from '@/lib/server-logger';
+import { writeLog, generateSessionId } from '@/lib/server-logger';
 
 interface LogRequestBody {
   level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';

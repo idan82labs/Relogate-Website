@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { MobileHeader } from "./MobileHeader";
@@ -263,11 +264,12 @@ const ScrollCard = ({ card, progress }: ScrollCardProps) => {
         willChange: "transform, opacity",
       }}
     >
-      <img
+      <Image
         src={card.src}
         alt={card.alt}
-        className="w-full h-full object-cover"
-        loading="eager"
+        fill
+        className="object-cover"
+        priority
       />
     </motion.div>
   );

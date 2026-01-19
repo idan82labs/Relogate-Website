@@ -53,7 +53,8 @@ export const CountryCard = ({
         transition={{ duration: 0.2 }}
         style={{ minWidth: size === "lg" ? "454px" : "261px" }}
       >
-        {/* Background image */}
+        {/* Background image - dynamic URL from API, domain unknown at build time */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image}
           alt={name}
@@ -100,7 +101,8 @@ export const CountryCard = ({
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Background image */}
+      {/* Background image - dynamic URL from API, domain unknown at build time */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={image}
         alt={name}

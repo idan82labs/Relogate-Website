@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
@@ -128,10 +129,11 @@ export const BannerToInfoTransition = () => {
                       height: imageHeight,
                     }}
                   >
-                    <img
+                    <Image
                       src="/banner-bg.jpg"
                       alt="Woman working on laptop"
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
 
                     {/* Dark overlay */}

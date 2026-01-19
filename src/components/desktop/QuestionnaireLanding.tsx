@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button, GlobeWatermark, StepCard } from "@/components/shared";
@@ -29,10 +30,11 @@ export const QuestionnaireLanding = () => {
         <section className="relative h-[500px] mx-auto max-w-[1440px] mt-0">
           {/* Hero Image */}
           <div className="absolute inset-x-0 top-0 h-full rounded-[20px] overflow-hidden mx-5">
-            <img
+            <Image
               src="/about-image.jpg"
               alt="Couple planning relocation"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
             {/* Dark overlay for text readability */}
             <div className="absolute inset-0 bg-black/30" />
