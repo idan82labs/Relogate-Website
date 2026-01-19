@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     "Relogate",
   ],
   authors: [{ name: "Relogate" }],
+  other: {
+    google: "notranslate",
+  },
   openGraph: {
     title: "Relogate - רילוקיישן לחו״ל? כל אחד יכול!",
     description:
@@ -38,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl" suppressHydrationWarning>
+    <html lang="he" dir="rtl" translate="no" suppressHydrationWarning>
       <body
         className={`${notoSansHebrew.variable} font-sans antialiased`}
         suppressHydrationWarning
