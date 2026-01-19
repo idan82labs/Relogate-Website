@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
+import { Icon } from "@/components/shared";
 import type { PaginationProps } from "@/types/blog";
 
 /**
@@ -27,113 +28,52 @@ export function Pagination({ currentPage, totalPages, contentType }: PaginationP
   const hasPrevious = currentPage > 1;
   const hasNext = currentPage < totalPages;
 
+  // Button styles matching ArticlesCarousel
+  const buttonBaseStyles = "w-10 h-10 rounded-full border flex items-center justify-center transition-colors";
+  const buttonActiveStyles = "border-[#C6C6C6] text-[#1D1D1B] hover:bg-[#F7F7F7]";
+  const buttonDisabledStyles = "border-[#E5E5E5] text-[#C6C6C6] cursor-not-allowed";
+
   return (
     <nav
       className="flex items-center justify-center gap-4 py-8"
       aria-label="Pagination"
     >
-      {/* Next Arrow (Left in RTL - goes to higher page numbers) */}
-      {hasNext ? (
-        <Link
-          href={getPageHref(currentPage + 1)}
-          className="p-2 text-[var(--color-primary)] hover:opacity-70 transition-opacity"
-          aria-label={blog.pagination.next}
-        >
+      {/* Left position (>) - Previous page */}
+      {hasPrevious ? (
+        <Link href={getPageHref(currentPage - 1)} aria-label={blog.pagination.previous}>
           <motion.span
-            whileHover={{ x: -4 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="block"
+            className={`${buttonBaseStyles} ${buttonActiveStyles}`}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="rotate-180"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Icon name="chevronRight" size={20} />
           </motion.span>
         </Link>
       ) : (
-        <span className="p-2 text-[var(--color-gray-300)] cursor-not-allowed">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="rotate-180"
-          >
-            <path
-              d="M9 18L15 12L9 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <span className={`${buttonBaseStyles} ${buttonDisabledStyles}`}>
+          <Icon name="chevronRight" size={20} />
         </span>
       )}
 
       {/* Page Counter */}
-      <span className="text-[16px] font-medium text-[var(--color-ink)] min-w-[80px] text-center">
+      <span className="text-[14px] font-light text-black min-w-[80px] text-center">
         {currentPage} {blog.pagination.of} {totalPages}
       </span>
 
-      {/* Previous Arrow (Right in RTL - goes to lower page numbers) */}
-      {hasPrevious ? (
-        <Link
-          href={getPageHref(currentPage - 1)}
-          className="p-2 text-[var(--color-primary)] hover:opacity-70 transition-opacity"
-          aria-label={blog.pagination.previous}
-        >
+      {/* Right position (<) - Next page */}
+      {hasNext ? (
+        <Link href={getPageHref(currentPage + 1)} aria-label={blog.pagination.next}>
           <motion.span
-            whileHover={{ x: 4 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="block"
+            className={`${buttonBaseStyles} ${buttonActiveStyles}`}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Icon name="chevronLeft" size={20} />
           </motion.span>
         </Link>
       ) : (
-        <span className="p-2 text-[var(--color-gray-300)] cursor-not-allowed">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 18L15 12L9 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <span className={`${buttonBaseStyles} ${buttonDisabledStyles}`}>
+          <Icon name="chevronLeft" size={20} />
         </span>
       )}
     </nav>

@@ -11,7 +11,7 @@ import type { HeroBannerProps } from "@/types/blog";
  * - Mobile: Full width, 300px height, no border-radius
  */
 export function HeroBanner({ title, variant, backgroundImage }: HeroBannerProps) {
-  const defaultBg = "/images/blog/hero-bg.jpg";
+  const defaultBg = "/hero-bg.jpg";
   const bgImage = backgroundImage || defaultBg;
 
   if (variant === "mobile") {

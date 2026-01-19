@@ -15,6 +15,9 @@ const QUESTIONNAIRE_ROUTES = [
 // Routes that should be accessible without auth
 const PUBLIC_ROUTES = ['/', '/login', '/register'];
 
+// Route prefixes that should be accessible without auth
+const PUBLIC_ROUTE_PREFIXES = ['/blog', '/press'];
+
 // Admin routes - handled separately with their own login
 const ADMIN_PUBLIC_ROUTES = ['/admin/login'];
 const ADMIN_PROTECTED_PREFIX = '/admin';
@@ -110,8 +113,12 @@ export function proxy(request: NextRequest) {
     return createResponse(NextResponse.redirect(url), 'redirect-to-admin-login');
   }
 
+  // Check if route is public (exact match or prefix match)
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname) ||
+    PUBLIC_ROUTE_PREFIXES.some(prefix => pathname.startsWith(prefix));
+
   // If user is NOT authenticated and trying to access any protected page (non-admin)
-  if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname) && !isAdminRoute) {
+  if (!isAuthenticated && !isPublicRoute && !isAdminRoute) {
     logInfo(sessionId, 'Proxy', 'REDIRECTING - unauthenticated user accessing protected route', {
       pathname,
       redirectTo: '/login',

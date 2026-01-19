@@ -10,8 +10,42 @@ export type ContentType = 'blog' | 'press';
 
 export type Locale = 'he' | 'en';
 
+/**
+ * Localized text object from API
+ */
+export interface LocalizedText {
+  he: string;
+  en?: string;
+}
+
 // ============================================================================
-// Blog Post Types
+// API Response Types (raw from backend)
+// ============================================================================
+
+/**
+ * Blog post from API (with localized fields)
+ */
+export interface ApiBlogPost {
+  id: string;
+  slug: string;
+  contentType: ContentType;
+  title: LocalizedText;
+  excerpt: LocalizedText | null;
+  content?: LocalizedText;
+  metaDescription?: LocalizedText | null;
+  featuredImageUrl: string | null;
+  featuredImageAlt?: LocalizedText | null;
+  category: string | null;
+  tags?: string[];
+  author: string;
+  viewCount?: number;
+  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ============================================================================
+// Transformed Types (for components)
 // ============================================================================
 
 /**
@@ -176,4 +210,57 @@ export interface RelatedArticlesProps {
 export interface BackButtonProps {
   href: string;
   label: string;
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Extract text from localized field
+ */
+export function getLocalizedText(
+  text: LocalizedText | string | null | undefined,
+  locale: Locale = 'he'
+): string {
+  if (!text) return '';
+  if (typeof text === 'string') return text;
+  return text[locale] ?? text.he ?? '';
+}
+
+/**
+ * Transform API post to component post
+ */
+export function transformApiPost(post: ApiBlogPost, locale: Locale = 'he'): BlogPostListItem {
+  return {
+    id: post.id,
+    slug: post.slug,
+    contentType: post.contentType,
+    title: getLocalizedText(post.title, locale),
+    excerpt: getLocalizedText(post.excerpt, locale),
+    featuredImageUrl: post.featuredImageUrl,
+    category: post.category,
+    author: post.author,
+    publishedAt: post.publishedAt,
+    viewCount: post.viewCount ?? 0,
+  };
+}
+
+/**
+ * Transform API post to full post
+ */
+export function transformApiFullPost(post: ApiBlogPost, locale: Locale = 'he'): BlogPost {
+  const content = getLocalizedText(post.content, locale);
+  const wordCount = content.split(/\s+/).length;
+  const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
+  return {
+    ...transformApiPost(post, locale),
+    content,
+    metaTitle: getLocalizedText(post.title, locale),
+    metaDescription: getLocalizedText(post.metaDescription, locale) || null,
+    tags: post.tags ?? [],
+    readingTimeMinutes,
+    updatedAt: post.updatedAt ?? post.publishedAt,
+  };
 }

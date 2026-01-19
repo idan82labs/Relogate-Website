@@ -54,7 +54,7 @@ export function ArticleCard({ post, variant, contentType }: ArticleCardProps) {
         {/* Content */}
         <div className="flex flex-col gap-2 px-1">
           {/* Date and Author */}
-          <p className="text-[14px] font-light text-[var(--color-gray-400)] leading-[1.4]">
+          <p className="text-[14px] font-light text-[var(--color-ink)] leading-[1.4]">
             {blog.publishedBy} {formattedDate} {blog.by} {post.author}
           </p>
 
@@ -64,16 +64,12 @@ export function ArticleCard({ post, variant, contentType }: ArticleCardProps) {
           </h3>
 
           {/* Excerpt */}
-          <p className="text-[16px] font-normal text-[var(--color-gray-400)] leading-[1.5] line-clamp-3">
+          <p className="text-[16px] font-normal text-[var(--color-ink)] leading-[1.5] line-clamp-3">
             {post.excerpt}
           </p>
 
           {/* Read More Link */}
-          <span
-            className={`text-[21px] font-semibold text-[var(--color-primary)] mt-2 ${
-              variant === "desktop" ? "underline" : ""
-            } group-hover:opacity-80 transition-opacity`}
-          >
+          <span className="text-[21px] font-semibold text-[var(--color-primary)] mt-2 underline group-hover:opacity-80 transition-opacity">
             {blog.readMore}
           </span>
         </div>

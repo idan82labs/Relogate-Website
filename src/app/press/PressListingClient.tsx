@@ -78,12 +78,20 @@ export function PressListingClient({
             />
 
             {/* Articles Grid */}
-            <section className={isMobile ? "py-8" : "py-12"}>
-              <ArticleGrid
-                posts={initialPosts}
-                variant={variant}
-                contentType="press"
-              />
+            <section className={`relative ${isMobile ? "py-8" : "py-12"}`}>
+              {/* Globe Watermark - Desktop only */}
+              {!isMobile && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none z-0 -translate-x-1/2" style={{ width: 480, height: 480, opacity: 0.15 }}>
+                  <img src="/globe-watermark.svg" alt="" className="w-full h-full object-contain" aria-hidden="true" />
+                </div>
+              )}
+              <div className="relative z-10">
+                <ArticleGrid
+                  posts={initialPosts}
+                  variant={variant}
+                  contentType="press"
+                />
+              </div>
             </section>
 
             {/* Pagination */}
