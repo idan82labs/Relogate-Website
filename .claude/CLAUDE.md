@@ -101,3 +101,32 @@ npx playwright screenshot --viewport-size=375,812 --wait-for-timeout=1000 \
 4. **RTL-first**: Test layouts in right-to-left
 5. **Existing patterns**: Prefer `shared/` components
 6. **Type everything**: No `any`, explicit function signatures
+
+## Context Management
+
+### Commands
+- `/compact` - Summarize conversation to free context (use at ~70% usage)
+- `/clear` - Reset context completely (use when switching topics)
+- `/context` - Check current context usage
+
+### Excluded Directories
+Skip these directories to reduce token usage:
+- `node_modules/`, `.next/`, `dist/`, `.git/`
+- `docs/design/figma_cache/` (large binary files)
+- `docs/design/verify/` (screenshot artifacts)
+
+### Efficient File Reading
+- Read specific files, not entire directories
+- Use glob patterns to find files: `src/components/**/*.tsx`
+- Prefer targeted searches over broad exploration
+
+### Session Strategy
+- One focused task per session
+- Compact before context exceeds 70%
+- Clear context when switching between unrelated tasks
+- For multi-file changes, batch related edits together
+
+### Subagent Delegation
+Use Task tool for complex searches to preserve main context:
+- Codebase exploration → `subagent_type=Explore`
+- Multi-step investigations → `subagent_type=general-purpose`
