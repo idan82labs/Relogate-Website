@@ -106,3 +106,49 @@ Organized by section and platform. Use the label path for context (e.g., "Homepa
   > Mobile expanded view with country detail section
 - mobile results-section-expanded: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=275-3280&t=n6DlCKcnmwoyTpf1-4
   > Mobile with info accordion expanded showing category list
+
+---
+
+## Blog (Knowledge Base)
+
+> **Note:** Blog/knowledge base section with relocation guides and articles.
+> Contains listing pages with article cards grid and individual article pages.
+> Hebrew title: "מאגר הידע שלנו לרילוקיישן" (Our relocation knowledge base)
+
+- blog-section (all frames): https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=492-1829&m=dev
+
+### Desktop
+- blog-listing: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=54-11300&m=dev
+  > Blog listing page with hero banner and 3×2 article cards grid
+  > Hero: "ברוכים הבאים למאגר הידע שלנו לרילוקיישן"
+- blog-article: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=72-520&m=dev
+  > Individual blog article page with back button, featured image,
+  > long-form content, and "כתבות נוספות" (more articles) section
+
+### Mobile
+- mobile blog-listing: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=272-2227&m=dev
+  > Mobile blog listing with single-column article cards
+- mobile blog-article: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=272-2760&m=dev
+  > Mobile article page with compact layout and horizontal scroll for related articles
+
+---
+
+## Communication (Press Coverage)
+
+> **Note:** Press/media coverage section showcasing articles written about Relogate.
+> Hebrew title: "כתבו עלינו בתקשורת" (They wrote about us in the media)
+> Structure mirrors the Blog section with different hero and content focus.
+
+### Desktop
+- communication-listing: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=86-707&m=dev
+  > Press coverage listing page with hero banner and 3×2 article cards grid
+  > Hero: "כתבו עלינו בתקשורת"
+- communication-article: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=86-837&m=dev
+  > Individual press article page
+  > Sample title: "שירות בגובה העיניים: החברה שמלווה לקוחות ברגעים המכריעים בחיים"
+
+### Mobile
+- mobile communication-listing: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=272-2384&m=dev
+  > Mobile press listing with single-column cards
+- mobile communication-article: https://www.figma.com/design/oa59PKkSQjmx05hyltKc4W/Relogate_Alex?node-id=272-2165&m=dev
+  > Mobile press article page
