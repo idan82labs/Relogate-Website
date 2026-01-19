@@ -1,16 +1,18 @@
 # Architecture Overview
 
-This document describes the codebase architecture for the Relogate marketing website.
+This document describes the codebase architecture for the Relogate platform - a relocation assistance application with marketing site, questionnaire system, user dashboard, and admin interface.
 
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
 - [Directory Structure](#directory-structure)
-- [Application Flow](#application-flow)
+- [Application Layers](#application-layers)
+- [Route Structure](#route-structure)
 - [Components](#components)
+- [Services Layer](#services-layer)
+- [State Management](#state-management)
 - [Styling System](#styling-system)
 - [Content Management](#content-management)
-- [Configuration Files](#configuration-files)
 
 ## Tech Stack
 
@@ -24,154 +26,219 @@ This document describes the codebase architecture for the Relogate marketing web
 | Tailwind CSS | 4.x | Utility-first styling |
 | Framer Motion | 12.x | Animations |
 
-### Key Choices
+### Key Architectural Decisions
 
-- **App Router**: Using Next.js 16's App Router for modern React Server Components support
-- **Client Components**: Most components are `"use client"` due to animation requirements
-- **CSS Variables**: Design tokens defined as CSS custom properties for consistency
-- **RTL-First**: Hebrew language with right-to-left text direction
+- **App Router**: Next.js 16 App Router with client components for animations
+- **Services Layer**: Centralized API integration via service modules
+- **React Contexts**: Auth and app state management
+- **RTL-First**: Hebrew language with right-to-left layout
+- **Responsive Split**: Separate mobile/desktop component trees
 
 ## Directory Structure
 
 ```
-relogate-website/
-├── src/
-│   ├── app/                      # Next.js App Router
-│   │   ├── page.tsx             # Main entry point
-│   │   ├── layout.tsx           # Root layout (fonts, metadata)
-│   │   └── globals.css          # Design tokens & base styles
+src/
+├── app/                          # Next.js App Router
+│   ├── page.tsx                  # Homepage (mobile/desktop detection)
+│   ├── layout.tsx                # Root layout (fonts, metadata)
+│   ├── providers.tsx             # Context providers wrapper
+│   ├── globals.css               # Design tokens & base styles
+│   ├── questionnaire/            # V1 questionnaire flow
+│   │   └── v2/                   # V2 questionnaire (primary)
+│   ├── personal-area/            # User dashboard
+│   │   └── report/               # Report viewer
+│   ├── admin/                    # Admin interface
+│   │   ├── login/                # Admin authentication
+│   │   └── reports/              # Report management
+│   ├── login/                    # User login
+│   ├── register/                 # User registration
+│   └── api/                      # API routes
+│       └── log/                  # Logging endpoint
+│
+├── components/
+│   ├── desktop/                  # Desktop-specific components
+│   │   ├── Header.tsx            # Navigation header
+│   │   ├── Hero.tsx              # Hero section
+│   │   ├── Footer.tsx            # Site footer
+│   │   ├── QuestionnaireLanding.tsx
+│   │   ├── QuestionnaireStep.tsx
+│   │   └── ResultsPage.tsx       # Report results view
 │   │
-│   ├── components/
-│   │   ├── desktop/             # Desktop-only components
-│   │   │   ├── index.ts         # Barrel export
-│   │   │   ├── Header.tsx       # Navigation header
-│   │   │   ├── Hero.tsx         # Hero section
-│   │   │   ├── SplashScreen.tsx # Intro animation
-│   │   │   ├── AboutSection.tsx # About content
-│   │   │   ├── BannerToInfoTransition.tsx # Scroll animation
-│   │   │   ├── HowItWorks.tsx   # Process steps
-│   │   │   ├── Testimonials.tsx # Customer reviews
-│   │   │   ├── ArticlesCarousel.tsx # Press mentions
-│   │   │   ├── FAQ.tsx          # Accordion Q&A
-│   │   │   ├── Contact.tsx      # Contact info
-│   │   │   └── Footer.tsx       # Site footer
-│   │   │
-│   │   ├── mobile/              # Mobile-only components
-│   │   │   ├── index.ts         # Barrel export
-│   │   │   ├── Splash.tsx       # Mobile splash
-│   │   │   ├── WelcomeIntro.tsx # Intro sequence
-│   │   │   ├── MobileHome.tsx   # Main mobile view
-│   │   │   ├── MobileHeader.tsx # Mobile navigation
-│   │   │   └── MobileHowItWorks.tsx
-│   │   │
-│   │   └── shared/              # Reusable components
-│   │       ├── index.ts         # Barrel export
-│   │       ├── Button.tsx       # Primary, secondary, ghost variants
-│   │       ├── Card.tsx         # Card container
-│   │       ├── Accordion.tsx    # Expandable sections
-│   │       ├── Icon.tsx         # SVG icon wrapper
-│   │       ├── Stars.tsx        # Rating stars
-│   │       └── GlobeWatermark.tsx # Decorative element
+│   ├── mobile/                   # Mobile-specific components
+│   │   ├── MobileHeader.tsx
+│   │   ├── MobileFooter.tsx
+│   │   ├── MobileHomepage.tsx
+│   │   ├── MobileQuestionnaireLanding.tsx
+│   │   ├── MobileQuestionnaireStep.tsx
+│   │   └── MobileResultsPage.tsx
 │   │
-│   └── content/
-│       └── he.ts                # Hebrew content strings
+│   ├── questionnaire/            # V2 questionnaire components
+│   │   ├── QuestionnaireLayout.tsx
+│   │   ├── QuestionnaireNavigation.tsx
+│   │   ├── QuestionnaireProgress.tsx
+│   │   └── steps/                # Individual step components
+│   │
+│   └── shared/                   # Reusable UI components
+│       ├── Button.tsx            # Button variants
+│       ├── Card.tsx              # Card container
+│       ├── Accordion.tsx         # Expandable sections
+│       ├── AuthGuard.tsx         # Route protection
+│       ├── ResponseEditor.tsx    # Admin report editor
+│       └── ResponsePreview.tsx   # Report preview
 │
-├── public/                      # Static assets
-│   ├── fonts/                   # Satoshi font files
-│   ├── *.svg, *.png, *.jpg     # Images
-│   └── favicon.ico
+├── contexts/                     # React Context providers
+│   ├── AuthContext.tsx           # Authentication state
+│   └── index.ts                  # Context exports
 │
-├── docs/                        # Documentation
-│   ├── ARCHITECTURE.md         # This file
-│   ├── DEVELOPER_GUIDE.md      # Developer setup guide
-│   └── design/
-│       ├── figma_urls.md       # Figma frame URLs
-│       └── figma_cache/        # Cached screenshots
+├── hooks/                        # Custom React hooks
+│   ├── useAuth.ts                # Authentication hook
+│   └── useQuestionnaire.ts       # Questionnaire state
 │
-├── scripts/
-│   └── figma_cache.mjs         # Figma caching CLI
+├── services/                     # API integration layer
+│   ├── api.ts                    # Base API client
+│   ├── auth.ts                   # Authentication service
+│   ├── questionnaire.ts          # V1 questionnaire API
+│   ├── questionnaire-v2.ts       # V2 questionnaire API
+│   ├── questionnaire-migration.ts # V1→V2 migration
+│   ├── reports.ts                # Reports API
+│   └── notifications.ts          # Notification service
 │
-└── .claude/                     # Claude Code agent memory
-    ├── CLAUDE.md               # Main agent context
-    └── rules/                  # Domain rules
-        ├── design/figma.md
-        └── frontend/
-            ├── styling.md
-            ├── typescript.md
-            └── testing.md
+├── types/                        # TypeScript definitions
+│   ├── api.ts                    # API response types
+│   ├── questionnaire.ts          # Questionnaire types
+│   └── report.ts                 # Report types
+│
+├── utils/                        # Utility functions
+│   └── validation.ts             # Form validation helpers
+│
+├── lib/                          # Shared libraries
+│   └── markdown.ts               # Markdown rendering
+│
+└── content/
+    └── he.ts                     # Hebrew content strings
 ```
 
-## Application Flow
-
-### Entry Point (`src/app/page.tsx`)
-
-The main page handles:
-
-1. **Viewport Detection**: Determines mobile (`< 1024px`) vs desktop
-2. **Session Management**: Tracks returning visitors via `sessionStorage`
-3. **Phase Control**: Manages splash → intro → main content transitions
+## Application Layers
 
 ```
-┌─────────────────────────────────────────┐
-│              page.tsx                    │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ Is Mobile? (<1024px)            │   │
-│  └────────────┬────────────────────┘   │
-│               │                         │
-│       ┌───────┴───────┐                │
-│       ▼               ▼                │
-│   Mobile Flow    Desktop Flow          │
-│                                         │
-│   splash →       SplashScreen →        │
-│   intro →        Main Content          │
-│   MobileHome                           │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    PRESENTATION                          │
+│  Components (desktop/, mobile/, shared/, questionnaire/) │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                    STATE MANAGEMENT                      │
+│         Contexts (AuthContext) + Custom Hooks            │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                    SERVICES LAYER                        │
+│     API integration (services/*.ts) + Business Logic     │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                    BACKEND API                           │
+│          Express server (separate repository)            │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Desktop Section Order
+## Route Structure
 
-1. `Header` - Fixed navigation
-2. `Hero` - Title and CTA
-3. `AboutSection` - Introduction
-4. `BannerToInfoTransition` - Scroll-based animation
-5. `HowItWorks` - 3-step process
-6. `Testimonials` - Customer reviews carousel
-7. `ArticlesCarousel` - Press mentions
-8. `FAQ` - Accordion questions
-9. `Contact` - Contact information
-10. `Footer` - Links and copyright
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | page.tsx | Homepage (mobile/desktop detection) |
+| `/login` | login/page.tsx | User authentication |
+| `/register` | register/page.tsx | User registration |
+| `/questionnaire` | questionnaire/page.tsx | V1 questionnaire landing |
+| `/questionnaire/v2` | questionnaire/v2/page.tsx | V2 questionnaire flow |
+| `/questionnaire/results` | questionnaire/results/page.tsx | Results display |
+| `/personal-area` | personal-area/page.tsx | User dashboard |
+| `/personal-area/report` | personal-area/report/page.tsx | Report viewer |
+| `/admin` | admin/page.tsx | Admin dashboard |
+| `/admin/login` | admin/login/page.tsx | Admin authentication |
+| `/admin/reports` | admin/reports/page.tsx | Report management |
+| `/admin/reports/[id]` | admin/reports/[id]/page.tsx | Single report view |
 
 ## Components
 
-### Shared Components (`src/components/shared/`)
+### Component Organization
 
-Reusable UI primitives:
+Components are split by platform and purpose:
 
-| Component | Props | Description |
-|-----------|-------|-------------|
-| `Button` | `variant`, `size`, `children` | Primary/secondary/ghost buttons |
-| `Card` | `children`, `className` | Basic card container |
-| `Accordion` | `title`, `children`, `defaultOpen` | Expandable section |
-| `Icon` | `name`, `size` | SVG icon wrapper |
-| `Stars` | `rating` | Star rating display |
-| `GlobeWatermark` | `className` | Decorative background globe |
+- **desktop/**: Full-width layouts for screens ≥1024px
+- **mobile/**: Touch-optimized layouts for screens <1024px
+- **questionnaire/**: V2 questionnaire-specific components
+- **shared/**: Platform-agnostic reusable components
 
-### Desktop Components (`src/components/desktop/`)
+### Key Shared Components
 
-Page sections with scroll-based animations:
+| Component | Purpose |
+|-----------|---------|
+| `Button` | Primary, secondary, outline, ghost variants |
+| `Card` | Container with shadow and border radius |
+| `Accordion` | Expandable content sections |
+| `AuthGuard` | Route protection wrapper |
+| `ResponseEditor` | Admin interface for editing reports |
+| `ResponsePreview` | Report content preview |
+| `CountryCard` | Country recommendation card |
+| `MatchScoreCircle` | Circular score visualization |
 
-- **`BannerToInfoTransition`**: Complex scroll animation using Framer Motion's `useScroll` and `useTransform`. Animates image size and text fade-in based on scroll position.
+## Services Layer
 
-### Mobile Components (`src/components/mobile/`)
+The services layer (`src/services/`) handles all API communication:
 
-Touch-optimized mobile experience with separate layout and navigation.
+### API Client (`api.ts`)
+
+Base configuration for API requests:
+- Base URL from environment
+- Error handling
+- Response type definitions
+
+### Authentication (`auth.ts`)
+
+- Login/logout
+- Session management
+- User state
+
+### Questionnaire Services
+
+- `questionnaire.ts`: V1 questionnaire API
+- `questionnaire-v2.ts`: V2 questionnaire API with enhanced features
+- `questionnaire-migration.ts`: Migration utilities between versions
+
+### Reports (`reports.ts`)
+
+- Fetch user reports
+- Admin report management
+- Report response handling
+
+## State Management
+
+### Authentication Context
+
+```typescript
+// src/contexts/AuthContext.tsx
+interface AuthContextValue {
+  user: User | null;
+  isAuthenticated: boolean;
+  hasCompletedOnboarding: boolean;
+  login: (credentials) => Promise<void>;
+  logout: () => void;
+}
+```
+
+### Local State Patterns
+
+- **useState**: Component-local state
+- **useReducer**: Complex state transitions (questionnaire steps)
+- **sessionStorage**: Persistent session data (splash screen, form progress)
 
 ## Styling System
 
-### Design Tokens (`src/app/globals.css`)
-
-CSS custom properties define the design system:
+### Design Tokens (`globals.css`)
 
 ```css
 :root {
@@ -179,188 +246,79 @@ CSS custom properties define the design system:
   --color-ink: #1D1D1B;           /* Primary text */
   --color-primary: #215388;        /* Brand blue */
   --color-accent-green: #239083;   /* Secondary accent */
-  --color-navy: #203170;           /* Dark accent */
   --color-gray-100: #F7F7F7;       /* Light backgrounds */
-  --color-gray-warm: #F9F6F1;      /* Warm backgrounds */
   --color-gray-200: #C6C6C6;       /* Borders */
-  --color-gray-300: #B2B2B2;       /* Disabled text */
   --color-gray-400: #706F6F;       /* Secondary text */
 
   /* Layout */
   --container-max-width: 1400px;
-  --container-padding: 20px;
   --header-height: 88px;
   --mobile-header-height: 52px;
 
   /* Animation */
   --transition-fast: 150ms ease-out;
   --transition-normal: 250ms ease-out;
-  --transition-slow: 350ms ease-out;
 }
 ```
 
-### Tailwind Integration
-
-Tailwind CSS 4 is configured via `@tailwindcss/postcss`. The `@theme inline` directive exposes CSS variables to Tailwind:
-
-```css
-@theme inline {
-  --color-ink: #1D1D1B;
-  --color-primary: #215388;
-  /* ... */
-}
-```
-
-Usage in components:
+### Tailwind Usage
 
 ```tsx
-// Using design tokens
+// Design token reference
 <div className="bg-[var(--color-primary)]">
 
-// Using Tailwind with hardcoded values (when matching Figma)
+// Direct hex (when matching Figma exactly)
 <div className="bg-[#215388]">
 
-// Using predefined classes
-<div className="container">  // Applies max-width + padding
-```
-
-### Animation Patterns
-
-#### Framer Motion (Complex Animations)
-
-```tsx
-import { motion, useScroll, useTransform } from "framer-motion";
-
-// Scroll-based animation
-const { scrollYProgress } = useScroll({ target: ref });
-const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-<motion.div style={{ opacity }}>
-```
-
-#### CSS Animations (Simple Transitions)
-
-```tsx
-<div className="animate-fade-in">
-<div className="animate-slide-up">
+// Predefined utility class
+<div className="container">
 ```
 
 ### RTL Support
 
-The site is Hebrew (RTL). Key patterns:
-
-```tsx
-// Root direction
-<html dir="rtl">
-
-// Component-level override
-<div dir="rtl" className="text-right">
-
-// Logical properties
-className="margin-inline-start-4"  // Instead of margin-left
-```
+- Root `dir="rtl"` on `<html>`
+- Logical properties for margins/padding
+- Flex/grid auto-reverse in RTL context
 
 ## Content Management
 
-All user-facing text is centralized in `src/content/he.ts`:
+All user-facing Hebrew text in `src/content/he.ts`:
 
 ```typescript
 export const siteContent = {
   meta: { title: "...", description: "..." },
-  nav: { items: [...], cta: "..." },
-  hero: { title: "...", subtitle: "..." },
+  nav: { items: [...] },
+  hero: { title: "...", cta: "..." },
+  questionnaireV2: { steps: [...], navigation: {...} },
   // ... all sections
 };
-
-// Type exports for TypeScript
-export type SiteContent = typeof siteContent;
 ```
 
-Usage in components:
-
+Access in components:
 ```tsx
 import { siteContent } from "@/content/he";
-
-const { hero } = siteContent;
-<h1>{hero.title}</h1>
-```
-
-## Configuration Files
-
-### `next.config.ts`
-
-Minimal Next.js configuration:
-
-```typescript
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {};
-
-export default nextConfig;
-```
-
-### `tsconfig.json`
-
-TypeScript with strict mode and path aliases:
-
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
-
-### `postcss.config.mjs`
-
-PostCSS with Tailwind CSS 4:
-
-```javascript
-const config = {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  },
-};
-export default config;
-```
-
-### `eslint.config.mjs`
-
-ESLint 9 with Next.js config:
-
-```javascript
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const compat = new FlatCompat({ baseDirectory: __dirname });
-
-const eslintConfig = [...compat.extends("next/core-web-vitals")];
-
-export default eslintConfig;
+const { hero, questionnaireV2 } = siteContent;
 ```
 
 ## Best Practices
 
 ### Component Guidelines
 
-1. **Keep components under 200 lines** - Extract sub-components when growing
-2. **Use barrel exports** - Each component folder has `index.ts`
-3. **Prefer existing components** - Check `shared/` before creating new
-4. **Client components only when needed** - Use `"use client"` directive
+1. Keep components under 200 lines
+2. Use barrel exports (`index.ts`) per folder
+3. Check `shared/` before creating new components
+4. Mark client components with `"use client"`
+
+### Service Guidelines
+
+1. All API calls through services layer
+2. Type all request/response data
+3. Handle errors consistently
+4. Return typed responses
 
 ### Styling Guidelines
 
-1. **Use design tokens** - Reference CSS variables, not magic numbers
-2. **Tailwind for layout** - Use utility classes for spacing, flex, grid
-3. **RTL-aware** - Use logical properties when possible
-
-### Content Guidelines
-
-1. **Centralize text** - All strings in `content/he.ts`
-2. **Type exports** - Export types for content structures
-3. **Match Figma labels** - Keep content keys aligned with design
+1. Use design tokens from `globals.css`
+2. Tailwind for layout utilities
+3. RTL-aware logical properties
+4. Match Figma specifications exactly

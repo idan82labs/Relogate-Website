@@ -17,7 +17,7 @@ This guide covers setting up your development environment, working with Figma de
 - Node.js 18+
 - npm 9+
 - Git
-- Claude Code CLI (for AI-assisted development with Figma MCP)
+- Claude Code CLI (for AI-assisted development)
 
 ### Installation
 
@@ -39,12 +39,18 @@ npm run dev
 
 ```
 main                 # Production-ready code
-├── mobile_dev       # Mobile development integration
-├── alex_dev         # Development integration
-└── feature/*        # Feature branches
-    fix/*            # Bug fix branches
-    docs/*           # Documentation branches
+└── dev              # Development integration
+    ├── feature/*    # New features (feature/add-user-profile)
+    ├── fix/*        # Bug fixes (fix/login-validation)
+    └── chore/*      # Maintenance (chore/update-deps)
 ```
+
+**Workflow:**
+1. Create branch from `dev`: `git checkout -b feature/my-feature dev`
+2. Make changes and commit
+3. Push and create PR to `dev`
+4. After review, merge to `dev`
+5. Periodic releases: merge `dev` to `main`
 
 ### Running the Dev Server
 
@@ -75,177 +81,134 @@ npm run lint
 
 ### Overview
 
-This project uses a design-to-code workflow with Figma as the source of truth. The Claude agent automatically manages a local cache of Figma screenshots and metadata using MCP tools.
+This project uses Figma as the design source of truth. Screenshots are cached locally to reduce API calls.
 
-**No manual token setup or scripts required** - Figma MCP authentication is handled through Claude Code settings.
+### Figma Cache Setup
+
+```bash
+# Set your Figma Personal Access Token
+export FIGMA_TOKEN="your-token-here"
+
+# Cache all designs (run once, then as needed)
+npm run figma:cache -- --all
+
+# List available designs
+npm run figma:cache -- --list
+```
 
 ### Figma URLs
 
 Design references are stored in `docs/design/figma_urls.md`:
 
 ```markdown
-mobile header without: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=270-1598
-mobile HP2: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=276-4579
-HP Relogate: https://www.figma.com/design/9iC5uUB.../Relogate?node-id=167-1882
+## Homepage
+### Mobile
+- mobile HP1: https://www.figma.com/design/.../Relogate?node-id=265-683
+- mobile HP2: https://www.figma.com/design/.../Relogate?node-id=276-4579
+
+### Desktop
+- HP Relogate: https://www.figma.com/design/.../Relogate?node-id=167-1882
 ```
 
-### Agent-Managed Cache
+### Cache Structure
 
-The Claude agent automatically:
-
-1. Checks if a cached screenshot exists in `docs/design/figma_cache/<slug>/`
-2. If cached: Uses the local image (no API call)
-3. If not cached: Fetches via Figma MCP and saves to cache
-
-Cache structure:
 ```
 docs/design/figma_cache/
 └── <slug>/
-    ├── meta.json         # Metadata (url, nodeId, label)
-    ├── render@2x.png     # Screenshot at 2x scale
-    └── design_context.md # Optional: MCP design context
+    ├── meta.json         # Metadata
+    └── render@2x.png     # Screenshot at 2x scale
 ```
 
-### Figma-to-Code Workflow
-
-1. **Find the design**: Look up the relevant frame in `docs/design/figma_urls.md`
-
-2. **Ask Claude**: Reference the design by label:
-   ```
-   "Implement the mobile HP2 design from Figma"
-   ```
-
-3. **Claude handles caching**: The agent checks cache, fetches if needed, and uses the screenshot for implementation
-
-4. **Implement**: Claude matches colors, spacing, typography from the design
-
 ### Design Token Mapping
-
-When implementing designs, map Figma values to CSS tokens:
 
 | Figma Color | CSS Variable |
 |-------------|--------------|
 | `#1D1D1B` | `--color-ink` |
 | `#215388` | `--color-primary` |
 | `#239083` | `--color-accent-green` |
-| `#203170` | `--color-navy` |
 | `#F7F7F7` | `--color-gray-100` |
-| `#F9F6F1` | `--color-gray-warm` |
+| `#C6C6C6` | `--color-gray-200` |
+| `#706F6F` | `--color-gray-400` |
 
 ## Claude Code Setup
 
 ### What is Claude Code?
 
-Claude Code is Anthropic's AI coding assistant CLI. This project includes agent memory files that help Claude understand the codebase context.
-
-### Installation
-
-```bash
-# Install Claude Code globally
-npm install -g @anthropic-ai/claude-code
-
-# Or use npx
-npx @anthropic-ai/claude-code
-```
+Claude Code is Anthropic's AI coding assistant CLI that understands project context through CLAUDE.md files.
 
 ### Agent Memory Structure
 
-The `.claude/` directory contains agent context:
-
 ```
 .claude/
-├── CLAUDE.md              # Main agent memory
-│   ├── Stack Summary      # Tech stack overview
-│   ├── Commands           # Available npm scripts
-│   ├── Repo Structure     # Directory layout
-│   ├── Rules of Engagement # Coding guidelines
-│   ├── Figma Workflow     # Design integration
-│   └── Design Tokens      # Color/spacing values
-│
+├── CLAUDE.md              # Main context (loaded automatically)
 └── rules/                 # Domain-specific rules
     ├── design/
-    │   └── figma.md       # Figma workflow rules
+    │   ├── figma.md       # Figma workflow
+    │   └── visual-verification.md
     └── frontend/
-        ├── styling.md     # Styling guidelines
-        ├── typescript.md  # TS patterns
+        ├── nextjs.md      # Next.js patterns
+        ├── styling.md     # Tailwind/CSS
+        ├── typescript.md  # TypeScript rules
         └── testing.md     # Test guidance
 ```
 
-### Using Claude Code with This Project
+### Using Claude Code
 
-1. **Start Claude Code in the project root**:
+1. **Start Claude Code**:
    ```bash
    cd Relogate-Website
    claude
    ```
 
-2. **Claude automatically loads**:
-   - `.claude/CLAUDE.md` - Main context
-   - `.claude/rules/**/*.md` - All rule files
-
-3. **Working with Figma**:
-
-   Claude Code has access to Figma MCP tools:
+2. **Effective prompts**:
    ```
-   mcp__figma__get_screenshot    # Render node as image
-   mcp__figma__get_design_context # Get layout/styling hints
-   mcp__figma__get_metadata      # Get node structure
-   ```
+   # Specific and actionable
+   "Implement the mobile header matching docs/design/figma_cache/mobile-header/render@2x.png"
 
-   The agent automatically manages the cache - checking local files before calling MCP.
+   # Reference existing patterns
+   "Add a new step to the questionnaire following the pattern in QuestionnaireLayout.tsx"
 
-4. **Example prompts**:
-   ```
-   "Implement the mobile header from Figma"
-   "Fix the scroll animation in BannerToInfoTransition"
-   "Add a new FAQ item matching the existing pattern"
+   # Ask for exploration first
+   "Read the services/auth.ts file and explain how authentication works"
    ```
 
-### Best Practices with Claude Code
-
-1. **Reference Figma URLs**: Point to specific frames:
+3. **Plan before coding** (for complex tasks):
    ```
-   "Implement the design from docs/design/figma_urls.md - HP Relogate"
+   "Create a plan for implementing user profile editing"
    ```
 
-2. **Request small changes**:
-   ```
-   "Update just the button color to match the primary token"
-   ```
+### Visual Verification
 
-3. **Verify builds**:
-   ```
-   "Run npm run build after making changes"
-   ```
+After implementing UI changes, verify with screenshots:
 
-### Configuring MCP for Figma
+```bash
+# Take screenshot at mobile resolution
+npx playwright screenshot --viewport-size=375,812 --wait-for-timeout=1000 \
+  http://localhost:3000/questionnaire docs/design/verify/questionnaire-mobile.png
 
-To use Figma MCP tools, configure your Claude Code MCP settings:
-
-1. Create or edit `~/.claude/mcp.json` (or use Claude Code's MCP settings)
-
-2. Add the Figma MCP server configuration
-
-3. Restart Claude Code to load the MCP server
-
-4. Verify Figma tools are available:
-   ```
-   /mcp
-   ```
+# Compare with Figma cache
+# Read both images in Claude to compare
+```
 
 ## Common Tasks
 
 ### Adding a New Component
 
-1. Determine if desktop, mobile, or shared
-2. Create component file in appropriate directory
+1. Determine location: `desktop/`, `mobile/`, `shared/`, or `questionnaire/`
+2. Create component file
 3. Add to barrel export (`index.ts`)
-4. Import in page or parent component
+4. Import where needed
 
 ```tsx
 // src/components/shared/NewComponent.tsx
-export const NewComponent = ({ children }) => {
-  return <div>{children}</div>;
+"use client";
+
+interface NewComponentProps {
+  children: React.ReactNode;
+}
+
+export const NewComponent = ({ children }: NewComponentProps) => {
+  return <div className="...">{children}</div>;
 };
 
 // src/components/shared/index.ts
@@ -254,11 +217,10 @@ export { NewComponent } from './NewComponent';
 
 ### Adding New Content
 
-All text goes in `src/content/he.ts`:
+All Hebrew text goes in `src/content/he.ts`:
 
 ```typescript
 export const siteContent = {
-  // Add new section
   newSection: {
     title: "כותרת חדשה",
     description: "תיאור...",
@@ -266,65 +228,87 @@ export const siteContent = {
 };
 ```
 
-### Creating a New Page Section
+### Working with Services
 
-1. Create component in `src/components/desktop/` or `src/components/mobile/`
-2. Import content from `src/content/he.ts`
-3. Add to page.tsx in correct order
-4. Style using existing design tokens
+API calls go through the services layer:
 
-### Implementing a Figma Design
+```typescript
+// src/services/my-service.ts
+import { apiClient } from './api';
 
-1. Find the URL in `docs/design/figma_urls.md`
-2. Ask Claude to implement:
-   ```
-   "Implement the mobile HP3 design from Figma"
-   ```
-3. Claude will check cache, fetch if needed, and implement
+export async function fetchData() {
+  return apiClient.get('/endpoint');
+}
 
-### Debugging Scroll Animations
+// Usage in component
+import { fetchData } from '@/services/my-service';
 
-The `BannerToInfoTransition` component uses scroll-based animations:
-
-```tsx
-const { scrollYProgress } = useScroll({
-  target: sectionRef,
-  offset: ["start center", "end end"]
-});
-
-const value = useTransform(
-  scrollYProgress,
-  [0, 0.5, 1],      // Input range (scroll progress)
-  [100, 50, 0]      // Output range (animated value)
-);
+useEffect(() => {
+  fetchData().then(setData);
+}, []);
 ```
 
-Key parameters:
-- `offset`: When animation starts/ends relative to viewport
-- `useTransform`: Maps scroll progress to animated values
-- Container height: Controls total scroll distance
+### Adding a New Route
+
+1. Create folder in `src/app/`
+2. Add `page.tsx`
+3. Optionally add `layout.tsx` for shared UI
+
+```tsx
+// src/app/new-route/page.tsx
+"use client";
+
+export default function NewPage() {
+  return <div>New Page</div>;
+}
+```
+
+### Working with the Questionnaire
+
+The V2 questionnaire uses:
+- `QuestionnaireLayout`: Responsive wrapper
+- `QuestionnaireProgress`: Step indicator
+- `QuestionnaireNavigation`: Back/Continue buttons
+- `steps/`: Individual step components
+
+To add a new step:
+1. Create step component in `components/questionnaire/steps/`
+2. Add step config in `steps/types.ts`
+3. Register in the step flow
 
 ## Troubleshooting
 
 ### Build Errors
 
 **TypeScript errors**
-- Check for missing types
-- Run `npm run lint` for hints
+- Run `npm run lint` for specific issues
+- Check import paths use `@/` alias
 
 **Missing dependencies**
-- Delete `node_modules` and reinstall:
-  ```bash
-  rm -rf node_modules
-  npm install
-  ```
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Development Server Issues
+
+**Port already in use**
+```bash
+npx kill-port 3000
+npm run dev
+```
+
+**Hot reload not working**
+- Check for syntax errors in edited file
+- Restart dev server
 
 ### Claude Code Issues
 
-**MCP tools not available**
-- Check MCP configuration
-- Restart Claude Code
+**Context seems wrong**
+- Ensure you're in project root
+- Check `.claude/CLAUDE.md` exists
+- Use `/clear` to reset context
 
-**Agent doesn't know project context**
-- Ensure you're in the project root directory
-- Check that `.claude/CLAUDE.md` exists
+**MCP tools not available**
+- Check MCP configuration in Claude Code settings
+- Restart Claude Code

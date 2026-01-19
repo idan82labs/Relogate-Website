@@ -1,6 +1,6 @@
-# Relogate Marketing Website
+# Relogate Website
 
-Marketing website for Relogate - an international company helping people relocate abroad.
+Relocation assistance platform helping users find their ideal destination country through personalized assessments and AI-generated reports.
 
 ## Tech Stack
 
@@ -35,41 +35,71 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Main page with mobile/desktop detection
-│   ├── layout.tsx         # Root layout with fonts
-│   └── globals.css        # Design tokens & global styles
+├── app/                        # Next.js App Router
+│   ├── page.tsx                # Homepage with mobile/desktop detection
+│   ├── layout.tsx              # Root layout with fonts
+│   ├── globals.css             # Design tokens & global styles
+│   ├── providers.tsx           # React context providers
+│   ├── questionnaire/          # Questionnaire flow (v1 & v2)
+│   ├── personal-area/          # User dashboard & reports
+│   ├── admin/                  # Admin interface
+│   ├── login/                  # Authentication
+│   ├── register/               # User registration
+│   └── api/                    # API routes
 ├── components/
-│   ├── desktop/           # Desktop-specific components
-│   ├── mobile/            # Mobile-specific components
-│   └── shared/            # Reusable UI components
+│   ├── desktop/                # Desktop-specific components
+│   ├── mobile/                 # Mobile-specific components
+│   ├── shared/                 # Reusable UI components
+│   └── questionnaire/          # V2 questionnaire components
+├── contexts/                   # React context providers
+├── hooks/                      # Custom React hooks
+├── services/                   # API integration & business logic
+├── types/                      # TypeScript type definitions
+├── utils/                      # Utility functions
+├── lib/                        # Shared libraries
 └── content/
-    └── he.ts              # Hebrew content (all user-facing text)
+    └── he.ts                   # Hebrew content (all user-facing text)
 
 docs/
-├── ARCHITECTURE.md        # Codebase architecture documentation
-├── DEVELOPER_GUIDE.md     # Setup guide for developers
+├── ARCHITECTURE.md             # Codebase architecture
+├── DEVELOPER_GUIDE.md          # Developer setup guide
 └── design/
-    ├── figma_urls.md      # Source of truth for Figma links
-    └── figma_cache/       # Cached Figma screenshots & metadata
+    ├── figma_urls.md           # Figma design links
+    └── figma_cache/            # Cached design screenshots
 
-.claude/                   # Claude Code agent memory
-├── CLAUDE.md             # Main agent context
-└── rules/                # Domain-specific rules
+.claude/                        # Claude Code agent configuration
+├── CLAUDE.md                   # Main agent context
+└── rules/                      # Domain-specific rules
 ```
 
 ## Key Features
 
-- **RTL Support**: Site is in Hebrew with full RTL layout support
+### Marketing Site
+- **RTL Support**: Hebrew language with full RTL layout
 - **Responsive Design**: Separate mobile and desktop experiences
 - **Splash Screen**: Animated intro for first-time visitors
-- **Scroll Animations**: Framer Motion-powered scroll interactions
-- **Figma Integration**: Agent-managed design cache (no manual scripts needed)
+- **Scroll Animations**: Framer Motion-powered interactions
+
+### Questionnaire System
+- **V1 Questionnaire**: Original multi-step flow
+- **V2 Questionnaire**: Enhanced workflow with improved UX
+- **Progress Tracking**: Visual step indicators
+- **Data Persistence**: Session-based state management
+
+### User Features
+- **Authentication**: Login/registration with session management
+- **Personal Area**: User dashboard with report access
+- **Report Viewer**: AI-generated country recommendations
+
+### Admin Interface
+- **Report Management**: Create, edit, preview reports
+- **Response Editor**: Manage AI-generated responses
+- **User Management**: Admin-only access control
 
 ## Documentation
 
-- [Architecture Overview](docs/ARCHITECTURE.md) - Codebase structure, components, styling
-- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Setup, Figma workflow, Claude Code usage
+- [Architecture Overview](docs/ARCHITECTURE.md) - Codebase structure, components, data flow
+- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Setup, workflows, Claude Code usage
 
 ## Scripts
 
@@ -82,16 +112,24 @@ docs/
 
 ## Design Resources
 
-Figma designs are tracked in `docs/design/figma_urls.md`. The Claude agent automatically manages the design cache using Figma MCP tools - no manual token setup or scripts required.
+Figma designs are tracked in `docs/design/figma_urls.md`. To populate the design cache:
+
+```bash
+# Set your Figma token
+export FIGMA_TOKEN="your-token"
+
+# Cache all designs
+npm run figma:cache -- --all
+```
 
 See [Developer Guide](docs/DEVELOPER_GUIDE.md) for detailed Figma workflow.
 
 ## Contributing
 
-1. Create a feature branch from `main`
+1. Create a feature branch from `dev` (`feature/description` or `fix/description`)
 2. Make changes following existing patterns
-3. Ensure `npm run build` passes
-4. Submit a pull request
+3. Ensure `npm run build` and `npm run lint` pass
+4. Submit a pull request to `dev`
 
 ## License
 
