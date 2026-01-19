@@ -386,4 +386,3 @@ export const MobileResultsPage = ({
   );
 };
 
-export default MobileResultsPage;

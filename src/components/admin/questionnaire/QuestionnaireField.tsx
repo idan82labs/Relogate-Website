@@ -100,4 +100,3 @@ export function QuestionnaireField({ label, value, className = "" }: Questionnai
   );
 }
 
-export default QuestionnaireField;

@@ -240,4 +240,3 @@ export const MobilePersonalArea = () => {
   );
 };
 
-export default MobilePersonalArea;

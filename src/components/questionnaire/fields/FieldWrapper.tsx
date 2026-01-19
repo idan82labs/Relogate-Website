@@ -80,4 +80,3 @@ export function FieldWrapper({
   );
 }
 
-export default FieldWrapper;

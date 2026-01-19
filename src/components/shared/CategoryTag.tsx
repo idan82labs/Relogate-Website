@@ -41,4 +41,3 @@ export const CategoryTag = ({
   );
 };
 
-export default CategoryTag;

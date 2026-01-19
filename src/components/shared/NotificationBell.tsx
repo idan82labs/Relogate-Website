@@ -263,4 +263,3 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
   );
 }
 
-export default NotificationBell;

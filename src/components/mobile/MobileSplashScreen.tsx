@@ -90,4 +90,3 @@ export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
   );
 };
 
-export default MobileSplashScreen;

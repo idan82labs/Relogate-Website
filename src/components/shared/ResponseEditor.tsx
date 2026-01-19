@@ -685,4 +685,3 @@ export function ResponseEditor({
 
 ResponseEditor.displayName = "ResponseEditor";
 
-export default ResponseEditor;

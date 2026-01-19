@@ -275,4 +275,3 @@ const ScrollCard = ({ card, progress }: ScrollCardProps) => {
   );
 };
 
-export default WelcomeIntro;

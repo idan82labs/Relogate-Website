@@ -62,4 +62,3 @@ export const QuestionProgress = ({
   );
 };
 
-export default QuestionProgress;

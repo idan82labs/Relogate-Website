@@ -101,4 +101,3 @@ export function PreferencesSection({ responses }: PreferencesSectionProps) {
   );
 }
 
-export default PreferencesSection;

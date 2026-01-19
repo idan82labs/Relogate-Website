@@ -136,4 +136,3 @@ export function RadioGroupField({
   );
 }
 
-export default RadioGroupField;

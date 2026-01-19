@@ -56,4 +56,3 @@ export function CitizenshipSection({
   );
 }
 
-export default CitizenshipSection;

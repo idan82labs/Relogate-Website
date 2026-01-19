@@ -99,4 +99,3 @@ export function QuestionnaireSection({
   );
 }
 
-export default QuestionnaireSection;

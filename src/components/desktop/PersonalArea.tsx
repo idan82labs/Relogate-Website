@@ -240,4 +240,3 @@ export const PersonalArea = () => {
   );
 };
 
-export default PersonalArea;

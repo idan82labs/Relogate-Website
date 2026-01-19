@@ -290,4 +290,3 @@ export function QuestionnaireLayout({
   return isMobile ? <MobileLayout {...props} /> : <DesktopLayout {...props} />;
 }
 
-export default QuestionnaireLayout;

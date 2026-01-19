@@ -119,4 +119,3 @@ export const StepCard = ({ icon, title, className = "" }: StepCardProps) => {
   );
 };
 
-export default StepCard;

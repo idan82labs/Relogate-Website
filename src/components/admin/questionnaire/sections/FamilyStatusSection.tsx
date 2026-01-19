@@ -89,4 +89,3 @@ export function FamilyStatusSection({
   );
 }
 
-export default FamilyStatusSection;

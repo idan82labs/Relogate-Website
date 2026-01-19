@@ -185,4 +185,3 @@ export function UserQuestionnaireView({
   );
 }
 
-export default UserQuestionnaireView;

@@ -167,4 +167,3 @@ export const MobileHowItWorks = () => {
   );
 };
 
-export default MobileHowItWorks;

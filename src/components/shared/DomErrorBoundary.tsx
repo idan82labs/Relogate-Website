@@ -61,4 +61,3 @@ export class DomErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default DomErrorBoundary;

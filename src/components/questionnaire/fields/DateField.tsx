@@ -108,4 +108,3 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldProps>(
 
 DateField.displayName = "DateField";
 
-export default DateField;

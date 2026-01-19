@@ -55,4 +55,3 @@ export const MobileFooter = () => {
   );
 };
 
-export default MobileFooter;

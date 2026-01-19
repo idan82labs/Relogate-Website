@@ -102,4 +102,3 @@ export const QuestionnaireLanding = () => {
   );
 };
 
-export default QuestionnaireLanding;

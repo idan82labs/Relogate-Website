@@ -107,4 +107,3 @@ export const Icon = ({ name, size = 24, className = "" }: IconProps) => {
   );
 };
 
-export default Icon;

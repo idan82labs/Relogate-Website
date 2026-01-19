@@ -38,5 +38,4 @@ export const GlobeWatermark = ({
   );
 };
 
-export default GlobeWatermark;
 

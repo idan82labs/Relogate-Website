@@ -168,4 +168,3 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   );
 };
 
-export default LoginForm;

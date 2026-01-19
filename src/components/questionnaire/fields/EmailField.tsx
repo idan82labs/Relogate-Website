@@ -101,4 +101,3 @@ export const EmailField = forwardRef<HTMLInputElement, EmailFieldProps>(
 
 EmailField.displayName = "EmailField";
 
-export default EmailField;

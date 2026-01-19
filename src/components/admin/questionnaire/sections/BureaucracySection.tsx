@@ -45,4 +45,3 @@ export function BureaucracySection({ responses }: BureaucracySectionProps) {
   );
 }
 
-export default BureaucracySection;

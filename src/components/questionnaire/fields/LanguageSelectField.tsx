@@ -272,4 +272,3 @@ export function LanguageSelectField({
   );
 }
 
-export default LanguageSelectField;

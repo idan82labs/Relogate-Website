@@ -308,4 +308,3 @@ export function ImageUpload({
 
 ImageUpload.displayName = "ImageUpload";
 
-export default ImageUpload;

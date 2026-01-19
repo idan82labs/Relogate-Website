@@ -215,4 +215,3 @@ export function MultiSelectField({
   );
 }
 
-export default MultiSelectField;

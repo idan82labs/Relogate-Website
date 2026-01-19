@@ -74,4 +74,3 @@ export function PersonalDetailsSection({
   );
 }
 
-export default PersonalDetailsSection;

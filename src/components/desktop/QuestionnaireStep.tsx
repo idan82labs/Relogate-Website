@@ -189,4 +189,3 @@ export const QuestionnaireStep = ({
   );
 };
 
-export default QuestionnaireStep;

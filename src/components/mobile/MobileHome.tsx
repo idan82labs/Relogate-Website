@@ -173,4 +173,3 @@ export const MobileHome = () => {
   );
 };
 
-export default MobileHome;

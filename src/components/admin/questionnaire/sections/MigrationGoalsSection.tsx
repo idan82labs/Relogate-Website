@@ -81,4 +81,3 @@ export function MigrationGoalsSection({
   );
 }
 
-export default MigrationGoalsSection;

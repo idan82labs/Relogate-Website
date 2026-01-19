@@ -47,4 +47,3 @@ export function StudiesInvestmentsSection({
   );
 }
 
-export default StudiesInvestmentsSection;

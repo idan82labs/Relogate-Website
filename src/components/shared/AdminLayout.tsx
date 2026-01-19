@@ -121,4 +121,3 @@ export function AdminLayout({ children, activeTab }: AdminLayoutProps) {
   );
 }
 
-export default AdminLayout;

@@ -46,4 +46,3 @@ export function QuestionnaireStatusBadge({
   );
 }
 
-export default QuestionnaireStatusBadge;

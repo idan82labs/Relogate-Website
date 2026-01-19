@@ -50,4 +50,3 @@ export const Stars = ({ rating, maxRating = 5, size = "md", color = "gold" }: St
   );
 };
 
-export default Stars;

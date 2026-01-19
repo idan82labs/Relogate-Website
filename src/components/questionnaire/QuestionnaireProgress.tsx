@@ -98,4 +98,3 @@ export function QuestionnaireProgress({
   );
 }
 
-export default QuestionnaireProgress;

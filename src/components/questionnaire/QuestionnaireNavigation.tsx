@@ -167,4 +167,3 @@ export function QuestionnaireNavigation({
   );
 }
 
-export default QuestionnaireNavigation;

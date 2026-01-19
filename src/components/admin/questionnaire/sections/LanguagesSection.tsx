@@ -35,4 +35,3 @@ export function LanguagesSection({ responses }: LanguagesSectionProps) {
   );
 }
 
-export default LanguagesSection;

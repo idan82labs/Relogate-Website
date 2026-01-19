@@ -104,4 +104,3 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps>(
 
 PhoneField.displayName = "PhoneField";
 
-export default PhoneField;

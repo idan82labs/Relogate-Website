@@ -369,4 +369,3 @@ export function SectionListEditor({
 SectionEditor.displayName = "SectionEditor";
 SectionListEditor.displayName = "SectionListEditor";
 
-export default SectionEditor;

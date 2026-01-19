@@ -402,4 +402,3 @@ function ToolbarButton({
 
 MarkdownEditor.displayName = "MarkdownEditor";
 
-export default MarkdownEditor;

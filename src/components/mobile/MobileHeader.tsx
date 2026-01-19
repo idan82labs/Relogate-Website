@@ -178,4 +178,3 @@ export const MobileHeader = () => {
   );
 };
 
-export default MobileHeader;

@@ -157,4 +157,3 @@ export function CheckboxField({
   );
 }
 
-export default CheckboxField;

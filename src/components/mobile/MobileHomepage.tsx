@@ -330,4 +330,3 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
   );
 };
 
-export default MobileHomepage;

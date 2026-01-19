@@ -201,4 +201,3 @@ export const BannerToInfoTransition = () => {
   );
 };
 
-export default BannerToInfoTransition;

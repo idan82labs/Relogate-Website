@@ -67,4 +67,3 @@ export function IncomeSection({ responses }: IncomeSectionProps) {
   );
 }
 
-export default IncomeSection;

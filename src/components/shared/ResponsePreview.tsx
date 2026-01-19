@@ -253,4 +253,3 @@ function NarrativeSection({ icon, title, content }: NarrativeSectionProps) {
 
 ResponsePreview.displayName = "ResponsePreview";
 
-export default ResponsePreview;

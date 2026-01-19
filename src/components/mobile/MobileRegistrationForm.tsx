@@ -252,4 +252,3 @@ export const MobileRegistrationForm = ({
   );
 };
 
-export default MobileRegistrationForm;

@@ -101,4 +101,3 @@ export const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
   );
 };
 
-export default Accordion;

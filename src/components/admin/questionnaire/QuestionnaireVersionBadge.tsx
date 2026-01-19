@@ -54,4 +54,3 @@ export function QuestionnaireVersionBadge({
   );
 }
 
-export default QuestionnaireVersionBadge;

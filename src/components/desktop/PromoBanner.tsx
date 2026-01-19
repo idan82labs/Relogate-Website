@@ -43,4 +43,3 @@ export const PromoBanner = () => {
   );
 };
 
-export default PromoBanner;

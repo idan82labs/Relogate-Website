@@ -75,4 +75,3 @@ export const CountrySelector = ({
   );
 };
 
-export default CountrySelector;

@@ -80,4 +80,3 @@ export function EmploymentSection({ responses }: EmploymentSectionProps) {
   );
 }
 
-export default EmploymentSection;

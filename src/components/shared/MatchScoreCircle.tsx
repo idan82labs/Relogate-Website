@@ -74,4 +74,3 @@ export const MatchScoreCircle = ({
   );
 };
 
-export default MatchScoreCircle;
