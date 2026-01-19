@@ -1,0 +1,10 @@
+export { PersonalDetailsSection } from "./PersonalDetailsSection";
+export { FamilyStatusSection } from "./FamilyStatusSection";
+export { MigrationGoalsSection } from "./MigrationGoalsSection";
+export { CitizenshipSection } from "./CitizenshipSection";
+export { EmploymentSection } from "./EmploymentSection";
+export { IncomeSection } from "./IncomeSection";
+export { LanguagesSection } from "./LanguagesSection";
+export { PreferencesSection } from "./PreferencesSection";
+export { BureaucracySection } from "./BureaucracySection";
+export { StudiesInvestmentsSection } from "./StudiesInvestmentsSection";
