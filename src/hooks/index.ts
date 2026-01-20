@@ -1,0 +1,1 @@
+export { useHeroAnimation } from './useHeroAnimation';

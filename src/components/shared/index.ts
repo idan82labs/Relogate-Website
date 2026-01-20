@@ -22,3 +22,5 @@ export { SectionEditor, SectionListEditor } from "./SectionEditor";
 export { ResponseEditor } from "./ResponseEditor";
 export { ResponsePreview } from "./ResponsePreview";
 export { DomErrorBoundary } from "./DomErrorBoundary";
+export { QuestionnaireAnswersDisplay } from "./QuestionnaireAnswersDisplay";
+export { HeroImageGrid } from "./HeroImageGrid";

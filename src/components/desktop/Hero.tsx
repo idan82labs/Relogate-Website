@@ -1,16 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteContent } from "@/content/he";
-import { Button, GlobeWatermark } from "@/components/shared";
+import { Button, GlobeWatermark, HeroImageGrid } from "@/components/shared";
 import { useAuth } from "@/contexts";
+import { useHeroAnimation } from "@/hooks";
 
 export const Hero = () => {
   const router = useRouter();
   const { hero } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { currentSetIndex } = useHeroAnimation();
 
   const handleCtaClick = () => {
     if (hasCompletedOnboarding) {
@@ -57,83 +58,7 @@ export const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="order-2 lg:order-1"
           >
-            {/* 3-column masonry layout matching Figma (reversed for RTL) */}
-            <div className="flex gap-3">
-              {/* Column 3 - Right (appears first in RTL) */}
-              <div className="flex flex-col gap-3 flex-1">
-                {/* Couple - tall */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[198/265]">
-                  <Image
-                    src="/hero-1.jpg"
-                    alt="Happy couple"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 2 - Middle */}
-              <div className="flex flex-col gap-3 flex-1">
-                {/* Amsterdam bikes - short */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[200/162]">
-                  <Image
-                    src="/hero-2.jpg"
-                    alt="Amsterdam"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* Mother and son - tall */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[200/267]">
-                  <Image
-                    src="/hero-4.jpg"
-                    alt="Mother and son"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* London bus - short */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[216/157]">
-                  <Image
-                    src="/hero-6.jpg"
-                    alt="London"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 1 - Left (appears last in RTL) */}
-              <div className="flex flex-col gap-3 flex-1">
-                {/* Manhattan subway - tall */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[197/265]">
-                  <Image
-                    src="/hero-3.jpg"
-                    alt="Manhattan & Brooklyn"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* Family with kids - short */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[199/158]">
-                  <Image
-                    src="/hero-5.jpg"
-                    alt="Happy family"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* Elderly with dog - tall */}
-                <div className="relative rounded-[10px] overflow-hidden aspect-[197/265]">
-                  <Image
-                    src="/hero-7.jpg"
-                    alt="Senior with pet"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            </div>
+            <HeroImageGrid currentSetIndex={currentSetIndex} variant="desktop" />
           </motion.div>
         </div>
       </div>

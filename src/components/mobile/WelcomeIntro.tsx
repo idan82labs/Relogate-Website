@@ -32,10 +32,10 @@ interface ImageCard {
 
 const imageCards: ImageCard[] = [
   {
-    // Top-Left: Manhattan & Brooklyn subway sign
+    // Top-Left: Plants/interior
     id: "top-left",
-    src: "/hero-3.jpg",
-    alt: "Manhattan & Brooklyn",
+    src: "/hero/set1/1.jpg",
+    alt: "Scandinavian interior",
     left: "4%",
     top: "6%",
     width: "39%",
@@ -44,10 +44,10 @@ const imageCards: ImageCard[] = [
     startY: -80,
   },
   {
-    // Top-Right: Couple in Florence
+    // Top-Right: Woman with bike
     id: "top-right",
-    src: "/hero-1.jpg",
-    alt: "Couple traveling",
+    src: "/hero/set1/3.jpg",
+    alt: "Woman traveling",
     left: "56%",
     top: "3%",
     width: "39%",
@@ -56,10 +56,10 @@ const imageCards: ImageCard[] = [
     startY: -80,
   },
   {
-    // Middle-Center: Amsterdam bikes
+    // Middle-Center: Family selfie
     id: "middle-center",
-    src: "/hero-2.jpg",
-    alt: "Amsterdam",
+    src: "/hero/set1/2.jpg",
+    alt: "Happy family",
     left: "32%",
     top: "22%",
     width: "39%",
@@ -68,10 +68,10 @@ const imageCards: ImageCard[] = [
     startY: -120,
   },
   {
-    // Bottom-Left: Elderly woman with dog
+    // Bottom-Left: Yellow tram
     id: "bottom-left",
-    src: "/hero-7.jpg",
-    alt: "Senior with pet",
+    src: "/hero/set1/6.jpg",
+    alt: "Yellow tram",
     left: "13%",
     top: "63%",
     width: "39%",
@@ -80,10 +80,10 @@ const imageCards: ImageCard[] = [
     startY: 80,
   },
   {
-    // Bottom-Center: Family photo
+    // Bottom-Center: Woman selfie
     id: "bottom-center",
-    src: "/hero-5.jpg",
-    alt: "Happy family",
+    src: "/hero/set1/4.jpg",
+    alt: "Woman selfie",
     left: "36%",
     top: "55%",
     width: "39%",
@@ -92,10 +92,10 @@ const imageCards: ImageCard[] = [
     startY: 120,
   },
   {
-    // Bottom-Right: Mother & child at beach
+    // Bottom-Right: Couple with boxes
     id: "bottom-right",
-    src: "/hero-4.jpg",
-    alt: "Mother and child",
+    src: "/hero/set1/5.jpg",
+    alt: "Couple moving",
     left: "64%",
     top: "68%",
     width: "39%",

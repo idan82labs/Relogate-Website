@@ -1,14 +1,29 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { MobileHeader } from "./MobileHeader";
+import { MobileHowItWorks } from "./MobileHowItWorks";
 import { siteContent } from "@/content/he";
-import { Button, Card, Accordion } from "@/components/shared";
+import { Button, Accordion, HeroImageGrid } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { useAuth } from "@/contexts";
+import { useHeroAnimation } from "@/hooks";
+import { listPosts } from "@/services/blog";
+import type { BlogPostListItem } from "@/types/blog";
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const formatter = new Intl.DateTimeFormat("he-IL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return `פורסם ב${formatter.format(date)}`;
+}
 
 interface MobileHomepageProps {
   onComplete?: () => void;
@@ -20,9 +35,34 @@ interface MobileHomepageProps {
  */
 export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps) => {
   const router = useRouter();
-  const { hero, about, greenBanner, info, howItWorks, testimonials, articles, faq, contact } = siteContent;
+  const { hero, about, greenBanner, info, testimonials, articles, faq, contact } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { currentSetIndex } = useHeroAnimation();
   const testimonialsRef = useRef<HTMLDivElement>(null);
+  const [posts, setPosts] = useState<BlogPostListItem[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [currentArticleIndex, setCurrentArticleIndex] = useState(0);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const { data } = await listPosts({ contentType: "press", limit: 8 });
+      if (data?.posts) {
+        setPosts(data.posts);
+      }
+      setIsLoadingPosts(false);
+    }
+    fetchPosts();
+  }, []);
+
+  const scrollArticles = (direction: "prev" | "next") => {
+    if (posts.length === 0) return;
+
+    if (direction === "prev") {
+      setCurrentArticleIndex((prev) => (prev > 0 ? prev - 1 : posts.length - 1));
+    } else {
+      setCurrentArticleIndex((prev) => (prev < posts.length - 1 ? prev + 1 : 0));
+    }
+  };
 
   const handleCtaClick = () => {
     if (hasCompletedOnboarding) {
@@ -50,48 +90,19 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
 
       {/* Main Content */}
       <main className="pt-[52px]">
-        {/* Hero Section with Ribbon */}
+        {/* Hero Section with Image Grid */}
         <section className="relative px-4 pt-6">
-          {/* Globe Watermark */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none">
-            <Image src="/globe-watermark.svg" alt="" fill aria-hidden="true" />
+          {/* Hero Image Grid */}
+          <div className="mb-6">
+            <HeroImageGrid currentSetIndex={currentSetIndex} variant="mobile" />
           </div>
 
           {/* Hero Text */}
           <div className="relative z-10 text-right mb-6">
-            <h1 className="text-lg font-medium text-[#1D1D1B] mb-3">
-              {about.title}<br />
-              {about.subtitle}
+            <h1 className="text-[26px] font-medium text-[#1D1D1B] leading-tight mb-3">
+              {hero.title}<br />
+              {hero.subtitle}
             </h1>
-            <p className="text-sm text-[#1D1D1B] leading-relaxed whitespace-pre-line">
-              {about.description}
-            </p>
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex justify-end mb-6">
-            <Button size="sm" className="text-sm px-5 py-2.5" onClick={handleCtaClick}>
-              {ctaText}
-            </Button>
-          </div>
-
-          {/* Hero Image Card with Ribbon Overlay */}
-          <div className="relative rounded-[20px] overflow-hidden h-[268px] mb-8">
-            <Image
-              src="/about-image.jpg"
-              alt="Family enjoying life abroad"
-              fill
-              className="object-cover"
-            />
-
-            {/* Ribbon Banner - positioned at top of image, rounded top, square bottom */}
-            <div className="absolute top-0 left-0 right-0 z-10">
-              <div className="bg-[#239083] rounded-t-[20px] py-2.5 px-4 text-center">
-                <p className="text-white text-sm font-medium">
-                  {siteContent.hero.banner}
-                </p>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -99,7 +110,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         <section className="px-4 mb-8">
           <div className="relative rounded-[20px] overflow-hidden h-[811px]">
             <Image
-              src="/hero-5.jpg"
+              src="/hero/set1/5.jpg"
               alt="Relogate - International relocation"
               fill
               className="object-cover"
@@ -153,45 +164,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         </section>
 
         {/* How It Works Section */}
-        <section className="bg-[#F7F7F7] py-10 px-4 mb-0">
-          <h2 className="text-[26px] font-medium text-[#1D1D1B] text-center mb-8">
-            {howItWorks.title}
-          </h2>
-
-          <div className="space-y-5">
-            {howItWorks.steps.map((step) => (
-              <Card
-                key={step.number}
-                padding="md"
-                className="bg-white"
-              >
-                <div className="flex gap-4">
-                  {/* Step Number */}
-                  <p className="font-['Satoshi',sans-serif] text-[40px] text-[#215388] leading-none">
-                    {step.number}
-                  </p>
-
-                  <div className="flex-1 text-right">
-                    {/* Step Title */}
-                    <h3 className="text-2xl text-[#215388] mb-2">
-                      {step.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-sm text-[#1D1D1B] mb-3">
-                      {step.shortDescription}
-                    </p>
-
-                    {/* Read More Link */}
-                    <button className="text-[11px] font-semibold text-[#1D1D1B] underline">
-                      {step.readMore}
-                    </button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
+        <MobileHowItWorks />
 
         {/* Testimonials Section */}
         <section className="py-10 px-4">
@@ -251,10 +224,18 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
         <section className="px-4 mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex gap-2">
-              <button className="p-1" aria-label="Previous article">
+              <button
+                className="p-1"
+                aria-label="Previous article"
+                onClick={() => scrollArticles("prev")}
+              >
                 <Image src="/icons/arrow-left.svg" alt="" width={9} height={11} />
               </button>
-              <button className="p-1" aria-label="Next article">
+              <button
+                className="p-1"
+                aria-label="Next article"
+                onClick={() => scrollArticles("next")}
+              >
                 <Image src="/icons/arrow-right.svg" alt="" width={9} height={11} />
               </button>
             </div>
@@ -264,26 +245,42 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
           </div>
 
           {/* Article Card */}
-          <div className="relative rounded-[20px] overflow-hidden h-[450px]">
-            <Image
-              src={articles.items[0].image}
-              alt={articles.items[0].title}
-              fill
-              className="object-cover"
-            />
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(29,29,27,0.6)] to-transparent" />
+          {isLoadingPosts ? (
+            <div className="relative rounded-[20px] overflow-hidden h-[450px] bg-[#F7F7F7] animate-pulse" />
+          ) : posts.length > 0 ? (
+            <Link href={`/press/${posts[currentArticleIndex].slug}`}>
+              <motion.div
+                key={posts[currentArticleIndex].id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative rounded-[20px] overflow-hidden h-[450px] cursor-pointer"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
+                <img
+                  src={posts[currentArticleIndex].featuredImageUrl || "/images/blog/placeholder.jpg"}
+                  alt={posts[currentArticleIndex].title}
+                  className="w-full h-full object-cover"
+                />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(29,29,27,0.6)] to-transparent" />
 
-            {/* Article Info */}
-            <div className="absolute bottom-6 right-4 left-4 text-right">
-              <p className="text-white text-base leading-snug mb-2">
-                {articles.items[0].title}
-              </p>
-              <p className="text-white/80 text-xs">
-                {articles.items[0].date}
-              </p>
+                {/* Article Info */}
+                <div className="absolute bottom-6 right-4 left-4 text-right">
+                  <p className="text-white text-base leading-snug mb-2">
+                    {posts[currentArticleIndex].title}
+                  </p>
+                  <p className="text-white/80 text-xs">
+                    {formatDate(posts[currentArticleIndex].publishedAt)}
+                  </p>
+                </div>
+              </motion.div>
+            </Link>
+          ) : (
+            <div className="relative rounded-[20px] overflow-hidden h-[450px] bg-[#F7F7F7] flex items-center justify-center">
+              <p className="text-[#706F6F] text-sm">אין כתבות זמינות</p>
             </div>
-          </div>
+          )}
         </section>
 
         {/* FAQ Section */}
