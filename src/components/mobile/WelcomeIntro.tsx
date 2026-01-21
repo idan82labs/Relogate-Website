@@ -221,31 +221,32 @@ interface ScrollCardProps {
 
 const ScrollCard = ({ card, progress }: ScrollCardProps) => {
   // Transform scroll progress to card position
-  // Animation spans entire scroll (0 to 1) for continuous movement
-  // At progress 0: card is off-screen
-  // At progress 1: card reaches final position
+  // Animation completes at 60% scroll so images are fully visible before the end
+  // At progress 0: card is off-screen (but closer than before)
+  // At progress 0.6: card reaches final position
   const x = useTransform(
     progress,
-    [0, 1],
-    [`${card.startX}vw`, "0vw"]
+    [0, 0.6],
+    [`${card.startX * 0.5}vw`, "0vw"]
   );
 
   const y = useTransform(
     progress,
-    [0, 1],
-    [`${card.startY}vh`, "0vh"]
+    [0, 0.6],
+    [`${card.startY * 0.5}vh`, "0vh"]
   );
 
+  // Images become visible quickly (by 15% scroll)
   const opacity = useTransform(
     progress,
-    [0, 0.3],
+    [0, 0.15],
     [0, 1]
   );
 
   const scale = useTransform(
     progress,
-    [0, 1],
-    [0.8, 1]
+    [0, 0.6],
+    [0.85, 1]
   );
 
   return (
