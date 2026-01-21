@@ -19,25 +19,29 @@ import {
 } from "@/components/desktop";
 
 // Mobile components
-import { MobileSplashScreen, MobileHomepage } from "@/components/mobile";
+import { MobileSplashScreen, WelcomeIntro, MobileHomepage } from "@/components/mobile";
 
 const SPLASH_SEEN_KEY = "relogate_splash_seen";
+const WELCOME_SEEN_KEY = "relogate_welcome_seen";
 
 export default function Home() {
   // Combined client state to avoid multiple setState calls in useEffect
   const [clientState, setClientState] = useState<{
     isMobile: boolean;
     showSplash: boolean;
+    showWelcome: boolean;
   } | null>(null);
 
   // Initialize client-only state after hydration
   // This pattern is required for SSR apps - sessionStorage is only available on client
   useEffect(() => {
     const splashSeen = sessionStorage.getItem(SPLASH_SEEN_KEY) === "true";
+    const welcomeSeen = sessionStorage.getItem(WELCOME_SEEN_KEY) === "true";
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Required for SSR hydration with client-only sessionStorage
     setClientState({
       isMobile: window.innerWidth < 1024,
       showSplash: !splashSeen,
+      showWelcome: splashSeen && !welcomeSeen,
     });
 
     const handleResize = () => {
@@ -51,9 +55,15 @@ export default function Home() {
   }, []);
 
   const handleSplashComplete = () => {
-    // Mark splash as seen and show homepage
+    // Mark splash as seen and show welcome intro
     sessionStorage.setItem(SPLASH_SEEN_KEY, "true");
-    setClientState((prev) => (prev ? { ...prev, showSplash: false } : null));
+    setClientState((prev) => (prev ? { ...prev, showSplash: false, showWelcome: true } : null));
+  };
+
+  const handleWelcomeComplete = () => {
+    // Mark welcome as seen and show homepage
+    sessionStorage.setItem(WELCOME_SEEN_KEY, "true");
+    setClientState((prev) => (prev ? { ...prev, showWelcome: false } : null));
   };
 
   // Loading state - wait for client state to be initialized
@@ -92,16 +102,19 @@ export default function Home() {
     );
   }
 
-  const { isMobile, showSplash } = clientState;
+  const { isMobile, showSplash, showWelcome } = clientState;
 
-  // Mobile Experience
+  // Mobile Experience: Splash → WelcomeIntro (HP2) → Homepage (HP3)
   if (isMobile) {
     return (
       <AnimatePresence mode="wait">
         {showSplash && (
           <MobileSplashScreen key="splash" onComplete={handleSplashComplete} />
         )}
-        {!showSplash && <MobileHomepage key="home" />}
+        {!showSplash && showWelcome && (
+          <WelcomeIntro key="welcome" onComplete={handleWelcomeComplete} />
+        )}
+        {!showSplash && !showWelcome && <MobileHomepage key="home" />}
       </AnimatePresence>
     );
   }
