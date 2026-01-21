@@ -146,6 +146,7 @@ export const WelcomeIntro = ({ onComplete }: WelcomeIntroProps) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-40 bg-white overflow-y-auto"
+      style={{ position: "fixed" }}
     >
       {/* Fixed header */}
       <div className="sticky top-0 left-0 right-0 z-50 bg-white">
@@ -269,6 +270,7 @@ const ScrollCard = ({ card, progress }: ScrollCardProps) => {
         src={card.src}
         alt={card.alt}
         fill
+        sizes="40vw"
         className="object-cover"
         priority
       />
