@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from './Button';
 import { AdminGuard } from './AdminGuard';
+import { NotificationBell } from './NotificationBell';
 import { siteContent } from '@/content/he';
 import { getCurrentUser, logout } from '@/services/auth';
 
@@ -30,6 +31,7 @@ function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () =>
           <span className="text-[#706F6F]">
             {content.dashboard.welcome}, <span className="font-medium text-[#1D1D1B]">{userName}</span>
           </span>
+          <NotificationBell />
           <Button variant="outline" size="sm" onClick={onLogout}>
             {content.dashboard.logout}
           </Button>

@@ -159,9 +159,10 @@ const ImageCard = ({
             className="object-cover"
             sizes={
               position === 3
-                ? "(max-width: 1024px) 33vw, 200px"
-                : "(max-width: 1024px) 33vw, 200px"
+                ? "(max-width: 1024px) 33vw, 25vw"
+                : "(max-width: 1024px) 33vw, 20vw"
             }
+            quality={85}
             priority={setIndex === 0}
           />
         </motion.div>

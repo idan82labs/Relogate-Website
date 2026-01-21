@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Button } from "@/components/shared";
@@ -64,6 +63,14 @@ export const BannerToInfoTransition = () => {
     [1, 1, 0.7, 0.35, 0.05, 0, 0]
   );
 
+  // === VIDEO CONTAINER TOP RADIUS ===
+  // Starts flat (connects to teal banner), becomes rounded when banner fades
+  const videoTopRadius = useTransform(
+    scrollYProgress,
+    [0, 0.60, 0.72, 0.84, 0.92, 0.95, 1],
+    [0, 0, 5, 12, 18, 20, 20]
+  );
+
   // === TEXT OVERLAY ON IMAGE ===
   // Fades out during animation phase
   const imageTextOpacity = useTransform(
@@ -122,19 +129,27 @@ export const BannerToInfoTransition = () => {
                     </p>
                   </motion.div>
 
-                  {/* Image container - square top to connect with banner, rounded bottom */}
+                  {/* Video container - top corners animate from flat to rounded as banner fades */}
                   <motion.div
-                    className="relative overflow-hidden rounded-b-[20px]"
+                    className="relative overflow-hidden"
                     style={{
                       height: imageHeight,
+                      borderTopLeftRadius: videoTopRadius,
+                      borderTopRightRadius: videoTopRadius,
+                      borderBottomLeftRadius: 20,
+                      borderBottomRightRadius: 20,
                     }}
                   >
-                    <Image
-                      src="/banner-bg.jpg"
-                      alt="Woman working on laptop"
-                      fill
-                      className="object-cover"
-                    />
+                    <video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover"
+                    >
+                      <source src="/videos/banner.webm" type="video/webm" />
+                      <source src="/videos/banner.mp4" type="video/mp4" />
+                    </video>
 
                     {/* Dark overlay */}
                     <motion.div

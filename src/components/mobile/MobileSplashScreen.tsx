@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { siteContent } from "@/content/he";
 
 interface MobileSplashScreenProps {
@@ -18,39 +18,57 @@ export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-50 bg-white flex flex-col items-center"
     >
-      {/*
-        Layout based on Figma HP1 (375×812):
-        - Logo at Y: 371px (~45.7% from top)
-        - CTA at Y: 490px (~60.3% from top)
-        Using percentage-based positioning for responsiveness
-      */}
-
       {/* Spacer to push content down - positions logo at ~45% from top */}
       <div className="flex-[45] min-h-0" />
 
-      {/* Logo */}
+      {/* Logo with Animated Globe */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="flex-shrink-0 w-full px-7"
+        className="flex-shrink-0"
+        dir="ltr"
+        style={{ direction: "ltr", unicodeBidi: "isolate" }}
       >
-        {/*
-          Figma logo: 322×69px on 375px width = 85.9% width
-          Logo positioned at x:26px from edge, so ~7% padding each side
-          Using width-based sizing to match Figma proportions
-        */}
-        <Image
-          src="/logo.svg"
-          alt="Relogate"
-          width={322}
-          height={69}
-          className="w-full h-auto"
-          priority
-        />
+        <div className="relative flex items-end justify-center flex-row" style={{ direction: "ltr" }}>
+          {/* Rel */}
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            R
+          </span>
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            e
+          </span>
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            l
+          </span>
+
+          {/* Animated Globe as "o" */}
+          <div className="relative w-[32px] sm:w-[38px] h-[32px] sm:h-[38px] -translate-y-[3px] sm:-translate-y-[4px]">
+            <DotLottieReact
+              src="/earth.lottie"
+              loop
+              autoplay
+              style={{ width: "100%", height: "100%" }}
+            />
+          </div>
+
+          {/* gate */}
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            g
+          </span>
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            a
+          </span>
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            t
+          </span>
+          <span className="text-[48px] sm:text-[56px] font-medium text-[#215388] tracking-tight leading-none">
+            e
+          </span>
+        </div>
       </motion.div>
 
-      {/* Spacer between logo and CTA - approximately 50px gap in Figma */}
+      {/* Spacer between logo and CTA */}
       <div className="flex-[15] min-h-[40px] max-h-[70px]" />
 
       {/* CTA Button */}
@@ -60,10 +78,6 @@ export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="flex-shrink-0"
       >
-        {/*
-          Figma button: 165×40px, pill shape, #215388 background
-          Font: Noto Sans Hebrew SemiBold, 14px
-        */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -84,9 +98,8 @@ export const MobileSplashScreen = ({ onComplete }: MobileSplashScreenProps) => {
         </motion.button>
       </motion.div>
 
-      {/* Bottom spacer - remaining space (~40% of screen) */}
+      {/* Bottom spacer */}
       <div className="flex-[40] min-h-0" />
     </motion.div>
   );
 };
-

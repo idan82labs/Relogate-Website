@@ -111,11 +111,8 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
       // Questionnaire-related (admin-facing)
       case 'new_questionnaire_submitted':
       case 'questionnaire_update_completed':
-        if (notification.relatedId) {
-          router.push(`/admin/users/${notification.relatedId}/questionnaire`);
-        } else {
-          router.push('/admin/users');
-        }
+        // Redirect to reports page where pending questionnaires are listed
+        router.push('/admin/reports');
         break;
       // Default
       case 'questionnaire_completed':

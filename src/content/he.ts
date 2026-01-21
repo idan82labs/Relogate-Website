@@ -336,6 +336,14 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
     },
   },
 
+  // Welcome page
+  welcome: {
+    title: "ברוכים הבאים",
+    subtitle: "לעולם החדש שלכם",
+    description: "Relogate מלווה אתכם בכל שלב במסע הרילוקיישן",
+    cta: "בואו נתחיל",
+  },
+
   // Mobile specific
   mobile: {
     splash: {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { siteContent } from "@/content/he";
 
 interface SplashScreenProps {
@@ -36,7 +36,7 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             dir="ltr"
             style={{ direction: "ltr", unicodeBidi: "isolate" }}
           >
-            <div className="relative flex items-center justify-center flex-row" style={{ direction: "ltr" }}>
+            <div className="relative flex items-end justify-center flex-row" style={{ direction: "ltr" }}>
               {/* R-el */}
               <span className="text-[120px] lg:text-[180px] font-medium text-[#215388] tracking-tight leading-none">
                 R
@@ -47,15 +47,14 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
               <span className="text-[120px] lg:text-[180px] font-medium text-[#215388] tracking-tight leading-none">
                 l
               </span>
-              
-              {/* 3D Globe as "o" */}
-              <div className="relative w-[85px] lg:w-[128px] h-[85px] lg:h-[128px] mx-[-8px] lg:mx-[-12px]">
-                <Image
-                  src="/globe-3d-full.svg"
-                  alt="Globe"
-                  fill
-                  className="object-contain drop-shadow-lg"
-                  priority
+
+              {/* Animated Globe as "o" */}
+              <div className="relative w-[80px] lg:w-[115px] h-[80px] lg:h-[115px] -translate-y-[8px] lg:-translate-y-[12px]">
+                <DotLottieReact
+                  src="/earth.lottie"
+                  loop
+                  autoplay
+                  style={{ width: "100%", height: "100%" }}
                 />
               </div>
 
@@ -92,5 +91,3 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     </AnimatePresence>
   );
 };
-
-

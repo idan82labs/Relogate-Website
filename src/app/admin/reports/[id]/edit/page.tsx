@@ -4,22 +4,24 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Button, AdminLayout } from '@/components/shared';
+import { Button, AdminLayout, QuestionnaireAnswersDisplay } from '@/components/shared';
 import { siteContent } from '@/content/he';
 import {
   getReportById,
   updateReport,
   publishReport,
   deleteDestinationResponse,
+  getQuestionnaireResponses,
   type Report,
   type ReportProfileSummary,
   type ReportStatus,
   type DestinationResponseListItem,
+  type QuestionnaireResponsesData,
 } from '@/services/reports';
 
 const content = siteContent.admin;
 
-type TabId = 'greeting' | 'profile' | 'countries';
+type TabId = 'questionnaire' | 'greeting' | 'profile' | 'countries';
 
 function TabButton({
   id,
@@ -180,10 +182,11 @@ function ReportEditContent({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
   const [report, setReport] = useState<Report | null>(null);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponsesData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<TabId>('greeting');
+  const [activeTab, setActiveTab] = useState<TabId>('questionnaire');
   const [deleteResponseTarget, setDeleteResponseTarget] = useState<DestinationResponseListItem | null>(null);
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
 
@@ -203,6 +206,16 @@ function ReportEditContent({ params }: { params: Promise<{ id: string }> }) {
           greeting: fetchedReport.greeting || '',
           profileSummary: fetchedReport.profileSummary || {},
         });
+
+        // Fetch questionnaire responses for admin reference
+        if (fetchedReport.questionnaireId) {
+          const { questionnaire: fetchedQuestionnaire } = await getQuestionnaireResponses(
+            fetchedReport.questionnaireId
+          );
+          if (fetchedQuestionnaire) {
+            setQuestionnaire(fetchedQuestionnaire);
+          }
+        }
       }
       setLoading(false);
     }
@@ -316,7 +329,13 @@ function ReportEditContent({ params }: { params: Promise<{ id: string }> }) {
         ) : report ? (
           <div className="bg-white rounded-lg shadow">
             {/* Tabs */}
-            <div className="border-b border-[#C6C6C6] flex">
+            <div className="border-b border-[#C6C6C6] flex overflow-x-auto">
+              <TabButton
+                id="questionnaire"
+                label="תשובות השאלון"
+                activeTab={activeTab}
+                onClick={setActiveTab}
+              />
               <TabButton
                 id="greeting"
                 label={content.reportEditor.tabs.greeting}
@@ -338,6 +357,44 @@ function ReportEditContent({ params }: { params: Promise<{ id: string }> }) {
             </div>
 
             <div className="p-6">
+              {/* Questionnaire Tab */}
+              {activeTab === 'questionnaire' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-4"
+                >
+                  {questionnaire ? (
+                    <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#1D1D1B]">
+                            תשובות השאלון
+                          </h3>
+                          <p className="text-sm text-[#706F6F]">
+                            הושלם: {questionnaire.completedAt ? new Date(questionnaire.completedAt).toLocaleDateString('he-IL') : '-'}
+                          </p>
+                        </div>
+                        {questionnaire.userName && (
+                          <div className="text-left">
+                            <p className="text-sm text-[#706F6F]">משתמש:</p>
+                            <p className="font-medium text-[#1D1D1B]">{questionnaire.userName}</p>
+                          </div>
+                        )}
+                      </div>
+                      <QuestionnaireAnswersDisplay
+                        responses={questionnaire.responses}
+                        defaultExpanded={true}
+                      />
+                    </>
+                  ) : (
+                    <div className="text-center py-12 text-[#706F6F]">
+                      לא נמצאו נתוני שאלון
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
               {/* Greeting Tab */}
               {activeTab === 'greeting' && (
                 <motion.div

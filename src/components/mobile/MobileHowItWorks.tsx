@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Card } from "@/components/shared";
 
@@ -9,7 +8,8 @@ type StepNumber = 1 | 2 | 3;
 
 export const MobileHowItWorks = () => {
   const { howItWorks } = siteContent;
-  const [selectedStep, setSelectedStep] = useState<StepNumber | null>(null);
+  // Start with first card expanded by default (per Figma design)
+  const [selectedStep, setSelectedStep] = useState<StepNumber | null>(1);
 
   const renderExpandedContent = (stepIndex: number) => {
     const step = howItWorks.steps[stepIndex];
@@ -18,23 +18,23 @@ export const MobileHowItWorks = () => {
 
     if (stepIndex === 0 && intro && typeof intro !== "string") {
       return (
-        <div className="space-y-4 text-sm">
-          <ol className="space-y-3 list-decimal list-inside">
+        <div className="space-y-4 text-sm text-right">
+          <div className="space-y-3">
             {intro.map((item, idx) => (
-              <li key={idx} className="text-white">
-                <span className="font-semibold">{item.title}</span>
+              <div key={idx} className="text-white">
+                <span className="font-semibold">{idx + 1}. {item.title}</span>
                 {item.content && (
-                  <p className="mt-1 mr-5 text-white/90">{item.content}</p>
+                  <p className="mt-1 text-white/90">{item.content}</p>
                 )}
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
           {step.expandedContent.reportInfo && (
-            <div className="mt-4 pt-4 border-t border-white/20">
-              <h4 className="font-semibold text-[#215388] mb-1">
+            <div className="mt-4 bg-white rounded-[16px] p-4">
+              <h4 className="font-semibold text-[#215388] text-sm mb-1 text-right">
                 {step.expandedContent.reportInfo.title}
               </h4>
-              <p className="text-[#215388]/90 text-xs">
+              <p className="text-[#1D1D1B] text-xs text-right leading-relaxed">
                 {step.expandedContent.reportInfo.content}
               </p>
             </div>
@@ -45,7 +45,7 @@ export const MobileHowItWorks = () => {
 
     if (stepIndex === 1 && sections) {
       return (
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-sm text-right">
           {sections.map((section, idx) => {
             if (typeof section === "string") return null;
             return (
@@ -61,7 +61,7 @@ export const MobileHowItWorks = () => {
 
     if (stepIndex === 2 && typeof intro === "string") {
       return (
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-sm text-right">
           <p className="font-semibold text-white">{intro}</p>
           {sections &&
             sections.map((text, idx) => (
@@ -77,10 +77,10 @@ export const MobileHowItWorks = () => {
   };
 
   return (
-    <section id="how-it-works" className="py-12 bg-[#F7F7F7]">
+    <section id="how-it-works" className="py-10 bg-[#F7F7F7]">
       <div className="px-4">
         {/* Section Title */}
-        <h2 className="text-2xl font-medium text-[#1D1D1B] text-center mb-8">
+        <h2 className="text-[26px] font-medium text-[#1D1D1B] text-center mb-8">
           {howItWorks.title}
         </h2>
 
@@ -91,9 +91,8 @@ export const MobileHowItWorks = () => {
             const isSelected = selectedStep === stepNum;
 
             return (
-              <motion.div
+              <div
                 key={step.number}
-                layout
                 className="cursor-pointer"
                 onClick={() => setSelectedStep(isSelected ? null : stepNum)}
               >
@@ -101,7 +100,7 @@ export const MobileHowItWorks = () => {
                   padding="md"
                   className={`transition-colors duration-300 ${
                     isSelected
-                      ? "bg-[#215388] text-white"
+                      ? "!bg-[#215388] text-white"
                       : "bg-white"
                   }`}
                 >
@@ -126,39 +125,24 @@ export const MobileHowItWorks = () => {
                       </h3>
 
                       {/* Content */}
-                      <AnimatePresence mode="wait">
-                        {isSelected ? (
-                          <motion.div
-                            key="expanded"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="overflow-hidden"
-                          >
-                            {renderExpandedContent(index)}
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="collapsed"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <p className="text-sm text-[#1D1D1B] mb-2">
-                              {step.shortDescription}
-                            </p>
-                            <button className="text-[#1D1D1B] font-semibold underline text-sm">
-                              {step.readMore}
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      {isSelected ? (
+                        <div className="mt-3">
+                          {renderExpandedContent(index)}
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-sm text-[#1D1D1B] mb-2">
+                            {step.shortDescription}
+                          </p>
+                          <button className="text-[#1D1D1B] font-semibold underline text-sm">
+                            {step.readMore}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
         </div>

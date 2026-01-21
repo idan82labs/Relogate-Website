@@ -445,6 +445,37 @@ export async function deleteReport(
 }
 
 /**
+ * Questionnaire responses data (for admin view)
+ */
+export interface QuestionnaireResponsesData {
+  id: string;
+  userId: string;
+  userName: string | null;
+  responses: Record<string, unknown>;
+  status: string;
+  completedAt: string | null;
+  createdAt: string;
+}
+
+/**
+ * Get questionnaire responses by questionnaire ID (admin)
+ * Used when admin wants to view user's questionnaire answers while preparing a report
+ */
+export async function getQuestionnaireResponses(
+  questionnaireId: string
+): Promise<{ questionnaire: QuestionnaireResponsesData | null; error?: string }> {
+  const response = await authenticatedFetch<{ questionnaire: QuestionnaireResponsesData }>(
+    `/api/v1/admin/reports/questionnaire/${questionnaireId}`
+  );
+
+  if (!response.success || !response.data) {
+    return { questionnaire: null, error: response.error };
+  }
+
+  return { questionnaire: response.data.questionnaire };
+}
+
+/**
  * Get a destination response by ID (admin)
  */
 export async function getDestinationResponseById(
