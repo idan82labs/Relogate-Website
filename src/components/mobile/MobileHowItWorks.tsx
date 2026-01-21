@@ -8,8 +8,8 @@ type StepNumber = 1 | 2 | 3;
 
 export const MobileHowItWorks = () => {
   const { howItWorks } = siteContent;
-  // Start with first card expanded by default (per Figma design)
-  const [selectedStep, setSelectedStep] = useState<StepNumber | null>(1);
+  // No card selected by default (per user specification)
+  const [selectedStep, setSelectedStep] = useState<StepNumber | null>(null);
 
   const renderExpandedContent = (stepIndex: number) => {
     const step = howItWorks.steps[stepIndex];
@@ -104,17 +104,18 @@ export const MobileHowItWorks = () => {
                       : "bg-white"
                   }`}
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Step Number */}
+                  {/* RTL layout: flex-row-reverse puts number on the right */}
+                  <div className="flex items-start gap-4 flex-row-reverse" dir="rtl">
+                    {/* Step Number - on the right in RTL */}
                     <p
-                      className={`font-['Satoshi',sans-serif] text-[40px] font-normal ${
+                      className={`font-['Satoshi',sans-serif] text-[40px] font-normal leading-none ${
                         isSelected ? "text-white" : "text-[#215388]"
                       }`}
                     >
                       {step.number}
                     </p>
 
-                    <div className="flex-1">
+                    <div className="flex-1 text-right">
                       {/* Step Title */}
                       <h3
                         className={`text-2xl font-normal mb-2 ${
@@ -131,10 +132,10 @@ export const MobileHowItWorks = () => {
                         </div>
                       ) : (
                         <div>
-                          <p className="text-sm text-[#1D1D1B] mb-2">
+                          <p className={`text-sm mb-2 ${isSelected ? "text-white/90" : "text-[#1D1D1B]"}`}>
                             {step.shortDescription}
                           </p>
-                          <button className="text-[#1D1D1B] font-semibold underline text-sm">
+                          <button className={`font-semibold underline text-sm ${isSelected ? "text-white" : "text-[#1D1D1B]"}`}>
                             {step.readMore}
                           </button>
                         </div>

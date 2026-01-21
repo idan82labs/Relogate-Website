@@ -8,10 +8,9 @@ import Image from "next/image";
 import { MobileHeader } from "./MobileHeader";
 import { MobileHowItWorks } from "./MobileHowItWorks";
 import { siteContent } from "@/content/he";
-import { Button, Accordion, HeroImageGrid } from "@/components/shared";
+import { Button, Accordion } from "@/components/shared";
 import { MobileFooter } from "./MobileFooter";
 import { useAuth } from "@/contexts";
-import { useHeroAnimation } from "@/hooks";
 import { listPosts } from "@/services/blog";
 import type { BlogPostListItem } from "@/types/blog";
 
@@ -32,16 +31,28 @@ interface MobileHomepageProps {
 /**
  * MobileHomepage - Full mobile homepage
  * Based on Figma design (mobile HP3: node 265-683)
+ *
+ * Correct Structure:
+ * a) About text section (title + description)
+ * b) CTA Button "למילוי השאלון האישי" (aligned right)
+ * c) Hero image with banner
+ * d) Video with RELOGATE text
+ * e) Info description
+ * f) Checklist with green marks (aligned right for RTL)
+ * g) "איך זה עובד?" section (no card selected by default)
+ * h) Testimonials (horizontal scroll)
+ * i) Articles (horizontal scroll RTL, no buttons)
+ * j) FAQ
+ * k) Contact
  */
 export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps) => {
   const router = useRouter();
   const { hero, about, greenBanner, info, testimonials, articles, faq, contact } = siteContent;
   const { isAuthenticated, hasCompletedOnboarding } = useAuth();
-  const { currentSetIndex } = useHeroAnimation();
   const testimonialsRef = useRef<HTMLDivElement>(null);
+  const articlesRef = useRef<HTMLDivElement>(null);
   const [posts, setPosts] = useState<BlogPostListItem[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-  const [currentArticleIndex, setCurrentArticleIndex] = useState(0);
 
   useEffect(() => {
     async function fetchPosts() {
@@ -54,16 +65,6 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
     fetchPosts();
   }, []);
 
-  const scrollArticles = (direction: "prev" | "next") => {
-    if (posts.length === 0) return;
-
-    if (direction === "prev") {
-      setCurrentArticleIndex((prev) => (prev > 0 ? prev - 1 : posts.length - 1));
-    } else {
-      setCurrentArticleIndex((prev) => (prev < posts.length - 1 ? prev + 1 : 0));
-    }
-  };
-
   const handleCtaClick = () => {
     if (hasCompletedOnboarding) {
       router.push("/questionnaire/results");
@@ -74,8 +75,6 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
       router.push("/login");
     }
   };
-
-  const ctaText = hasCompletedOnboarding ? hero.ctaViewResults : hero.cta;
 
   return (
     <motion.div
@@ -90,83 +89,113 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
 
       {/* Main Content */}
       <main className="pt-[52px]">
-        {/* Hero Section with Image Grid */}
-        <section className="relative px-4 pt-6">
-          {/* Hero Image Grid */}
-          <div className="mb-6">
-            <HeroImageGrid currentSetIndex={currentSetIndex} variant="mobile" />
-          </div>
+        {/* a) About Text Section - FIRST */}
+        <section className="px-4 pt-6 pb-4">
+          {/* Title */}
+          <h2 className="text-[18px] font-medium text-[#1D1D1B] text-right mb-4 leading-snug">
+            {about.title}
+            <br />
+            {about.subtitle}
+          </h2>
 
-          {/* Hero Text */}
-          <div className="relative z-10 text-right mb-6">
-            <h1 className="text-[26px] font-medium text-[#1D1D1B] leading-tight mb-3">
-              {hero.title}<br />
-              {hero.subtitle}
-            </h1>
+          {/* Description */}
+          <p className="text-[14px] text-[#1D1D1B] text-right mb-6 whitespace-pre-line leading-relaxed">
+            {about.description}
+          </p>
+
+          {/* b) CTA Button - aligned right */}
+          <div dir="ltr" className="flex justify-end">
+            <Button size="md" onClick={handleCtaClick}>
+              למילוי השאלון האישי
+            </Button>
           </div>
         </section>
 
-        {/* Company Statement Card */}
-        <section className="px-4 mb-8">
-          <div className="relative rounded-[20px] overflow-hidden h-[811px]">
+        {/* c) Hero Image with Banner */}
+        <section className="relative px-4 py-4">
+          {/* Banner - Green/Teal strip on top */}
+          <div className="bg-[#239083] rounded-t-[20px] py-3 px-4 flex items-center justify-center">
+            <p className="text-[#f7f7f7] text-[14px] font-medium text-center">
+              {hero.banner}
+            </p>
+          </div>
+
+          {/* Hero Image - Connected to banner (rounded bottom corners only) */}
+          <div className="relative rounded-b-[20px] overflow-hidden aspect-[343/240]">
             <Image
-              src="/hero/set1/5.jpg"
-              alt="Relogate - International relocation"
+              src="/about-image.jpg"
+              alt="Family relaxing - relocation lifestyle"
               fill
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, 343px"
+              priority
             />
+          </div>
+        </section>
+
+        {/* d) Video with RELOGATE text */}
+        <section className="px-4 mb-6">
+          <div className="relative rounded-[20px] overflow-hidden aspect-[343/400]">
+            {/* Video Background */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/videos/banner.webm" type="video/webm" />
+              <source src="/videos/banner.mp4" type="video/mp4" />
+            </video>
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             {/* Text Overlay */}
-            <div className="absolute inset-0 flex items-end p-6">
-              <p className="text-white text-[26px] font-medium leading-tight text-right">
+            <div className="absolute inset-0 flex items-end justify-end p-6">
+              <p className="text-white text-[26px] font-medium leading-tight text-right max-w-[300px]">
                 {greenBanner.title}
               </p>
             </div>
           </div>
         </section>
 
-        {/* Benefits Section */}
-        <section className="px-4 mb-8">
-          {/* Globe Watermark for this section */}
-          <div className="relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[200px] opacity-20 pointer-events-none -z-10">
-              <Image src="/globe-watermark.svg" alt="" fill aria-hidden="true" />
-            </div>
+        {/* e) Info Description */}
+        <section className="px-4 py-4">
+          <p className="text-[18px] text-[#1D1D1B] text-right mb-6 leading-relaxed">
+            {info.description}
+          </p>
+        </section>
 
-            <p className="text-lg text-[#1D1D1B] text-right mb-6 leading-relaxed">
-              {info.description}
-            </p>
+        {/* f) Checklist with Green Marks (aligned right for RTL) */}
+        <section className="px-4 pb-6">
+          <div className="space-y-3 mb-6">
+            {info.checklist.map((item, index) => (
+              <div key={index} className="flex items-start gap-3" dir="ltr">
+                <p className="text-[12px] text-[#1D1D1B] text-right leading-relaxed flex-1">
+                  {item}
+                </p>
+                <Image
+                  src="/icons/checkmark.svg"
+                  alt=""
+                  width={12}
+                  height={9}
+                  className="mt-1.5 flex-shrink-0"
+                />
+              </div>
+            ))}
+          </div>
 
-            {/* Checklist */}
-            <div className="space-y-3 mb-6">
-              {info.checklist.map((item, index) => (
-                <div key={index} className="flex items-start gap-3 flex-row-reverse">
-                  <Image
-                    src="/icons/checkmark.svg"
-                    alt=""
-                    width={12}
-                    height={9}
-                    className="mt-0.5 flex-shrink-0"
-                  />
-                  <p className="text-xs text-[#1D1D1B] text-right">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Button */}
-            <div className="flex justify-end">
-              <Button size="sm" className="text-sm px-6 py-2.5" onClick={handleCtaClick}>
-                {hasCompletedOnboarding ? hero.ctaViewResults : info.cta}
-              </Button>
-            </div>
+          {/* CTA Button - aligned right */}
+          <div dir="ltr" className="flex justify-end">
+            <Button size="md" onClick={handleCtaClick}>
+              {info.cta}
+            </Button>
           </div>
         </section>
 
-        {/* How It Works Section */}
+        {/* g) How It Works Section - No card selected by default */}
         <MobileHowItWorks />
 
-        {/* Testimonials Section */}
+        {/* h) Testimonials - Horizontal scroll */}
         <section className="py-10 px-4">
           <h2 className="text-[26px] font-medium text-[#1D1D1B] text-right mb-6">
             {testimonials.title}
@@ -177,6 +206,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
             ref={testimonialsRef}
             className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide"
             style={{ scrollSnapType: 'x mandatory' }}
+            dir="rtl"
           >
             {testimonials.items.map((item, index) => (
               <div
@@ -220,70 +250,67 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
           </div>
         </section>
 
-        {/* Press/Articles Section */}
+        {/* i) Articles - Horizontal scroll RTL, NO buttons */}
         <section className="px-4 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex gap-2">
-              <button
-                className="p-1"
-                aria-label="Previous article"
-                onClick={() => scrollArticles("prev")}
-              >
-                <Image src="/icons/arrow-left.svg" alt="" width={9} height={11} />
-              </button>
-              <button
-                className="p-1"
-                aria-label="Next article"
-                onClick={() => scrollArticles("next")}
-              >
-                <Image src="/icons/arrow-right.svg" alt="" width={9} height={11} />
-              </button>
-            </div>
-            <h2 className="text-[26px] font-medium text-[#1D1D1B]">
-              {articles.title}
-            </h2>
-          </div>
+          <h2 className="text-[26px] font-medium text-[#1D1D1B] text-right mb-4">
+            {articles.title}
+          </h2>
 
-          {/* Article Card */}
+          {/* Horizontal Scroll Container - RTL (right to left) */}
           {isLoadingPosts ? (
-            <div className="relative rounded-[20px] overflow-hidden h-[450px] bg-[#F7F7F7] animate-pulse" />
-          ) : posts.length > 0 ? (
-            <Link href={`/press/${posts[currentArticleIndex].slug}`}>
-              <motion.div
-                key={posts[currentArticleIndex].id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="relative rounded-[20px] overflow-hidden h-[450px] cursor-pointer"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
-                <img
-                  src={posts[currentArticleIndex].featuredImageUrl || "/images/blog/placeholder.jpg"}
-                  alt={posts[currentArticleIndex].title}
-                  className="w-full h-full object-cover"
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4" dir="rtl">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 w-[280px] h-[350px] rounded-[20px] bg-[#F7F7F7] animate-pulse"
                 />
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(29,29,27,0.6)] to-transparent" />
+              ))}
+            </div>
+          ) : posts.length > 0 ? (
+            <div
+              ref={articlesRef}
+              className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide"
+              style={{ scrollSnapType: 'x mandatory' }}
+              dir="rtl"
+            >
+              {posts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/press/${post.slug}`}
+                  className="flex-shrink-0 w-[280px]"
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <div className="relative rounded-[20px] overflow-hidden h-[350px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
+                    <img
+                      src={post.featuredImageUrl || "/images/blog/placeholder.jpg"}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(29,29,27,0.6)] to-transparent" />
 
-                {/* Article Info */}
-                <div className="absolute bottom-6 right-4 left-4 text-right">
-                  <p className="text-white text-base leading-snug mb-2">
-                    {posts[currentArticleIndex].title}
-                  </p>
-                  <p className="text-white/80 text-xs">
-                    {formatDate(posts[currentArticleIndex].publishedAt)}
-                  </p>
-                </div>
-              </motion.div>
-            </Link>
+                    {/* Article Info */}
+                    <div className="absolute bottom-4 right-4 left-4 text-right">
+                      <p className="text-white text-base leading-snug mb-2">
+                        {post.title}
+                      </p>
+                      <p className="text-white/80 text-xs">
+                        {formatDate(post.publishedAt)}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           ) : (
-            <div className="relative rounded-[20px] overflow-hidden h-[450px] bg-[#F7F7F7] flex items-center justify-center">
+            <div className="relative rounded-[20px] overflow-hidden h-[350px] bg-[#F7F7F7] flex items-center justify-center">
               <p className="text-[#706F6F] text-sm">אין כתבות זמינות</p>
             </div>
           )}
         </section>
 
-        {/* FAQ Section */}
+        {/* j) FAQ Section */}
         <section className="px-4 py-10">
           <h2 className="text-[26px] font-medium text-[#1D1D1B] text-right mb-6">
             {faq.title}
@@ -292,7 +319,7 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
           <Accordion items={faq.items} />
         </section>
 
-        {/* Contact Section */}
+        {/* k) Contact Section */}
         <section className="px-4 py-10 text-center">
           <h2 className="text-[26px] font-medium text-[#1D1D1B] mb-4">
             {contact.title}
@@ -326,4 +353,3 @@ export const MobileHomepage = ({ onComplete: _onComplete }: MobileHomepageProps)
     </motion.div>
   );
 };
-
