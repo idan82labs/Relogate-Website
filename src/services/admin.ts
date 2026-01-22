@@ -288,3 +288,23 @@ export async function getQuestionnaireById(
 
   return { questionnaire: response.data.questionnaire };
 }
+
+/**
+ * Restore a deactivated user
+ */
+export async function restoreUser(
+  userId: string
+): Promise<{ success: boolean; error?: string }> {
+  const response = await authenticatedFetch<void>(
+    `/api/v1/admin/users/${userId}/restore`,
+    {
+      method: 'POST',
+    }
+  );
+
+  if (!response.success) {
+    return { success: false, error: response.error };
+  }
+
+  return { success: true };
+}

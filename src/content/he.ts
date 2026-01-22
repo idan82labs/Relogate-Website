@@ -1192,6 +1192,62 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
   personalAreaDashboard: {
     title: "האזור האישי שלי",
     greeting: "שלום",
+    welcomeMessage: "ברוכים הבאים לאזור האישי שלך ב-Relogate",
+    welcomeSubtitle: "כאן תוכל לעקוב אחרי התקדמות מסע הרילוקיישן שלך",
+
+    // Journey progress section
+    journeyProgress: {
+      title: "המסע שלך",
+      steps: {
+        questionnaire: "שאלון",
+        payment: "תשלום",
+        report: "דוח אישי",
+        planning: "תכנון",
+      },
+      stepStatus: {
+        completed: "הושלם",
+        inProgress: "בתהליך",
+        pending: "ממתין",
+        locked: "נעול",
+      },
+    },
+
+    // Payment section
+    payment: {
+      title: "תשלום",
+      notPaid: {
+        title: "טרם שילמת עבור הדוח האישי",
+        description: "לאחר התשלום נתחיל להכין את הדוח המותאם אישית עבורך",
+        cta: "לתשלום",
+      },
+      pending: {
+        title: "התשלום בבדיקה",
+        description: "אנחנו מאמתים את התשלום שלך. תהליך זה עשוי להימשך מספר דקות.",
+      },
+      completed: {
+        title: "התשלום התקבל",
+        description: "תודה! התשלום התקבל בהצלחה והדוח שלך בהכנה.",
+        paidAt: "שולם בתאריך:",
+        amount: "סכום:",
+        orderNumber: "מספר הזמנה:",
+      },
+      failed: {
+        title: "התשלום נכשל",
+        description: "לצערנו התשלום לא הושלם. אנא נסה שוב.",
+        retryCta: "נסה שוב",
+      },
+      checkStatus: "בדוק סטטוס תשלום",
+    },
+
+    // Quick actions section
+    quickActions: {
+      title: "פעולות מהירות",
+      editProfile: "עריכת פרופיל",
+      viewQuestionnaire: "צפה בשאלון",
+      contactSupport: "צור קשר",
+      viewBlog: "מאגר הידע",
+    },
+
     sections: {
       profile: {
         title: "פרטים אישיים",
@@ -1205,6 +1261,7 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         startButton: "התחל שאלון",
         continueButton: "המשך שאלון",
         viewResultsButton: "צפה בתוצאות",
+        description: "מלא את השאלון כדי שנוכל להתאים עבורך את היעדים המושלמים",
       },
       results: {
         title: "תוצאות הדוח שלי",
@@ -1219,6 +1276,8 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         readyDescription: "לחץ לצפייה בדוח האישי שלך עם המדינות המותאמות עבורך.",
         viewButton: "צפה בדוח האישי",
         countriesCount: "מדינות מומלצות",
+        awaitingPayment: "ממתין לתשלום",
+        awaitingPaymentDescription: "יש להשלים את התשלום כדי שנוכל להתחיל בהכנת הדוח האישי שלך.",
       },
     },
     fields: {
@@ -1355,9 +1414,11 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         deletePermanent: "מחיקה לצמיתות",
         deactivate: "השבתה",
         activate: "הפעלה",
+        restore: "שחזור",
       },
       confirmDelete: "האם אתה בטוח שברצונך למחוק משתמש זה לצמיתות? פעולה זו אינה ניתנת לביטול.",
       confirmDeactivate: "האם אתה בטוח שברצונך להשבית משתמש זה?",
+      confirmRestore: "האם אתה בטוח שברצונך לשחזר משתמש זה?",
       cannotDeleteSelf: "לא ניתן למחוק את החשבון שלך",
       empty: "לא נמצאו משתמשים",
       pagination: {
@@ -1606,6 +1667,61 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         new_questionnaire_submitted: "משתמש חדש הגיש שאלון לבדיקה.",
         questionnaire_update_completed: "משתמש השלים את השאלון המעודכן.",
       },
+    },
+  },
+
+  // Checkout / Payment flow
+  checkout: {
+    // Cart page
+    cart: {
+      title: 'הסל שלי:',
+      subtitle: 'אתם כמעט שם! מלאו פרטי כרטיס אשראי וקבלו דו״ח Relomatch מותאם אישית, תוך 24 שעות.',
+      termsCheckbox: 'הנני מצהיר כי אני מסכים לתנאי העסקה וקראתי והבנתי את מדיניות ההגנה על הנתונים.',
+      termsLink: 'תנאי העסקה',
+      privacyLink: 'מדיניות ההגנה על הנתונים',
+      total: 'סה"כ לתשלום:',
+      payButton: 'לתשלום',
+      backButton: 'חזור',
+      step: 'תשלום',
+    },
+    // Products
+    products: {
+      relomatch_report: {
+        name: 'דו״ח Relomatch',
+        description: 'דו״ח התאמה מקיף ומקצועי לרילוקיישן',
+      },
+      consultation: {
+        name: 'שיחת ייעוץ עם מומחים ישראלים מקומיים',
+        description: 'שיחת ייעוץ אישית עם מומחי רילוקיישן',
+      },
+    },
+    // Success page
+    success: {
+      title: 'התשלום בוצע בהצלחה!',
+      orderNumber: 'מספר אישור הזמנה:',
+      report: {
+        message: 'Relogate team קיבלו את הנתונים האישיים והעדפות שלך. בעוד 24 שעות יופיע דו״ח Relomach מקיף ומקצועי באזור האישי שלך.',
+        primaryCta: 'לאיזור האישי',
+        secondaryCta: 'חזרה לעמוד הבית',
+      },
+      consultation: {
+        message: 'Relogate team קיבלו את הבקשה שלך ויחזרו אליך עד 48 שעות לתיאום שיחות ייעוץ.',
+        primaryCta: 'חזרה לעמוד הבית',
+      },
+    },
+    // Cancel page
+    cancel: {
+      title: 'התשלום בוטל',
+      message: 'התשלום לא הושלם. תוכלו לנסות שוב או לחזור מאוחר יותר.',
+      retryCta: 'נסה שוב',
+      homeCta: 'חזרה לעמוד הבית',
+    },
+    // Errors
+    errors: {
+      generic: 'אירעה שגיאה בתהליך התשלום. אנא נסו שוב.',
+      sessionExpired: 'פג תוקף הסשן. אנא התחילו מחדש.',
+      paymentFailed: 'התשלום נכשל. אנא בדקו את פרטי הכרטיס ונסו שוב.',
+      termsRequired: 'יש לאשר את תנאי השימוש כדי להמשיך',
     },
   },
 };

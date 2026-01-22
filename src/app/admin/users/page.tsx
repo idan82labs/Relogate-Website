@@ -9,6 +9,7 @@ import {
   listUsers,
   deleteUser,
   getUserById,
+  restoreUser,
   type AdminUser,
   type AdminUserDetail,
   type ListUsersParams,
@@ -65,12 +66,14 @@ function UsersTable({
   currentUserId,
   onView,
   onDeactivate,
+  onRestore,
   onDeletePermanent,
 }: {
   users: AdminUser[];
   currentUserId: string | null;
   onView: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
+  onRestore: (user: AdminUser) => void;
   onDeletePermanent: (user: AdminUser) => void;
 }) {
   const formatDate = (dateStr: string) => {
@@ -151,12 +154,19 @@ function UsersTable({
                   </button>
                   {user.id !== currentUserId && (
                     <>
-                      {user.isActive && (
+                      {user.isActive ? (
                         <button
                           onClick={() => onDeactivate(user)}
                           className="text-yellow-600 hover:text-yellow-800 font-medium"
                         >
                           {content.users.actions.deactivate}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => onRestore(user)}
+                          className="text-green-600 hover:text-green-800 font-medium"
+                        >
+                          {content.users.actions.restore}
                         </button>
                       )}
                       <button
@@ -473,6 +483,7 @@ function AdminUsersContent() {
   const [selectedUserDetail, setSelectedUserDetail] = useState<AdminUserDetail | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [userToDeactivate, setUserToDeactivate] = useState<AdminUser | null>(null);
+  const [userToRestore, setUserToRestore] = useState<AdminUser | null>(null);
   const [userToDeletePermanent, setUserToDeletePermanent] = useState<AdminUser | null>(null);
 
   const fetchUsers = useCallback(async (params: ListUsersParams = {}) => {
@@ -549,6 +560,20 @@ function AdminUsersContent() {
     setUserToDeactivate(null);
   };
 
+  const handleRestoreUser = async () => {
+    if (!userToRestore) return;
+
+    const { error: restoreError } = await restoreUser(userToRestore.id);
+
+    if (restoreError) {
+      setError(restoreError);
+    } else {
+      fetchUsers();
+    }
+
+    setUserToRestore(null);
+  };
+
   const handleDeletePermanent = async () => {
     if (!userToDeletePermanent) return;
 
@@ -606,6 +631,7 @@ function AdminUsersContent() {
                 currentUserId={currentUserId}
                 onView={handleViewUser}
                 onDeactivate={(user) => setUserToDeactivate(user)}
+                onRestore={(user) => setUserToRestore(user)}
                 onDeletePermanent={(user) => setUserToDeletePermanent(user)}
               />
               <Pagination
@@ -636,6 +662,15 @@ function AdminUsersContent() {
             variant="warning"
             onConfirm={handleDeactivateUser}
             onCancel={() => setUserToDeactivate(null)}
+          />
+        )}
+        {userToRestore && (
+          <ConfirmDialog
+            message={content.users.confirmRestore}
+            actionLabel={content.users.actions.restore}
+            variant="warning"
+            onConfirm={handleRestoreUser}
+            onCancel={() => setUserToRestore(null)}
           />
         )}
         {userToDeletePermanent && (

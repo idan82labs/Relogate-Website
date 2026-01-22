@@ -24,3 +24,6 @@ export { ResponsePreview } from "./ResponsePreview";
 export { DomErrorBoundary } from "./DomErrorBoundary";
 export { QuestionnaireAnswersDisplay } from "./QuestionnaireAnswersDisplay";
 export { HeroImageGrid } from "./HeroImageGrid";
+export { PaymentStatusCard } from "./PaymentStatusCard";
+export { JourneyProgress } from "./JourneyProgress";
+export { QuickActions } from "./QuickActions";

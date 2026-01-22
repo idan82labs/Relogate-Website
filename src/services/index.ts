@@ -77,6 +77,7 @@ export {
   createUser,
   updateUser,
   deleteUser,
+  restoreUser,
 } from "./admin";
 export type {
   UserRole as AdminUserRole,
@@ -186,3 +187,26 @@ export {
   getTotalPages,
   blogService,
 } from "./blog";
+
+// ============================================================================
+// Payments Service
+// ============================================================================
+
+export {
+  getStripeConfig,
+  createCheckoutSession,
+  getUserPayments,
+  getPayment,
+  checkPaymentStatus,
+  redirectToCheckout,
+} from "./payments";
+export type {
+  Payment,
+  PaymentStatus,
+  ProductType,
+  CheckoutSessionResponse,
+  PaymentStatusResponse,
+  PaymentsListResponse,
+  StripeConfigResponse,
+  CreateCheckoutParams,
+} from "@/types/payment";
