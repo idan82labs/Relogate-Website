@@ -209,7 +209,7 @@ export const MobilePersonalArea = () => {
                     <Button
                       variant="primary"
                       size="md"
-                      onClick={() => router.push("/personal-area/report")}
+                      onClick={() => router.push("/questionnaire/results")}
                     >
                       {personalAreaDashboard.sections.personalizedReport.viewButton}
                     </Button>

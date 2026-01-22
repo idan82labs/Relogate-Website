@@ -94,6 +94,8 @@ export interface UserReportStatus {
   hasPublishedReport: boolean;
   publishedDestinationCount: number;
   reportId?: string;
+  /** Whether the user has completed the questionnaire (even if no report exists yet) */
+  hasCompletedQuestionnaire: boolean;
 }
 
 interface ApiResponse<T> {

@@ -208,7 +208,7 @@ export const PersonalArea = () => {
                       <Button
                         variant="primary"
                         size="lg"
-                        onClick={() => router.push("/personal-area/report")}
+                        onClick={() => router.push("/questionnaire/results")}
                       >
                         {personalAreaDashboard.sections.personalizedReport.viewButton}
                       </Button>

@@ -93,14 +93,10 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
     switch (notification.type) {
       // Report-related
       case 'report_ready':
-        router.push('/personal-area/report');
+        router.push('/questionnaire/results');
         break;
       case 'country_response_ready':
-        if (notification.relatedId) {
-          router.push(`/personal-area/report?destination=${notification.relatedId}`);
-        } else {
-          router.push('/personal-area/report');
-        }
+        router.push('/questionnaire/results');
         break;
       // Questionnaire-related (user-facing)
       case 'questionnaire_updated':
