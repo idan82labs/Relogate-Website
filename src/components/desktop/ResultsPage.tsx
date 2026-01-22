@@ -1,13 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CategoryTag, CountryCard } from "@/components/shared";
 import { renderMarkdown } from "@/lib/markdown";
+import {
+  familyStatusTranslations,
+  incomeRangeTranslations,
+  passiveIncomeRangeTranslations,
+  relocationReasonTranslations,
+  occupationTranslations,
+  citizenshipTranslations,
+} from "@/lib/questionnaire-translations";
+
+/**
+ * Translate profile field values to Hebrew
+ */
+function translateProfileValue(fieldName: string, value: string | undefined): string {
+  if (!value) return "";
+
+  switch (fieldName) {
+    case "familyStatus":
+      return familyStatusTranslations[value] || value;
+    case "profession":
+      return occupationTranslations[value] || value;
+    case "netIncome":
+      return incomeRangeTranslations[value] || value;
+    case "passiveIncome":
+      return passiveIncomeRangeTranslations[value] || value;
+    case "citizenship":
+      // Handle comma-separated citizenship values
+      if (value.includes(",")) {
+        return value.split(",").map(v =>
+          citizenshipTranslations[v.trim().toLowerCase()] || v.trim()
+        ).join(", ");
+      }
+      return citizenshipTranslations[value.toLowerCase()] || value;
+    case "relocationGoals":
+      // Handle comma-separated or array-like values
+      if (value.includes(",")) {
+        return value.split(",").map(v =>
+          relocationReasonTranslations[v.trim()] || v.trim()
+        ).join(", ");
+      }
+      return relocationReasonTranslations[value] || value;
+    default:
+      return value;
+  }
+}
 
 interface CountrySection {
   key: string;
@@ -30,6 +75,13 @@ interface Country {
   sections?: CountrySection[];
 }
 
+interface Article {
+  title: string;
+  date: string;
+  image: string;
+  url?: string;
+}
+
 interface ResultsPageProps {
   // TODO: Replace with actual data from backend
   userData?: {
@@ -45,6 +97,8 @@ interface ResultsPageProps {
     };
   };
   countries?: Country[];
+  // Related articles - will be populated by recommendation algorithm
+  articles?: Article[];
 }
 
 /**
@@ -53,7 +107,15 @@ interface ResultsPageProps {
 export const ResultsPage = ({
   userData = siteContent.reportResults.mockData,
   countries = siteContent.reportResults.mockData.countries,
+  articles,
 }: ResultsPageProps) => {
+  // Get random articles - memoized to prevent changing on re-renders
+  const displayArticles = useMemo(() => {
+    if (articles) return articles;
+    const allArticles = [...siteContent.articles.items];
+    const shuffled = allArticles.sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 3);
+  }, [articles]);
   const { reportResults } = siteContent;
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("visa");
@@ -100,66 +162,71 @@ export const ResultsPage = ({
           </div>
 
           <div className="max-w-[1200px] mx-auto relative z-10">
-            {/* Greeting */}
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-[48px] font-medium text-black text-right mb-2"
-            >
-              {reportResults.greeting} {userData.userName}
-            </motion.h2>
-
-            <p className="text-[18px] text-[#1D1D1B] text-right mb-8">
-              {reportResults.profileSummary.title}
-            </p>
-
-            {/* Profile Data */}
-            <div className="flex gap-12">
-              {/* Profile Summary */}
+            {/* Two-column layout: Greeting on right, Profile data on left */}
+            <div className="flex gap-12 items-start">
+              {/* Greeting - Right side (first in DOM = right in RTL) */}
               <div className="flex-1 text-right">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-[48px] font-medium text-black mb-2"
+                >
+                  {reportResults.greeting} {userData.userName}
+                </motion.h2>
+                <p className="text-[18px] text-[#1D1D1B]">
+                  {reportResults.profileSummary.title}
+                </p>
+              </div>
+
+              {/* Profile Data - Left side (second in DOM = left in RTL) */}
+              <div className="flex-1 text-left">
                 <h3 className="text-[24px] font-medium text-[#239083] mb-4">
                   {reportResults.profileSummary.profileDataTitle}
                 </h3>
                 <div className="space-y-2 text-[18px]">
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.citizenship}</span>{" "}
-                    {userData.profile.citizenship}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.age}</span>{" "}
-                    {userData.profile.age}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.profession}</span>{" "}
-                    {userData.profile.profession}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.familyStatus}</span>{" "}
-                    {userData.profile.familyStatus}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.netIncome}</span>{" "}
-                    {userData.profile.netIncome}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.passiveIncome}</span>{" "}
-                    {userData.profile.passiveIncome}
-                  </p>
-                  <p>
-                    <span className="font-medium">{reportResults.profileSummary.fields.relocationGoals}</span>{" "}
-                    {userData.profile.relocationGoals}
-                  </p>
+                  {translateProfileValue("citizenship", userData.profile.citizenship) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.citizenship}</span>{" "}
+                      {translateProfileValue("citizenship", userData.profile.citizenship)}
+                    </p>
+                  )}
+                  {userData.profile.age && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.age}</span>{" "}
+                      {userData.profile.age}
+                    </p>
+                  )}
+                  {translateProfileValue("profession", userData.profile.profession) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.profession}</span>{" "}
+                      {translateProfileValue("profession", userData.profile.profession)}
+                    </p>
+                  )}
+                  {translateProfileValue("familyStatus", userData.profile.familyStatus) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.familyStatus}</span>{" "}
+                      {translateProfileValue("familyStatus", userData.profile.familyStatus)}
+                    </p>
+                  )}
+                  {translateProfileValue("netIncome", userData.profile.netIncome) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.netIncome}</span>{" "}
+                      {translateProfileValue("netIncome", userData.profile.netIncome)}
+                    </p>
+                  )}
+                  {translateProfileValue("passiveIncome", userData.profile.passiveIncome) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.passiveIncome}</span>{" "}
+                      {translateProfileValue("passiveIncome", userData.profile.passiveIncome)}
+                    </p>
+                  )}
+                  {translateProfileValue("relocationGoals", userData.profile.relocationGoals) && (
+                    <p>
+                      <span className="font-medium">{reportResults.profileSummary.fields.relocationGoals}</span>{" "}
+                      {translateProfileValue("relocationGoals", userData.profile.relocationGoals)}
+                    </p>
+                  )}
                 </div>
-              </div>
-
-              {/* Sharing placeholder */}
-              <div className="w-[300px] bg-[#F7F7F7] rounded-[20px] p-6 text-center">
-                <h4 className="text-[18px] font-medium text-[#706F6F] mb-4">
-                  {reportResults.sharing.title}
-                </h4>
-                <p className="text-[14px] text-[#B2B2B2]">
-                  {reportResults.sharing.placeholder}
-                </p>
               </div>
             </div>
           </div>
@@ -169,36 +236,50 @@ export const ResultsPage = ({
         <section className="py-12">
           <div className="container">
             <div className="max-w-[1200px] mx-auto">
-              <h2 className="text-[48px] font-medium text-black text-right mb-4">
-                {reportResults.reportSection.title}
-              </h2>
-              <p className="text-[18px] text-[#1D1D1B] text-right mb-10 max-w-[800px] mr-0 ml-auto">
-                {reportResults.reportSection.description}
-              </p>
+              {/* Two-column layout: Title on right, Description on left (RTL) */}
+              <div className="flex gap-12 items-start mb-10">
+                {/* Title - Right side (first in DOM = right in RTL) */}
+                <div className="flex-1 text-right">
+                  <h2 className="text-[48px] font-medium text-black leading-[46px]">
+                    {reportResults.reportSection.title}
+                  </h2>
+                </div>
+
+                {/* Description - Left side (second in DOM = left in RTL) */}
+                <div className="flex-1 text-right">
+                  <p className="text-[18px] text-[#1D1D1B] leading-[24px]">
+                    {reportResults.reportSection.description.replace("{count}", String(countries.length))}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Country Cards */}
           <div className="bg-[#F7F7F7] py-12">
             <div className="container">
-              <div className="flex justify-center gap-6 flex-wrap">
+              <div
+                className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+                style={{ direction: "rtl" }}
+              >
                 {countries.map((country) => (
-                  <CountryCard
-                    key={country.id}
-                    name={country.name}
-                    matchScore={country.matchScore}
-                    image={country.image}
-                    isSelected={selectedCountryId === country.id}
-                    isExpanded={selectedCountryId === country.id}
-                    visaType={country.visaType}
-                    matchReasons={country.matchReasons}
-                    onClick={() =>
-                      setSelectedCountryId(
-                        selectedCountryId === country.id ? null : country.id
-                      )
-                    }
-                    size={selectedCountryId === country.id ? "lg" : "lg"}
-                  />
+                  <div key={country.id} className="flex-shrink-0">
+                    <CountryCard
+                      name={country.name}
+                      matchScore={country.matchScore}
+                      image={country.image}
+                      isSelected={selectedCountryId === country.id}
+                      isExpanded={selectedCountryId === country.id}
+                      visaType={country.visaType}
+                      matchReasons={country.matchReasons}
+                      onClick={() =>
+                        setSelectedCountryId(
+                          selectedCountryId === country.id ? null : country.id
+                        )
+                      }
+                      size="lg"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -255,7 +336,7 @@ export const ResultsPage = ({
                             animate={{ opacity: 1, y: 0 }}
                             className="bg-white rounded-[20px] p-8 shadow-sm"
                           >
-                            <h3 className="text-[24px] font-medium text-[#239083] mb-6 text-right flex items-center gap-2 justify-end">
+                            <h3 className="text-[24px] font-medium text-[#239083] mb-6 flex items-center gap-2 justify-start">
                               {section?.icon && <span>{section.icon}</span>}
                               {section?.title || reportResults.countryDetail.visaPathTitle}
                             </h3>
@@ -275,7 +356,7 @@ export const ResultsPage = ({
                           animate={{ opacity: 1, y: 0 }}
                           className="bg-white rounded-[20px] p-8 shadow-sm"
                         >
-                          <h3 className="text-[24px] font-medium text-[#239083] mb-6 text-right flex items-center gap-2 justify-end">
+                          <h3 className="text-[24px] font-medium text-[#239083] mb-6 flex items-center gap-2 justify-start">
                             {section.icon && <span>{section.icon}</span>}
                             {section.title}
                           </h3>
@@ -313,29 +394,34 @@ export const ResultsPage = ({
                 {reportResults.relatedArticles.title}
               </h2>
               <div className="grid grid-cols-3 gap-6">
-                {siteContent.articles.items.slice(0, 3).map((article, index) => (
-                  <motion.div
+                {displayArticles.map((article, index) => (
+                  <Link
                     key={index}
-                    className="bg-white rounded-[20px] overflow-hidden shadow-sm cursor-pointer"
-                    whileHover={{ scale: 1.02 }}
+                    href={article.url || `/blog/${encodeURIComponent(article.title)}`}
+                    className="block"
                   >
-                    <div className="relative h-[200px] overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-4 text-right">
-                      <h3 className="text-[18px] font-medium text-[#1D1D1B] mb-2 line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <p className="text-[14px] text-[#706F6F]">
-                        {article.date.split(" ")[0]} {article.date.split(" ")[1]}
-                      </p>
-                    </div>
-                  </motion.div>
+                    <motion.div
+                      className="bg-white rounded-[20px] overflow-hidden shadow-sm cursor-pointer h-full"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <div className="relative h-[200px] overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
+                        <img
+                          src={article.image}
+                          alt={article.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-4 text-right">
+                        <h3 className="text-[18px] font-medium text-[#1D1D1B] mb-2 line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-[14px] text-[#706F6F]">
+                          {article.date.split(" ")[0]} {article.date.split(" ")[1]}
+                        </p>
+                      </div>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -12,6 +12,24 @@ import {
   UserReport,
   UserReportStatus,
 } from "@/services/userReports";
+import { listPosts } from "@/services/blog";
+import type { BlogPostListItem } from "@/types/blog";
+
+/**
+ * Transform blog posts to Article format for ResultsPage
+ */
+function transformBlogPostsToArticles(posts: BlogPostListItem[]) {
+  return posts.map((post) => ({
+    title: post.title,
+    date: new Date(post.publishedAt).toLocaleDateString("he-IL", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    image: post.featuredImageUrl || "/articles/article-1.jpg",
+    url: `/blog/${post.slug}`,
+  }));
+}
 
 /**
  * Transform API report data to component props format
@@ -128,6 +146,7 @@ export default function ResultsPageRoute() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [reportStatus, setReportStatus] = useState<UserReportStatus | null>(null);
   const [report, setReport] = useState<UserReport | null>(null);
+  const [articles, setArticles] = useState<BlogPostListItem[]>([]);
   const [isLoadingReport, setIsLoadingReport] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -182,6 +201,22 @@ export default function ResultsPageRoute() {
     fetchReportData();
   }, [authLoading, user]);
 
+  // Fetch blog articles for related articles section
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const result = await listPosts({ contentType: "blog", limit: 6 });
+        if (result.data?.posts) {
+          setArticles(result.data.posts);
+        }
+      } catch {
+        // Silently fail - articles are not critical
+      }
+    }
+
+    fetchArticles();
+  }, []);
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
@@ -225,22 +260,26 @@ export default function ResultsPageRoute() {
     );
   }
 
-  // No report - questionnaire not completed
-  if (!reportStatus?.hasReport) {
+  // Questionnaire not completed - prompt user to fill it
+  if (!reportStatus?.hasCompletedQuestionnaire) {
     return <NoReport />;
   }
 
-  // Report not ready - waiting for admin to publish
-  if (!reportStatus?.hasPublishedReport || !report) {
+  // Questionnaire completed but no report yet, or report not published
+  // Show "waiting for report" message
+  if (!reportStatus?.hasReport || !reportStatus?.hasPublishedReport || !report) {
     return <WaitingForReport />;
   }
 
   // Report is ready - show results
   const { userData, countries } = transformReportToComponentProps(report);
+  const transformedArticles = articles.length > 0
+    ? transformBlogPostsToArticles(articles).slice(0, 3)
+    : undefined;
 
   return isMobile ? (
-    <MobileResultsPage userData={userData} countries={countries} />
+    <MobileResultsPage userData={userData} countries={countries} articles={transformedArticles} />
   ) : (
-    <ResultsPage userData={userData} countries={countries} />
+    <ResultsPage userData={userData} countries={countries} articles={transformedArticles} />
   );
 }

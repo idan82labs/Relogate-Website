@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteContent } from "@/content/he";
 import { MobileHeader } from "./MobileHeader";
@@ -30,6 +31,13 @@ interface Country {
   sections?: CountrySection[];
 }
 
+interface Article {
+  title: string;
+  date: string;
+  image: string;
+  url?: string;
+}
+
 interface MobileResultsPageProps {
   userData?: {
     userName: string;
@@ -44,6 +52,7 @@ interface MobileResultsPageProps {
     };
   };
   countries?: Country[];
+  articles?: Article[];
 }
 
 /**
@@ -52,11 +61,20 @@ interface MobileResultsPageProps {
 export const MobileResultsPage = ({
   userData = siteContent.reportResults.mockData,
   countries = siteContent.reportResults.mockData.countries,
+  articles,
 }: MobileResultsPageProps) => {
   const { reportResults } = siteContent;
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("visa");
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Get random articles - memoized to prevent changing on re-renders
+  const displayArticles = useMemo(() => {
+    if (articles) return articles;
+    const allArticles = [...siteContent.articles.items];
+    const shuffled = allArticles.sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 2);
+  }, [articles]);
 
   const selectedCountry = countries.find((c) => c.id === selectedCountryId);
 
@@ -156,7 +174,7 @@ export const MobileResultsPage = ({
             {reportResults.reportSection.title}
           </h2>
           <p className="text-[14px] text-[#1D1D1B] text-right mb-6">
-            {reportResults.reportSection.description}
+            {reportResults.reportSection.description.replace("{count}", String(countries.length))}
           </p>
         </section>
 
@@ -353,29 +371,34 @@ export const MobileResultsPage = ({
             {reportResults.relatedArticles.title}
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            {siteContent.articles.items.slice(0, 2).map((article, index) => (
-              <motion.div
+            {displayArticles.slice(0, 2).map((article, index) => (
+              <Link
                 key={index}
-                className="bg-white rounded-[10px] overflow-hidden shadow-sm cursor-pointer"
-                whileHover={{ scale: 1.02 }}
+                href={article.url || `/blog/${encodeURIComponent(article.title)}`}
+                className="block"
               >
-                <div className="relative h-[100px] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-3 text-right">
-                  <h3 className="text-[14px] font-medium text-[#1D1D1B] mb-1 line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-[12px] text-[#706F6F]">
-                    {article.date.split(" ")[0]} {article.date.split(" ")[1]}
-                  </p>
-                </div>
-              </motion.div>
+                <motion.div
+                  className="bg-white rounded-[10px] overflow-hidden shadow-sm cursor-pointer h-full"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className="relative h-[100px] overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- Dynamic content image */}
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3 text-right">
+                    <h3 className="text-[14px] font-medium text-[#1D1D1B] mb-1 line-clamp-2">
+                      {article.title}
+                    </h3>
+                    <p className="text-[12px] text-[#706F6F]">
+                      {article.date.split(" ")[0]} {article.date.split(" ")[1]}
+                    </p>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </section>
