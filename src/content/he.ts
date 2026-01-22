@@ -1376,6 +1376,7 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
       nav: {
         users: "משתמשים",
         reports: "דוחות",
+        payments: "תשלומים",
         questionnaires: "שאלונים",
         settings: "הגדרות",
       },
@@ -1595,6 +1596,58 @@ Relogate תעשה לכם סדר, תמפה את מסלולי ההגירה הרל�
         publish: "פרסם דוח",
         publishAll: "פרסם עם כל המדינות",
         preview: "תצוגה מקדימה",
+      },
+    },
+    // Payments management
+    payments: {
+      title: "ניהול תשלומים",
+      searchPlaceholder: "חיפוש לפי שם או אימייל...",
+      filters: {
+        all: "כל התשלומים",
+        completed: "שולמו",
+        pending: "ממתינים",
+        failed: "נכשלו",
+        refunded: "הוחזרו",
+      },
+      productTypes: {
+        all: "כל המוצרים",
+        relomatch_report: "דוח Relomatch",
+        consultation: "שיחת ייעוץ",
+      },
+      table: {
+        user: "משתמש",
+        email: "אימייל",
+        product: "מוצר",
+        amount: "סכום",
+        status: "סטטוס",
+        createdAt: "נוצר",
+        paidAt: "שולם",
+        actions: "פעולות",
+      },
+      status: {
+        pending: "ממתין",
+        completed: "שולם",
+        failed: "נכשל",
+        expired: "פג תוקף",
+        refunded: "הוחזר",
+        disputed: "במחלוקת",
+      },
+      actions: {
+        view: "צפייה",
+        viewUser: "צפה במשתמש",
+        viewReport: "צפה בדוח",
+      },
+      empty: "לא נמצאו תשלומים",
+      pagination: {
+        prev: "הקודם",
+        next: "הבא",
+        of: "מתוך",
+      },
+      stats: {
+        totalRevenue: "סה״כ הכנסות",
+        totalPayments: "סה״כ תשלומים",
+        completedPayments: "תשלומים שהושלמו",
+        pendingPayments: "ממתינים לתשלום",
       },
     },
     // Country response editor

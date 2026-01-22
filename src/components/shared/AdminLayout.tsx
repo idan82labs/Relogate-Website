@@ -13,7 +13,7 @@ const content = siteContent.admin;
 
 interface AdminLayoutProps {
   children: ReactNode;
-  activeTab?: 'users' | 'reports';
+  activeTab?: 'users' | 'reports' | 'payments';
 }
 
 function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () => void }) {
@@ -42,7 +42,7 @@ function AdminHeader({ userName, onLogout }: { userName: string; onLogout: () =>
 }
 
 interface NavItem {
-  id: 'users' | 'reports';
+  id: 'users' | 'reports' | 'payments';
   label: string;
   href: string;
 }
@@ -50,6 +50,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'users', label: content.dashboard.nav.users, href: '/admin/users' },
   { id: 'reports', label: content.dashboard.nav.reports, href: '/admin/reports' },
+  { id: 'payments', label: content.dashboard.nav.payments, href: '/admin/payments' },
 ];
 
 function AdminNav({ activeTab }: { activeTab?: string }) {
@@ -84,6 +85,7 @@ function AdminLayoutContent({ children, activeTab }: AdminLayoutProps) {
   // Auto-detect active tab from pathname if not provided
   const detectedTab = activeTab || (() => {
     if (pathname.startsWith('/admin/reports')) return 'reports';
+    if (pathname.startsWith('/admin/payments')) return 'payments';
     if (pathname.startsWith('/admin/users')) return 'users';
     return 'users';
   })();

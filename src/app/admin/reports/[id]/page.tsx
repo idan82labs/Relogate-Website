@@ -15,6 +15,7 @@ import {
   type ReportStatus,
   type DestinationResponseListItem,
 } from '@/services/reports';
+import { getUserPaymentStatus, type UserPaymentStatus } from '@/services/admin';
 
 const content = siteContent.admin;
 
@@ -141,10 +142,25 @@ function ConfirmDialog({
   );
 }
 
+function PaymentStatusBadge({ hasPaid }: { hasPaid: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        hasPaid
+          ? 'bg-green-100 text-green-800'
+          : 'bg-yellow-100 text-yellow-800'
+      }`}
+    >
+      {hasPaid ? 'שולם' : 'לא שולם'}
+    </span>
+  );
+}
+
 function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
   const [report, setReport] = useState<Report | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<UserPaymentStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -157,6 +173,13 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
         setError(fetchError);
       } else if (fetchedReport) {
         setReport(fetchedReport);
+        // Fetch payment status for the user
+        if (fetchedReport.user?.id) {
+          const { data: paymentData } = await getUserPaymentStatus(fetchedReport.user.id);
+          if (paymentData) {
+            setPaymentStatus(paymentData);
+          }
+        }
       }
       setLoading(false);
     }
@@ -289,7 +312,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
               )}
             </motion.div>
 
-            {/* Profile Summary */}
+            {/* Payment Status */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -297,9 +320,51 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
               className="bg-white rounded-lg shadow p-6"
             >
               <h2 className="text-lg font-semibold text-[#1D1D1B] mb-4">
+                סטטוס תשלום
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-sm text-[#706F6F]">תשלום עבור דוח</label>
+                  <p className="font-medium mt-1">
+                    <PaymentStatusBadge hasPaid={paymentStatus?.hasPaidReport || false} />
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-[#706F6F]">תשלום עבור ייעוץ</label>
+                  <p className="font-medium mt-1">
+                    <PaymentStatusBadge hasPaid={paymentStatus?.hasPaidConsultation || false} />
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-[#706F6F]">סה״כ תשלומים</label>
+                  <p className="font-medium text-[#1D1D1B]">
+                    {paymentStatus?.totalPayments || 0}
+                  </p>
+                </div>
+                {paymentStatus?.lastPayment && (
+                  <div>
+                    <label className="text-sm text-[#706F6F]">תשלום אחרון</label>
+                    <p className="font-medium text-[#1D1D1B]">
+                      {paymentStatus.lastPayment.paidAt
+                        ? new Date(paymentStatus.lastPayment.paidAt).toLocaleDateString('he-IL')
+                        : new Date(paymentStatus.lastPayment.createdAt).toLocaleDateString('he-IL')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Profile Summary */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-lg shadow p-6"
+            >
+              <h2 className="text-lg font-semibold text-[#1D1D1B] mb-4">
                 {content.reportEditor.profile.title}
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                   <label className="text-sm text-[#706F6F]">
                     {content.reportEditor.profile.fields.userName}
@@ -318,6 +383,22 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                 </div>
                 <div>
                   <label className="text-sm text-[#706F6F]">
+                    {content.reportEditor.profile.fields.age}
+                  </label>
+                  <p className="font-medium text-[#1D1D1B]">
+                    {report.profileSummary?.age || '-'}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-[#706F6F]">
+                    {content.reportEditor.profile.fields.profession}
+                  </label>
+                  <p className="font-medium text-[#1D1D1B]">
+                    {report.profileSummary?.profession || '-'}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-[#706F6F]">
                     {content.reportEditor.profile.fields.familyStatus}
                   </label>
                   <p className="font-medium text-[#1D1D1B]">
@@ -325,6 +406,22 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                   </p>
                 </div>
                 <div>
+                  <label className="text-sm text-[#706F6F]">
+                    {content.reportEditor.profile.fields.netIncome}
+                  </label>
+                  <p className="font-medium text-[#1D1D1B]">
+                    {translateValue("householdIncome", report.profileSummary?.netIncome || '') || '-'}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-[#706F6F]">
+                    {content.reportEditor.profile.fields.passiveIncome}
+                  </label>
+                  <p className="font-medium text-[#1D1D1B]">
+                    {translateValue("passiveIncomeAmount", report.profileSummary?.passiveIncome || '') || '-'}
+                  </p>
+                </div>
+                <div className="md:col-span-2">
                   <label className="text-sm text-[#706F6F]">
                     {content.reportEditor.profile.fields.relocationGoals}
                   </label>
@@ -339,7 +436,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.4 }}
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-center justify-between mb-4">

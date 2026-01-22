@@ -308,3 +308,118 @@ export async function restoreUser(
 
   return { success: true };
 }
+
+/**
+ * User payment status response from admin API
+ */
+export interface UserPaymentStatus {
+  hasPaidReport: boolean;
+  hasPaidConsultation: boolean;
+  totalPayments: number;
+  lastPayment: {
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    productType: string;
+    paidAt: string | null;
+    createdAt: string;
+  } | null;
+}
+
+/**
+ * Get user's payment status
+ */
+export async function getUserPaymentStatus(
+  userId: string
+): Promise<{ data: UserPaymentStatus | null; error?: string }> {
+  const response = await authenticatedFetch<UserPaymentStatus>(
+    `/api/v1/admin/users/${userId}/payments`
+  );
+
+  if (!response.success || !response.data) {
+    return { data: null, error: response.error };
+  }
+
+  return { data: response.data };
+}
+
+/**
+ * Admin payment list item with user info
+ */
+export interface AdminPayment {
+  id: string;
+  userId: string;
+  questionnaireResponseId: string | null;
+  stripeCustomerId: string | null;
+  stripeCheckoutSessionId: string | null;
+  stripePaymentIntentId: string | null;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'completed' | 'failed' | 'expired' | 'refunded' | 'disputed';
+  productType: 'relomatch_report' | 'consultation';
+  productName: string;
+  createdAt: string;
+  updatedAt: string;
+  paidAt: string | null;
+  refundedAt: string | null;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
+}
+
+/**
+ * Admin payments list response
+ */
+export interface AdminPaymentsListResponse {
+  payments: AdminPayment[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+/**
+ * List all payments params
+ */
+export interface ListPaymentsParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  productType?: string;
+  search?: string;
+  sortBy?: 'createdAt' | 'amount' | 'paidAt';
+  sortOrder?: 'asc' | 'desc';
+}
+
+/**
+ * List all payments (admin)
+ */
+export async function listPayments(
+  params: ListPaymentsParams = {}
+): Promise<{ data: AdminPaymentsListResponse | null; error?: string }> {
+  const searchParams = new URLSearchParams();
+
+  if (params.page) searchParams.set('page', String(params.page));
+  if (params.limit) searchParams.set('limit', String(params.limit));
+  if (params.status) searchParams.set('status', params.status);
+  if (params.productType) searchParams.set('productType', params.productType);
+  if (params.search) searchParams.set('search', params.search);
+  if (params.sortBy) searchParams.set('sortBy', params.sortBy);
+  if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
+
+  const queryString = searchParams.toString();
+  const url = `/api/v1/admin/payments${queryString ? `?${queryString}` : ''}`;
+
+  const response = await authenticatedFetch<AdminPaymentsListResponse>(url);
+
+  if (!response.success || !response.data) {
+    return { data: null, error: response.error };
+  }
+
+  return { data: response.data };
+}
