@@ -8,13 +8,13 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent, getCountryOptions } from "@/locales/compat";
 import { MultiSelectField } from "@/components/questionnaire/fields";
 import { hasPartner } from "@/types/questionnaire";
 import type { StepProps } from "./types";
 
-const content = siteContent.questionnaireV2.steps.citizenship;
-const countryOptions = siteContent.questionnaireV2.countryOptions;
+const content = getQuestionnaireStepContent().citizenship;
+const countryOptions = getCountryOptions();
 
 export function CitizenshipStep({
   data,

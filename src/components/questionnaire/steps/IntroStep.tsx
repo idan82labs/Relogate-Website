@@ -8,10 +8,10 @@
  */
 
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireV2Content } from "@/locales/compat";
 import type { StepProps } from "./types";
 
-const content = siteContent.questionnaireV2;
+const content = getQuestionnaireV2Content();
 
 export function IntroStep({ isSubmitting }: StepProps): React.ReactElement {
   return (

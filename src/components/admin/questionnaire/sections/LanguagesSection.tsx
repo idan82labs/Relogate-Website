@@ -24,8 +24,8 @@ export function LanguagesSection({ responses }: LanguagesSectionProps) {
   return (
     <QuestionnaireSection title="שפות" completionStatus={completionStatus}>
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <QuestionnaireField label="שפות דיבור" value={speakingLanguages} />
-        <QuestionnaireField label="שפות כתיבה" value={writingLanguages} />
+        <QuestionnaireField label="שפות דיבור" value={speakingLanguages} fieldName="speakingLanguages" />
+        <QuestionnaireField label="שפות כתיבה" value={writingLanguages} fieldName="writingLanguages" />
         <QuestionnaireField
           label="פתוח/ה ללמוד שפה חדשה"
           value={responses.willingToLearnLanguage}

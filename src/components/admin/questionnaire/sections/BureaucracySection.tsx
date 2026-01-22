@@ -27,7 +27,9 @@ export function BureaucracySection({ responses }: BureaucracySectionProps) {
         <QuestionnaireField
           label="ניסיון קודם לקבלת ויזה"
           value={responses.previousVisaAttempt}
+          fieldName="previousVisaAttempt"
         />
+        {/* Free text - no translation */}
         <QuestionnaireField
           label="פרטי ניסיון קודם"
           value={responses.previousVisaDetails}
@@ -35,7 +37,9 @@ export function BureaucracySection({ responses }: BureaucracySectionProps) {
         <QuestionnaireField
           label="רקע פלילי"
           value={responses.hasCriminalRecord}
+          fieldName="hasCriminalRecord"
         />
+        {/* Free text - no translation */}
         <QuestionnaireField
           label="פרטי רקע פלילי"
           value={responses.criminalRecordDetails}

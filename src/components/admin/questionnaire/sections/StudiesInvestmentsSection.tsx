@@ -29,7 +29,9 @@ export function StudiesInvestmentsSection({
         <QuestionnaireField
           label="פתוח/ה ללימודים בחו״ל"
           value={responses.openToStudyingAbroad}
+          fieldName="openToStudyingAbroad"
         />
+        {/* Free text - no translation */}
         <QuestionnaireField
           label="תחומי עניין ללימודים"
           value={responses.studyInterests}
@@ -37,7 +39,9 @@ export function StudiesInvestmentsSection({
         <QuestionnaireField
           label="מעוניין/ת להשקיע בנדל״ן"
           value={responses.willingToInvestInProperty}
+          fieldName="willingToInvestInProperty"
         />
+        {/* Free text - no translation */}
         <QuestionnaireField
           label="תקציב השקעה"
           value={responses.investmentBudget}

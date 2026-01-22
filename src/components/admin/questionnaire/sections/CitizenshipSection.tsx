@@ -42,7 +42,7 @@ export function CitizenshipSection({
   return (
     <QuestionnaireSection title="אזרחות" completionStatus={completionStatus}>
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <QuestionnaireField label="אזרחויות" value={allCitizenships} />
+        <QuestionnaireField label="אזרחויות" value={allCitizenships} fieldName="citizenships" />
         <QuestionnaireField
           label="זכאות לאזרחות נוספת"
           value={responses.eligibleForAdditionalCitizenship}

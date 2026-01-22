@@ -71,7 +71,7 @@ export const MobileResultsPage = ({
   // Get random articles - memoized to prevent changing on re-renders
   const displayArticles = useMemo(() => {
     if (articles) return articles;
-    const allArticles = [...siteContent.articles.items];
+    const allArticles = [...siteContent.articles.items] as Article[];
     const shuffled = allArticles.sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 2);
   }, [articles]);

@@ -8,7 +8,7 @@
  */
 
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import {
   TextField,
   DateField,
@@ -18,7 +18,7 @@ import {
 } from "@/components/questionnaire/fields";
 import type { StepProps } from "./types";
 
-const content = siteContent.questionnaireV2.steps.personalDetails;
+const content = getQuestionnaireStepContent().personalDetails;
 
 export function PersonalDetailsStep({
   data,

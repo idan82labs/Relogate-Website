@@ -8,12 +8,12 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import { SelectField, RadioGroupField } from "@/components/questionnaire/fields";
 import type { StepProps } from "./types";
 import type { IncomeRange, PassiveIncomeRange } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.income;
+const content = getQuestionnaireStepContent().income;
 
 export function IncomeStep({
   data,

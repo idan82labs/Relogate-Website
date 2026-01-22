@@ -11,28 +11,6 @@ interface PreferencesSectionProps {
   responses: Record<string, unknown>;
 }
 
-const WEATHER_PREFERENCE_LABELS: Record<string, string> = {
-  warm: "חם",
-  cold: "קר",
-  moderate: "ממוזג",
-  no_preference: "אין העדפה",
-};
-
-const LIVING_TYPE_LABELS: Record<string, string> = {
-  city: "עיר גדולה",
-  suburb: "פרבר",
-  small_town: "עיירה קטנה",
-  rural: "כפרי",
-  no_preference: "אין העדפה",
-};
-
-const IMPORTANCE_LABELS: Record<string, string> = {
-  not_important: "לא חשוב",
-  somewhat_important: "קצת חשוב",
-  important: "חשוב",
-  very_important: "מאוד חשוב",
-};
-
 export function PreferencesSection({ responses }: PreferencesSectionProps) {
   const weatherPreference = responses.weatherPreference as string | undefined;
   const livingType = responses.livingType as string | undefined;
@@ -56,45 +34,32 @@ export function PreferencesSection({ responses }: PreferencesSectionProps) {
         <QuestionnaireField
           label="מרחק מישראל"
           value={responses.distanceFromIsrael}
+          fieldName="distanceFromIsrael"
         />
         <QuestionnaireField
           label="הפרש אזור זמן"
           value={responses.timeZoneDifference}
+          fieldName="timeZoneDifference"
         />
         <QuestionnaireField
           label="העדפת מזג אוויר"
-          value={
-            weatherPreference
-              ? WEATHER_PREFERENCE_LABELS[weatherPreference] ||
-                weatherPreference
-              : undefined
-          }
+          value={weatherPreference}
+          fieldName="weatherPreference"
         />
         <QuestionnaireField
           label="סוג מגורים"
-          value={
-            livingType
-              ? LIVING_TYPE_LABELS[livingType] || livingType
-              : undefined
-          }
+          value={livingType}
+          fieldName="livingType"
         />
         <QuestionnaireField
           label="חשיבות קהילה יהודית"
-          value={
-            jewishCommunityImportance
-              ? IMPORTANCE_LABELS[jewishCommunityImportance] ||
-                jewishCommunityImportance
-              : undefined
-          }
+          value={jewishCommunityImportance}
+          fieldName="jewishCommunityImportance"
         />
         <QuestionnaireField
           label="חשיבות קהילה ישראלית"
-          value={
-            israeliCommunityImportance
-              ? IMPORTANCE_LABELS[israeliCommunityImportance] ||
-                israeliCommunityImportance
-              : undefined
-          }
+          value={israeliCommunityImportance}
+          fieldName="israeliCommunityImportance"
         />
       </dl>
     </QuestionnaireSection>

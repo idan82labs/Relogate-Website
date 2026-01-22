@@ -11,24 +11,6 @@ interface EmploymentSectionProps {
   responses: Record<string, unknown>;
 }
 
-const EMPLOYMENT_STATUS_LABELS: Record<string, string> = {
-  employed: "שכיר",
-  self_employed: "עצמאי",
-  business_owner: "בעל עסק",
-  unemployed: "לא עובד/ת",
-  student: "סטודנט/ית",
-  retired: "פנסיונר/ית",
-};
-
-const EDUCATION_LEVEL_LABELS: Record<string, string> = {
-  high_school: "תיכונית",
-  vocational: "מקצועית",
-  bachelor: "תואר ראשון",
-  master: "תואר שני",
-  doctorate: "דוקטורט",
-  other: "אחר",
-};
-
 export function EmploymentSection({ responses }: EmploymentSectionProps) {
   const employmentStatus = responses.employmentStatus as string | undefined;
   const educationLevel = responses.educationLevel as string | undefined;
@@ -48,12 +30,10 @@ export function EmploymentSection({ responses }: EmploymentSectionProps) {
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <QuestionnaireField
           label="סטטוס תעסוקה"
-          value={
-            employmentStatus
-              ? EMPLOYMENT_STATUS_LABELS[employmentStatus] || employmentStatus
-              : undefined
-          }
+          value={employmentStatus}
+          fieldName="employmentStatus"
         />
+        {/* Profession is free text - no translation */}
         <QuestionnaireField label="מקצוע" value={responses.profession} />
         <QuestionnaireField
           label="יכולת עבודה מרחוק"
@@ -61,12 +41,10 @@ export function EmploymentSection({ responses }: EmploymentSectionProps) {
         />
         <QuestionnaireField
           label="רמת השכלה"
-          value={
-            educationLevel
-              ? EDUCATION_LEVEL_LABELS[educationLevel] || educationLevel
-              : undefined
-          }
+          value={educationLevel}
+          fieldName="education"
         />
+        {/* Field of study is free text - no translation */}
         <QuestionnaireField
           label="תחום לימודים"
           value={responses.fieldOfStudy}

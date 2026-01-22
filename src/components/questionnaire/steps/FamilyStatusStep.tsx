@@ -9,7 +9,7 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import {
   SelectField,
   TextField,
@@ -19,7 +19,7 @@ import { hasPartner, hasChildren } from "@/types/questionnaire";
 import type { StepProps } from "./types";
 import type { FamilyStatus, ProcessPartner, ChildInfo } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.familyStatus;
+const content = getQuestionnaireStepContent().familyStatus;
 
 export function FamilyStatusStep({
   data,

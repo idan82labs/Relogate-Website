@@ -12,7 +12,7 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent, getLanguageOptions } from "@/locales/compat";
 import {
   RadioGroupField,
   LanguageSelectField,
@@ -21,8 +21,8 @@ import { hasPartner } from "@/types/questionnaire";
 import type { StepProps } from "./types";
 import type { Language } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.studiesInvestmentsLanguages;
-const languageOptions = siteContent.questionnaireV2.languageOptions;
+const content = getQuestionnaireStepContent().studiesInvestmentsLanguages;
+const languageOptions = getLanguageOptions();
 
 export function StudiesInvestmentsLanguagesStep({
   data,

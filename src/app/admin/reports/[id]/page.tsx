@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button, AdminLayout } from '@/components/shared';
 import { siteContent } from '@/content/he';
+import { translateValue } from '@/locales/compat';
 import {
   getReportById,
   deleteReport,
@@ -16,6 +17,17 @@ import {
 } from '@/services/reports';
 
 const content = siteContent.admin;
+
+/**
+ * Translate comma-separated values for a specific field
+ */
+function translateCommaSeparated(fieldName: string, value: string): string {
+  if (!value) return "-";
+  return value
+    .split(",")
+    .map((v) => translateValue(fieldName, v.trim()))
+    .join(", ");
+}
 
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
@@ -301,7 +313,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                     {content.reportEditor.profile.fields.citizenship}
                   </label>
                   <p className="font-medium text-[#1D1D1B]">
-                    {report.profileSummary?.citizenship || '-'}
+                    {translateCommaSeparated("citizenships", report.profileSummary?.citizenship || '')}
                   </p>
                 </div>
                 <div>
@@ -309,7 +321,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                     {content.reportEditor.profile.fields.familyStatus}
                   </label>
                   <p className="font-medium text-[#1D1D1B]">
-                    {report.profileSummary?.familyStatus || '-'}
+                    {translateValue("familyStatus", report.profileSummary?.familyStatus || '') || '-'}
                   </p>
                 </div>
                 <div>
@@ -317,7 +329,7 @@ function ReportDetailContent({ params }: { params: Promise<{ id: string }> }) {
                     {content.reportEditor.profile.fields.relocationGoals}
                   </label>
                   <p className="font-medium text-[#1D1D1B]">
-                    {report.profileSummary?.relocationGoals || '-'}
+                    {translateCommaSeparated("relocationReasons", report.profileSummary?.relocationGoals || '')}
                   </p>
                 </div>
               </div>

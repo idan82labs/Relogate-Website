@@ -9,50 +9,14 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CategoryTag, CountryCard } from "@/components/shared";
 import { renderMarkdown } from "@/lib/markdown";
-import {
-  familyStatusTranslations,
-  incomeRangeTranslations,
-  passiveIncomeRangeTranslations,
-  relocationReasonTranslations,
-  occupationTranslations,
-  citizenshipTranslations,
-} from "@/lib/questionnaire-translations";
-
 /**
- * Translate profile field values to Hebrew
+ * NOTE: All translations are now handled in the page.tsx transformation layer
+ * (transformReportToComponentProps). This component receives already-translated values.
+ *
+ * - Enum values (familyStatus, netIncome, etc.) are translated via translateValue()
+ * - Free text fields (profession, age) are passed through as-is
+ * - This ensures free text entered by users is never incorrectly translated
  */
-function translateProfileValue(fieldName: string, value: string | undefined): string {
-  if (!value) return "";
-
-  switch (fieldName) {
-    case "familyStatus":
-      return familyStatusTranslations[value] || value;
-    case "profession":
-      return occupationTranslations[value] || value;
-    case "netIncome":
-      return incomeRangeTranslations[value] || value;
-    case "passiveIncome":
-      return passiveIncomeRangeTranslations[value] || value;
-    case "citizenship":
-      // Handle comma-separated citizenship values
-      if (value.includes(",")) {
-        return value.split(",").map(v =>
-          citizenshipTranslations[v.trim().toLowerCase()] || v.trim()
-        ).join(", ");
-      }
-      return citizenshipTranslations[value.toLowerCase()] || value;
-    case "relocationGoals":
-      // Handle comma-separated or array-like values
-      if (value.includes(",")) {
-        return value.split(",").map(v =>
-          relocationReasonTranslations[v.trim()] || v.trim()
-        ).join(", ");
-      }
-      return relocationReasonTranslations[value] || value;
-    default:
-      return value;
-  }
-}
 
 interface CountrySection {
   key: string;
@@ -112,7 +76,7 @@ export const ResultsPage = ({
   // Get random articles - memoized to prevent changing on re-renders
   const displayArticles = useMemo(() => {
     if (articles) return articles;
-    const allArticles = [...siteContent.articles.items];
+    const allArticles = [...siteContent.articles.items] as Article[];
     const shuffled = allArticles.sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 3);
   }, [articles]);
@@ -184,10 +148,10 @@ export const ResultsPage = ({
                   {reportResults.profileSummary.profileDataTitle}
                 </h3>
                 <div className="space-y-2 text-[18px]">
-                  {translateProfileValue("citizenship", userData.profile.citizenship) && (
+                  {userData.profile.citizenship && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.citizenship}</span>{" "}
-                      {translateProfileValue("citizenship", userData.profile.citizenship)}
+                      {userData.profile.citizenship}
                     </p>
                   )}
                   {userData.profile.age && (
@@ -196,34 +160,34 @@ export const ResultsPage = ({
                       {userData.profile.age}
                     </p>
                   )}
-                  {translateProfileValue("profession", userData.profile.profession) && (
+                  {userData.profile.profession && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.profession}</span>{" "}
-                      {translateProfileValue("profession", userData.profile.profession)}
+                      {userData.profile.profession}
                     </p>
                   )}
-                  {translateProfileValue("familyStatus", userData.profile.familyStatus) && (
+                  {userData.profile.familyStatus && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.familyStatus}</span>{" "}
-                      {translateProfileValue("familyStatus", userData.profile.familyStatus)}
+                      {userData.profile.familyStatus}
                     </p>
                   )}
-                  {translateProfileValue("netIncome", userData.profile.netIncome) && (
+                  {userData.profile.netIncome && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.netIncome}</span>{" "}
-                      {translateProfileValue("netIncome", userData.profile.netIncome)}
+                      {userData.profile.netIncome}
                     </p>
                   )}
-                  {translateProfileValue("passiveIncome", userData.profile.passiveIncome) && (
+                  {userData.profile.passiveIncome && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.passiveIncome}</span>{" "}
-                      {translateProfileValue("passiveIncome", userData.profile.passiveIncome)}
+                      {userData.profile.passiveIncome}
                     </p>
                   )}
-                  {translateProfileValue("relocationGoals", userData.profile.relocationGoals) && (
+                  {userData.profile.relocationGoals && (
                     <p>
                       <span className="font-medium">{reportResults.profileSummary.fields.relocationGoals}</span>{" "}
-                      {translateProfileValue("relocationGoals", userData.profile.relocationGoals)}
+                      {userData.profile.relocationGoals}
                     </p>
                   )}
                 </div>

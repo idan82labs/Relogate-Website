@@ -10,6 +10,18 @@ import {
   type Report,
   type DestinationResponseListItem,
 } from "@/services/reports";
+import { translateValue } from "@/locales/compat";
+
+/**
+ * Translate comma-separated values for a specific field
+ */
+function translateCommaSeparated(fieldName: string, value: string): string {
+  if (!value) return "";
+  return value
+    .split(",")
+    .map((v) => translateValue(fieldName, v.trim()))
+    .join(", ");
+}
 
 // User-facing preview components
 function PreviewGreeting({
@@ -43,9 +55,9 @@ function PreviewProfileSummary({
   summary: Report["profileSummary"];
 }) {
   const fields = [
-    { label: "אזרחות", value: summary?.citizenship },
-    { label: "מצב משפחתי", value: summary?.familyStatus },
-    { label: "מטרות הגירה", value: summary?.relocationGoals },
+    { label: "אזרחות", value: translateCommaSeparated("citizenships", summary?.citizenship || "") },
+    { label: "מצב משפחתי", value: translateValue("familyStatus", summary?.familyStatus || "") },
+    { label: "מטרות הגירה", value: translateCommaSeparated("relocationReasons", summary?.relocationGoals || "") },
   ];
 
   const hasContent = fields.some((f) => f.value);

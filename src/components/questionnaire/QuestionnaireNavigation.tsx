@@ -9,7 +9,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireNavigation } from "@/locales/compat";
 import { Button } from "@/components/shared";
 
 interface QuestionnaireNavigationProps {
@@ -33,7 +33,7 @@ interface QuestionnaireNavigationProps {
   className?: string;
 }
 
-const content = siteContent.questionnaireV2.navigation;
+const content = getQuestionnaireNavigation();
 
 /**
  * Spinner Component

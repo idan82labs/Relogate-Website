@@ -23,6 +23,9 @@ const FIELD_LABELS: Record<string, string> = {
   residenceCountry: "ארץ מגורים",
 };
 
+// Fields that contain country codes and need translation
+const COUNTRY_FIELDS = ["citizenship", "additionalCitizenship", "residenceCountry"];
+
 export function PersonalDetailsSection({
   responses,
   schemaVersion,
@@ -33,7 +36,7 @@ export function PersonalDetailsSection({
       ? (responses.personalDetails as Record<string, unknown>)
       : responses;
 
-  // Fields to display
+  // Fields to display - personal text fields don't need translation
   const fields = [
     { key: "fullName", value: personalDetails.fullName },
     { key: "email", value: personalDetails.email },
@@ -67,6 +70,7 @@ export function PersonalDetailsSection({
             key={key}
             label={FIELD_LABELS[key] || key}
             value={value}
+            fieldName={COUNTRY_FIELDS.includes(key) ? "citizenships" : undefined}
           />
         ))}
       </dl>

@@ -14,7 +14,7 @@ import {
   getFieldLabel,
   translateValue,
   type QuestionnaireSection,
-} from '@/lib/questionnaire-translations';
+} from '@/locales/compat';
 import type { ChildInfo } from '@/types/questionnaire';
 
 interface QuestionnaireAnswersDisplayProps {

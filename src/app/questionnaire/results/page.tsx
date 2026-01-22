@@ -12,6 +12,7 @@ import {
   UserReport,
   UserReportStatus,
 } from "@/services/userReports";
+import { translateValue } from "@/locales/compat";
 import { listPosts } from "@/services/blog";
 import type { BlogPostListItem } from "@/types/blog";
 
@@ -32,19 +33,39 @@ function transformBlogPostsToArticles(posts: BlogPostListItem[]) {
 }
 
 /**
+ * Translate comma-separated values for a specific field
+ */
+function translateCommaSeparated(fieldName: string, value: string): string {
+  if (!value) return "";
+  // Split by comma, trim whitespace, translate each, rejoin
+  return value
+    .split(",")
+    .map((v) => translateValue(fieldName, v.trim()))
+    .join(", ");
+}
+
+/**
  * Transform API report data to component props format
+ * Translates enum values but keeps free text values as-is
  */
 function transformReportToComponentProps(report: UserReport) {
   const userData = {
     userName: report.profileSummary.userName || "",
     profile: {
-      citizenship: report.profileSummary.citizenship || "",
+      // Translate country codes (e.g., "israel, uk" → "ישראל, בריטניה")
+      citizenship: translateCommaSeparated("citizenships", report.profileSummary.citizenship || ""),
+      // Age is a number, no translation needed
       age: report.profileSummary.age || "",
+      // Profession is free text, no translation needed
       profession: report.profileSummary.profession || "",
-      familyStatus: report.profileSummary.familyStatus || "",
-      netIncome: report.profileSummary.netIncome || "",
-      passiveIncome: report.profileSummary.passiveIncome || "",
-      relocationGoals: report.profileSummary.relocationGoals || "",
+      // Translate family status enum (e.g., "single" → "רווק/ה")
+      familyStatus: translateValue("familyStatus", report.profileSummary.familyStatus || ""),
+      // Translate income range enum (e.g., "20k_25k" → "20,000 - 25,000 ש״ח")
+      netIncome: translateValue("householdIncome", report.profileSummary.netIncome || ""),
+      // Translate passive income enum
+      passiveIncome: translateValue("passiveIncomeAmount", report.profileSummary.passiveIncome || ""),
+      // Translate relocation goals (comma-separated enums)
+      relocationGoals: translateCommaSeparated("relocationReasons", report.profileSummary.relocationGoals || ""),
     },
   };
 

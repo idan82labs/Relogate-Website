@@ -12,20 +12,6 @@ interface FamilyStatusSectionProps {
   schemaVersion: number;
 }
 
-const FAMILY_STATUS_LABELS: Record<string, string> = {
-  single: "רווק/ה",
-  married: "נשוי/אה",
-  married_no_children: "נשוי/אה ללא ילדים",
-  married_with_children: "נשוי/אה עם ילדים",
-  common_law: "ידוע/ה בציבור",
-  divorced: "גרוש/ה",
-  divorced_no_children: "גרוש/ה ללא ילדים",
-  divorced_with_children: "גרוש/ה עם ילדים",
-  widowed: "אלמן/ה",
-  widowed_no_children: "אלמן/ה ללא ילדים",
-  widowed_with_children: "אלמן/ה עם ילדים",
-};
-
 export function FamilyStatusSection({
   responses,
   schemaVersion,
@@ -54,11 +40,8 @@ export function FamilyStatusSection({
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <QuestionnaireField
           label="מצב משפחתי"
-          value={
-            familyStatus
-              ? FAMILY_STATUS_LABELS[familyStatus] || familyStatus
-              : undefined
-          }
+          value={familyStatus}
+          fieldName="familyStatus"
         />
         <QuestionnaireField
           label="מספר ילדים"
@@ -81,6 +64,7 @@ export function FamilyStatusSection({
                   ? spouseDetails.citizenship
                   : responses.partnerCitizenships
               }
+              fieldName="citizenships"
             />
           </>
         )}

@@ -15,7 +15,7 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import {
   SelectField,
   RadioGroupField,
@@ -31,7 +31,7 @@ import type {
   VisaAttemptStatus,
 } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.preferences;
+const content = getQuestionnaireStepContent().preferences;
 
 export function PreferencesStep({
   data,

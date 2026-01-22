@@ -10,7 +10,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireV2Content } from "@/locales/compat";
 import { useQuestionnaireV2, QuestionnaireMode } from "./hooks";
 import { QuestionnaireLayout } from "./QuestionnaireLayout";
 import type { QuestionnaireDataV2 } from "@/types/questionnaire";
@@ -28,7 +28,7 @@ interface QuestionnaireProps {
   redirectUrl?: string;
 }
 
-const content = siteContent.questionnaireV2;
+const content = getQuestionnaireV2Content();
 
 /**
  * Loading Spinner

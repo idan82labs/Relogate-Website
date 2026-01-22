@@ -8,12 +8,12 @@
  */
 
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import { MultiSelectField } from "@/components/questionnaire/fields";
 import type { StepProps } from "./types";
 import type { RelocationReason } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.relocationGoals;
+const content = getQuestionnaireStepContent().relocationGoals;
 
 export function RelocationGoalsStep({
   data,

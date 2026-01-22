@@ -9,7 +9,7 @@
  */
 
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireStepContent } from "@/locales/compat";
 import {
   SelectField,
   TextField,
@@ -18,7 +18,7 @@ import {
 import type { StepProps } from "./types";
 import type { EmploymentStatus, EducationLevel } from "@/types/questionnaire";
 
-const content = siteContent.questionnaireV2.steps.partnerDetails;
+const content = getQuestionnaireStepContent().partnerDetails;
 
 export function PartnerDetailsStep({
   data,

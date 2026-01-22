@@ -8,7 +8,7 @@
  */
 
 import { motion } from "framer-motion";
-import { siteContent } from "@/content/he";
+import { getQuestionnaireV2Content } from "@/locales/compat";
 import type { StepId } from "./steps/types";
 
 interface QuestionnaireProgressProps {
@@ -22,7 +22,7 @@ interface QuestionnaireProgressProps {
   className?: string;
 }
 
-const content = siteContent.questionnaireV2;
+const content = getQuestionnaireV2Content();
 
 /** Map step IDs to progress sections */
 const STEP_TO_SECTION: Record<StepId, keyof typeof content.progress> = {
