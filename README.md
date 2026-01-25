@@ -91,15 +91,36 @@ docs/
 - **Personal Area**: User dashboard with report access
 - **Report Viewer**: AI-generated country recommendations
 
+### Payments
+- **Stripe Integration**: Secure payment processing
+- **Checkout Flow**: Seamless payment experience
+- **Payment History**: Track payment status and history
+
 ### Admin Interface
 - **Report Management**: Create, edit, preview reports
 - **Response Editor**: Manage AI-generated responses
 - **User Management**: Admin-only access control
+- **Payment Oversight**: Monitor all platform payments
+- **Blog Management**: Create and manage blog content
+
+### Notifications
+- **Real-time Updates**: Notify users of report status
+- **Email Integration**: Email notifications for key events
 
 ## Documentation
 
+### Getting Started
 - [Architecture Overview](docs/ARCHITECTURE.md) - Codebase structure, components, data flow
 - [Developer Guide](docs/DEVELOPER_GUIDE.md) - Setup, workflows, Claude Code usage
+- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment procedures
+
+### User Documentation
+- [User Guide](docs/USER_GUIDE.md) - User workflows and features
+- [Admin Guide](docs/ADMIN_GUIDE.md) - Admin interface and management
+
+### Reference
+- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
+- [Response Import Guide](docs/response-import-guide.md) - Importing report content
 
 ## Scripts
 

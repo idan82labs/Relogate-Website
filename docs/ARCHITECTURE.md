@@ -100,8 +100,13 @@ src/
 │   ├── questionnaire.ts          # V1 questionnaire API
 │   ├── questionnaire-v2.ts       # V2 questionnaire API
 │   ├── questionnaire-migration.ts # V1→V2 migration
-│   ├── reports.ts                # Reports API
-│   └── notifications.ts          # Notification service
+│   ├── questionnaire-status.ts   # Questionnaire status checks
+│   ├── reports.ts                # Reports API (admin)
+│   ├── userReports.ts            # Reports API (user)
+│   ├── notifications.ts          # Notification service
+│   ├── payments.ts               # Stripe payment service
+│   ├── blog.ts                   # Blog/press articles
+│   └── admin.ts                  # Admin management service
 │
 ├── types/                        # TypeScript definitions
 │   ├── api.ts                    # API response types
@@ -147,20 +152,51 @@ src/
 
 ## Route Structure
 
+### Public Routes
+
 | Route | Component | Description |
 |-------|-----------|-------------|
 | `/` | page.tsx | Homepage (mobile/desktop detection) |
 | `/login` | login/page.tsx | User authentication |
 | `/register` | register/page.tsx | User registration |
+| `/blog` | blog/page.tsx | Blog listing |
+| `/blog/[slug]` | blog/[slug]/page.tsx | Blog post detail |
+| `/press` | press/page.tsx | Press articles |
+| `/press/[slug]` | press/[slug]/page.tsx | Press article detail |
+
+### Questionnaire Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
 | `/questionnaire` | questionnaire/page.tsx | V1 questionnaire landing |
 | `/questionnaire/v2` | questionnaire/v2/page.tsx | V2 questionnaire flow |
 | `/questionnaire/results` | questionnaire/results/page.tsx | Results display |
+
+### User Routes (Protected)
+
+| Route | Component | Description |
+|-------|-----------|-------------|
 | `/personal-area` | personal-area/page.tsx | User dashboard |
 | `/personal-area/report` | personal-area/report/page.tsx | Report viewer |
+| `/personal-area/checkout` | personal-area/checkout/page.tsx | Payment checkout |
+| `/personal-area/checkout/success` | personal-area/checkout/success/page.tsx | Payment success |
+
+### Admin Routes (Admin Only)
+
+| Route | Component | Description |
+|-------|-----------|-------------|
 | `/admin` | admin/page.tsx | Admin dashboard |
 | `/admin/login` | admin/login/page.tsx | Admin authentication |
+| `/admin/users` | admin/users/page.tsx | User management |
+| `/admin/users/[userId]/questionnaire` | admin/users/.../page.tsx | View user questionnaire |
 | `/admin/reports` | admin/reports/page.tsx | Report management |
 | `/admin/reports/[id]` | admin/reports/[id]/page.tsx | Single report view |
+| `/admin/reports/[id]/edit` | admin/reports/[id]/edit/page.tsx | Edit report |
+| `/admin/reports/[id]/preview` | admin/reports/[id]/preview/page.tsx | Preview report |
+| `/admin/reports/[id]/responses/new` | admin/reports/.../new/page.tsx | Add destination |
+| `/admin/reports/[id]/responses/[responseId]` | admin/reports/.../page.tsx | View destination |
+| `/admin/reports/[id]/responses/[responseId]/edit` | admin/reports/.../edit/page.tsx | Edit destination |
+| `/admin/payments` | admin/payments/page.tsx | Payment management |
 
 ## Components
 
@@ -209,11 +245,34 @@ Base configuration for API requests:
 - `questionnaire-v2.ts`: V2 questionnaire API with enhanced features
 - `questionnaire-migration.ts`: Migration utilities between versions
 
-### Reports (`reports.ts`)
+### Reports
 
-- Fetch user reports
-- Admin report management
-- Report response handling
+- `reports.ts`: Admin report management (create, edit, publish)
+- `userReports.ts`: User report viewing
+
+### Payments (`payments.ts`)
+
+- Stripe checkout integration
+- Payment status checking
+- Payment history
+
+### Blog (`blog.ts`)
+
+- Blog post fetching
+- Press article fetching
+- Category filtering
+
+### Admin (`admin.ts`)
+
+- User management (list, create, update, deactivate)
+- Payment oversight
+- Questionnaire viewing
+
+### Notifications (`notifications.ts`)
+
+- Fetch user notifications
+- Mark as read
+- Unread count
 
 ## State Management
 
