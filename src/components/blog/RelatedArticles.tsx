@@ -59,19 +59,21 @@ export function RelatedArticles({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
-      <h2 className="text-[32px] font-semibold text-[var(--color-ink)] mb-8 text-center">
-        {title || blog.relatedArticles}
-      </h2>
+      <div className="max-w-[1400px] mx-auto px-6">
+        <h2 className="text-[32px] font-semibold text-[var(--color-ink)] mb-8 text-center">
+          {title || blog.relatedArticles}
+        </h2>
 
-      <div className="flex justify-center gap-6 flex-wrap">
-        {posts.map((post) => (
-          <ArticleCard
-            key={post.id}
-            post={post}
-            variant="desktop"
-            contentType={contentType}
-          />
-        ))}
+        <div className="flex justify-center gap-6">
+          {posts.slice(0, 3).map((post) => (
+            <ArticleCard
+              key={post.id}
+              post={post}
+              variant="desktop"
+              contentType={contentType}
+            />
+          ))}
+        </div>
       </div>
     </motion.section>
   );

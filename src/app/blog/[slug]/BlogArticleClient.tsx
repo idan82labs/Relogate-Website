@@ -73,83 +73,90 @@ export function BlogArticleClient({ post, relatedPosts }: BlogArticleClientProps
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className={isMobile ? "px-4" : "max-w-[900px] mx-auto px-6"}
+            className={isMobile ? "px-4" : "max-w-[1400px] mx-auto px-6"}
           >
-            {/* Back Button */}
-            <div className={isMobile ? "py-4" : "py-6"}>
-              <BackButton href="/blog" label={blog.backToBlog} />
+            {/* Container for text content */}
+            <div className={isMobile ? "" : "max-w-[900px] mx-auto"}>
+              {/* Back Button */}
+              <div className={isMobile ? "py-4" : "py-6"}>
+                <BackButton href="/blog" label={blog.backToBlog} />
+              </div>
+
+              {/* Article Header */}
+              <header className="mb-8">
+                {/* Title */}
+                <motion.h1
+                  className={`font-semibold text-[var(--color-ink)] leading-[1.2] mb-4 ${
+                    isMobile ? "text-[28px]" : "text-[40px]"
+                  }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {post.title}
+                </motion.h1>
+
+                {/* Meta Info */}
+                <motion.p
+                  className="text-[14px] font-light text-[var(--color-gray-400)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  {blog.publishedBy} {formattedDate} {blog.by} {post.author}
+                </motion.p>
+
+                {/* Excerpt */}
+                <motion.p
+                  className="text-[18px] text-[var(--color-gray-400)] mt-4 leading-[1.6]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  {post.excerpt}
+                </motion.p>
+              </header>
             </div>
 
-            {/* Article Header */}
-            <header className="mb-8">
-              {/* Title */}
-              <motion.h1
-                className={`font-semibold text-[var(--color-ink)] leading-[1.2] mb-4 ${
-                  isMobile ? "text-[28px]" : "text-[40px]"
-                }`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {post.title}
-              </motion.h1>
+            {/* Wider container for featured image */}
+            <div className={isMobile ? "" : "max-w-[900px] mx-auto"}>
+              {post.featuredImageUrl && (
+                <motion.div
+                  className={`relative overflow-hidden rounded-[20px] mb-8 ${
+                    isMobile ? "h-[250px]" : "h-[400px]"
+                  }`}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.15 }}
+                >
+                  <Image
+                    src={post.featuredImageUrl}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
+              )}
+            </div>
 
-              {/* Meta Info */}
-              <motion.p
-                className="text-[14px] font-light text-[var(--color-gray-400)]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                {blog.publishedBy} {formattedDate} {blog.by} {post.author}
-              </motion.p>
-
-              {/* Excerpt */}
-              <motion.p
-                className="text-[18px] text-[var(--color-gray-400)] mt-4 leading-[1.6]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                {post.excerpt}
-              </motion.p>
-            </header>
-
-            {/* Featured Image */}
-            {post.featuredImageUrl && (
-              <motion.div
-                className={`relative overflow-hidden rounded-[20px] mb-8 ${
-                  isMobile ? "h-[250px]" : "h-[400px]"
-                }`}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-              >
-                <Image
-                  src={post.featuredImageUrl}
-                  alt={post.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </motion.div>
-            )}
-
-            {/* Article Content */}
-            <ArticleContent content={post.content} />
-
-            {/* Related Articles */}
-            {relatedPosts.length > 0 && (
-              <div className={isMobile ? "mt-12 -mx-4" : "mt-16"}>
-                <RelatedArticles
-                  posts={relatedPosts}
-                  variant={variant}
-                  contentType="blog"
-                  title={blog.relatedArticles}
-                />
-              </div>
-            )}
+            {/* Container for article body */}
+            <div className={isMobile ? "" : "max-w-[900px] mx-auto"}>
+              <ArticleContent content={post.content} />
+            </div>
           </motion.article>
+
+          {/* Related Articles - Outside narrow container for full width */}
+          {relatedPosts.length > 0 && (
+            <div className={isMobile ? "mt-12" : "mt-16"}>
+              <RelatedArticles
+                posts={relatedPosts}
+                variant={variant}
+                contentType="blog"
+                title={blog.relatedArticles}
+              />
+            </div>
+          )}
         </AnimatePresence>
       </main>
 

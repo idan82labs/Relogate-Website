@@ -10,6 +10,10 @@ import type { ArticleContentProps } from "@/types/blog";
 function parseMarkdown(markdown: string): string {
   let html = markdown;
 
+  // Normalize whitespace: collapse 2+ spaces to single space (preserves intentional formatting)
+  // This handles double/triple spaces within text that may come from copy-paste or formatting
+  html = html.replace(/[ \t]{2,}/g, " ");
+
   // Escape HTML entities first
   html = html
     .replace(/&/g, "&amp;")
@@ -68,7 +72,17 @@ function parseMarkdown(markdown: string): string {
       }
       // Don't wrap empty blocks
       if (!trimmed) return "";
-      return `<p class="article-p">${trimmed.replace(/\n/g, "<br />")}</p>`;
+      // Check if original block started with whitespace (first line had leading spaces)
+      const firstLineHadSpaces = /^[ \t]+/.test(block);
+      // Replace leading spaces on lines with bullet character (for enum-style content)
+      let processed = trimmed
+        .replace(/\n[ \t]+/g, "<br />• ")  // Lines starting with whitespace become bullet points
+        .replace(/\n/g, "<br />");          // Regular line breaks
+      // Add bullet to first line if it originally had leading spaces
+      if (firstLineHadSpaces) {
+        processed = "• " + processed;
+      }
+      return `<p class="article-p">${processed}</p>`;
     })
     .join("\n");
 
@@ -92,26 +106,26 @@ export function ArticleContent({ content }: ArticleContentProps) {
     >
       <style jsx global>{`
         .article-content .article-h2 {
-          font-size: 28px;
+          font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
           font-weight: 600;
           color: var(--color-ink);
-          margin-top: 2.5rem;
-          margin-bottom: 1rem;
-          line-height: 1.3;
+          margin-top: clamp(2rem, 1.5rem + 1vw, 2.5rem);
+          margin-bottom: clamp(0.75rem, 0.5rem + 0.5vw, 1rem);
+          line-height: 1.25;
         }
         .article-content .article-h3 {
-          font-size: 22px;
+          font-size: clamp(1.25rem, 1rem + 0.75vw, 1.5rem);
           font-weight: 600;
           color: var(--color-ink);
-          margin-top: 2rem;
-          margin-bottom: 0.75rem;
+          margin-top: clamp(1.5rem, 1.25rem + 0.5vw, 2rem);
+          margin-bottom: clamp(0.5rem, 0.25rem + 0.25vw, 0.75rem);
           line-height: 1.3;
         }
         .article-content .article-p {
-          font-size: 16px;
+          font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
           color: var(--color-ink);
-          line-height: 1.8;
-          margin-bottom: 1rem;
+          line-height: 1.75;
+          margin-bottom: clamp(1.25rem, 1rem + 0.5vw, 1.5rem);
         }
         .article-content .article-bold {
           font-weight: 600;
@@ -120,25 +134,36 @@ export function ArticleContent({ content }: ArticleContentProps) {
         .article-content .article-italic {
           font-style: italic;
         }
-        .article-content .article-ul,
-        .article-content .article-ol {
-          margin: 1rem 0;
-          padding-right: 1.5rem;
+        .article-content .article-ul {
+          margin: clamp(1rem, 0.75rem + 0.5vw, 1.5rem) 0;
+          padding-right: clamp(1.25rem, 1rem + 0.5vw, 2rem);
           color: var(--color-ink);
+          list-style-type: disc;
+          list-style-position: inside;
+        }
+        .article-content .article-ol {
+          margin: clamp(1rem, 0.75rem + 0.5vw, 1.5rem) 0;
+          padding-right: clamp(1.25rem, 1rem + 0.5vw, 2rem);
+          color: var(--color-ink);
+          list-style-type: decimal;
+          list-style-position: inside;
         }
         .article-content .article-li,
         .article-content .article-li-ordered {
-          font-size: 16px;
-          line-height: 1.7;
-          margin-bottom: 0.5rem;
+          font-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+          line-height: 1.75;
+          margin-bottom: clamp(0.5rem, 0.375rem + 0.25vw, 0.75rem);
         }
         .article-content .article-blockquote {
-          border-right: 4px solid var(--color-primary);
-          padding-right: 1rem;
-          margin: 1.5rem 0;
-          font-size: 18px;
+          border-right: 3px solid var(--color-primary);
+          padding: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
+          padding-left: 0;
+          margin: clamp(1.5rem, 1.25rem + 0.5vw, 2rem) 0;
+          font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);
           font-style: italic;
           color: var(--color-gray-400);
+          background: linear-gradient(to left, rgba(247, 247, 247, 0.5), transparent);
+          border-radius: 4px;
         }
       `}</style>
       <div dangerouslySetInnerHTML={{ __html: html }} />
